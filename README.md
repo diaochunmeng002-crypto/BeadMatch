@@ -41,16 +41,17 @@ BeadMatch/
 ├─ server/              FastAPI 后端（app.py + test_app.py）
 ├─ solver/
 │  ├─ free_solver.py      按本项目规则写的求解器（DFS + 启发式）
-│  ├─ kociemba_solver.py  旧规则（商业球排序）的求解器，借它求短解
+│  ├─ free_solver.py      按本项目规则求解（DFS + 启发式），只作兜底
 │  └─ test_*.py
+├─ walk_gen.py          出题算法：引导式走法 + 反走即解（不需要求解器）
 ├─ web/                 前端（原生 JS，三个文件，不用构建）
-└─ vendor/kociemba/     原版 Pascal 源码存档（**不随仓库分发**，.gitignore 已排除；只作本机对照）
+└─ vendor/kociemba/     已删除的旧求解器的原版源码存档（**不随仓库分发**，只作本机对照）
 ```
 
-## 两套「规则」要分清
+## 只有一套规则
 
-- **本项目的规则**：一次挪一颗，**落点只要有空位就能放**（不要求同色）。
-- **旧规则**（商业球排序 / Kociemba 求解器）：只能放到空柱或顶色相同的柱子——那套规则下会走死，
-  我们**不用**它，但可以借用它算出来的解（它的走法在我们规则下同样合法）。
+一次挪一颗，**落点只要有空位就能放**（不要求同色）。细节见 [docs/requirement.md](docs/requirement.md) §2。
 
-细节和原因见 [docs/requirement.md](docs/requirement.md) §2 与 §8。
+> 2026-09-14 之前，仓库里还有一个 Kociemba 的 Python 移植（商业球排序那套"只能放空柱或同色柱顶"
+> 的规则），当时用来算难度/找短解，现在**已删除**——原因和经过见
+> [docs/requirement.md](docs/requirement.md) §8.2 与 [docs/solver_research.md](docs/solver_research.md)。

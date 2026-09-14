@@ -27,12 +27,12 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "solver"))
 
+import walk_gen  # noqa: E402
 from free_solver import (  # noqa: E402
     apply_move,
     format_moves,
     legal_moves,
     parse_moves,
-    solve_any_with_source,
     verify,
 )
 
@@ -45,7 +45,7 @@ COLORS = 6              # 颜色数
 BALLS_PER_COLOR = 10    # 每色珠子数
 CAPACITY = 10           # 每根柱子的容量（能装几格）
 
-# 出题时随机乱走多少步。实测结论见 docs/requirement.md §4.3（100 步档出题多、等级 2~4）。
+# 出题时乱走多少步的兜底值（正常情况下由 difficulty × 10 算出来）。
 WALK_STEPS = 100
 
 # 题库目录（一题一文件，文件名 = <id>.txt）
@@ -64,7 +64,7 @@ LEVEL_STEP = 10                 # 每 10 步一档
 #   created_by —— 谁出的：工具名，或以后手工摆题时的人名/`manual`
 #   generator  —— 用哪套算法出的：名字 + 版本，算法一改语义就变，所以带版本
 CREATED_BY = "beadmatch"
-GENERATOR = "random_walk@1"
+GENERATOR = walk_gen.GENERATOR      # walk_guided@4，见 walk_gen.py
 
 # 元信息区的输出顺序（第一行是创建时间，第二行是谁创建的）
 META_ORDER = (
@@ -124,49 +124,36 @@ def generate(
     seed: Optional[int] = None,
     puzzle_id: Optional[str] = None,
     walk_steps: Optional[int] = None,
-    attempts: int = 5,
-    **solve_kwargs,
 ) -> Tuple[List[List[int]], Dict[str, object]]:
     """出一道题，返回 ``(局面, 元信息)``。**不写文件**（落盘交给调用方）。
 
-    ``difficulty`` 目前**不参与筛选**（方案2 先出什么收什么），只作为参数保留。
-    解不出来（超预算）就换个种子重走，最多 ``attempts`` 次。
+    ``difficulty`` 就是目标等级（十步一档）：走 ``difficulty × 10`` 步，
+    出来的解正好也是这个长度，于是等级就是它。也可以直接给 ``walk_steps`` 覆盖。
+
+    出题方式是 **walk_gen 的引导式走法**，反走即解 —— 不需要求解器，也不会失败。
     """
-    steps = WALK_STEPS if walk_steps is None else walk_steps
-    base_seed = seed if seed is not None else random.randrange(1 << 30)
-
-    for attempt in range(attempts):
-        used_seed = base_seed if attempt == 0 else base_seed + attempt * 7919
-        rng = random.Random(used_seed)
-        state = walk_state(steps, rng)
-        # 先借旧规则求解器（快），它给不出解再上我们自己的 DFS；顺便记住解是谁给的
-        kwargs = {"time_limit": 2.0, "node_limit": 100_000}
-        kwargs.update(solve_kwargs)
-        moves, solution_by = solve_any_with_source(state, **kwargs)
-        if moves is None:
-            continue
-        meta: Dict[str, object] = {
-            "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "created_by": CREATED_BY,
-            "id": puzzle_id or make_id(),
-            "tubes": TUBES,
-            "colors": COLOR_LETTERS[:COLORS],
-            "capacity": CAPACITY,
-            "balls_per_color": BALLS_PER_COLOR,
-            "level": level_of(len(moves)),
-            "moves": len(moves),
-            "seed": used_seed,
-            "steps": steps,
-            "generator": GENERATOR,
-            "solution_by": solution_by,
-            "solution": format_moves(moves),
-        }
-        return state, meta
-
-    raise RuntimeError(
-        "连试 %d 次都没解出来（walk_steps=%d，seed=%r）。"
-        "可以把 WALK_STEPS 调小，或加长 solve 的预算。" % (attempts, steps, seed)
-    )
+    steps = int(walk_steps) if walk_steps is not None else max(1, int(difficulty) * LEVEL_STEP)
+    used_seed = seed if seed is not None else random.randrange(1 << 30)
+    state, raw, solution = walk_gen.walk(used_seed, steps)
+    meta: Dict[str, object] = {
+        "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "created_by": CREATED_BY,
+        "solution_by": "walk",
+        "id": puzzle_id or make_id(),
+        "tubes": TUBES,
+        "colors": COLOR_LETTERS[:COLORS],
+        "capacity": CAPACITY,
+        "balls_per_color": BALLS_PER_COLOR,
+        "level": level_of(len(solution)),
+        "moves": len(solution),
+        "seed": used_seed,
+        # steps = 走的目标步数（复现要 seed + steps 两个；实际走出的原始步数会略多，
+        # 因为「同球连搬」的那些被合并掉了 —— 解的长度看 moves）
+        "steps": steps,
+        "generator": GENERATOR,
+        "solution": format_moves(solution),
+    }
+    return [list(t) for t in state], meta
 
 
 # --------------------------------------------------------------------------
@@ -425,13 +412,13 @@ def save_board(path, matrix: Sequence[Sequence[int]], meta: Dict[str, object],
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="BeadMatch 出题器")
     p.add_argument("--level", type=int, default=5,
-                   help="想要的难度等级（目前不筛选，只记录）")
+                   help="难度等级（默认 5）：走 level × 10 步，解的长度正好是这个数")
     p.add_argument("--seed", type=int, default=None, help="随机种子（同 seed + 同 steps 能复现同一道题）")
-    p.add_argument("--steps", type=int, default=WALK_STEPS, help="乱走多少步（默认 %d）" % WALK_STEPS)
+    p.add_argument("--steps", type=int, default=None,
+                   help="直接指定走多少步（不给就按 --level × 10 算）")
     p.add_argument("--out", default=str(PUZZLE_DIR), help="题库目录（默认 %s）" % PUZZLE_DIR)
     p.add_argument("--print-only", action="store_true", help="只打印，不写文件")
     p.add_argument("--show", metavar="FILE", help="读一道题并打印")
-    p.add_argument("--time-limit", type=float, default=2.0, help="求解的时间上限（秒）")
     return p
 
 
@@ -446,9 +433,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 0
 
     t0 = time.time()
-    matrix, meta = generate(
-        args.level, seed=args.seed, walk_steps=args.steps, time_limit=args.time_limit
-    )
+    matrix, meta = generate(args.level, seed=args.seed, walk_steps=args.steps)
     dt = time.time() - t0
 
     if not args.print_only:

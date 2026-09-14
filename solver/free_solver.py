@@ -397,54 +397,28 @@ def verify(state: Sequence[Sequence[int]], moves: Sequence[Move]) -> bool:
     return is_finished(cur)
 
 
-def solve_by_old_rule(state: Sequence[Sequence[int]]) -> Optional[List[Move]]:
-    """借现成的 Kociemba 求解器求一条解。
+def solve_any_with_source(
+    state: Sequence[Sequence[int]],
+    **kwargs,
+) -> Tuple[Optional[List[Move]], str]:
+    """求一条解，并把「这条解是谁给的」一起返回：``dfs`` / ``-``。
 
-    它按**旧规则**（只能放空柱或同色柱顶）搜索，但**旧规则的走法在我们规则下同样合法**，
-    所以只要它能给出解，那条解我们直接就能用 —— 而且它很快（实测 0.03~0.08 秒）。
-    它说"无解"时（我们的题经常如此）返回 ``None``，交给 ``solve`` 兜底。
+    2026-09-14：原来会先借 Kociemba（旧规则）求短解，现已删除（见 docs/solver_research.md）。
+    现在只剩我们自己的 DFS —— 它**只保证能解开、不保证步数最少**，而且能力有限；
+    不过出题已经不依赖它了（`walk_gen` 的反走就是解）。
     """
-    try:
-        from kociemba_solver import ColorSortSolver
-    except ImportError:  # pragma: no cover
-        return None
-
-    tubes = len(state)
-    volume = len(state[0])
-    n_colors = max((max(t) for t in state if any(t)), default=0)
-    n_empty = tubes - n_colors
-    if n_colors < 1 or n_empty < 1:
-        return None
-    solver = ColorSortSolver(n_colors, volume, n_empty, single_mode=True)
-    res = solver.solve([list(t) for t in state])
-    if res.status in ("optimal", "near-optimal", "solved"):
-        return list(res.moves) + list(res.correction_moves)
-    return None
+    moves = solve(state, **kwargs)
+    if moves is not None:
+        return moves, "dfs"
+    return None, "-"
 
 
 def solve_any(
     state: Sequence[Sequence[int]],
     **kwargs,
 ) -> Optional[List[Move]]:
-    """先借旧规则求解器，再退回我们自己的 DFS；都失败返回 ``None``。"""
+    """求一条解，失败返回 ``None``（``solve_any_with_source`` 的薄包装）。"""
     return solve_any_with_source(state, **kwargs)[0]
-
-
-def solve_any_with_source(
-    state: Sequence[Sequence[int]],
-    **kwargs,
-) -> Tuple[Optional[List[Move]], str]:
-    """同 ``solve_any``，但把「这条解是谁给的」也返回：``kociemba`` / ``dfs`` / ``-``。
-
-    出题时要把这个来源记进题目文件（字段 ``solution_by``），所以得能拿到它。
-    """
-    moves = solve_by_old_rule(state)
-    if moves is not None and verify(state, moves):
-        return moves, "kociemba"
-    moves = solve(state, **kwargs)
-    if moves is not None:
-        return moves, "dfs"
-    return None, "-"
 
 
 def format_moves(moves: Sequence[Move]) -> str:

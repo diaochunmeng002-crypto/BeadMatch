@@ -9,7 +9,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import generator as g  # noqa: E402
-from free_solver import is_finished, solve_any, verify  # noqa: E402
+import walk_gen  # noqa: E402
+from free_solver import is_finished, verify  # noqa: E402
 
 
 class TempDir:
@@ -30,7 +31,7 @@ class TempDir:
 
 class TestRenderParse(unittest.TestCase):
     def setUp(self):
-        self.matrix, self.meta = g.generate(seed=1, walk_steps=60)
+        self.matrix, self.meta = g.generate(seed=1, walk_steps=20)
 
     def test_round_trip(self):
         text = g.render_board(self.matrix, self.meta)
@@ -77,7 +78,7 @@ class TestRenderParse(unittest.TestCase):
         """出身字段：新出的题必须带 created_by / generator，读回来一致。"""
         self.assertEqual(self.meta["created_by"], g.CREATED_BY)
         self.assertEqual(self.meta["generator"], g.GENERATOR)
-        self.assertIn(self.meta["solution_by"], ("kociemba", "dfs"))
+        self.assertEqual(self.meta["solution_by"], "walk")
         text = g.render_board(self.matrix, self.meta)
         self.assertIn("created_by=%s" % g.CREATED_BY, text)
         self.assertIn("generator=%s" % g.GENERATOR, text)
@@ -143,7 +144,7 @@ class TestRenderParse(unittest.TestCase):
 
 class TestValidation(unittest.TestCase):
     def setUp(self):
-        self.matrix, self.meta = g.generate(seed=2, walk_steps=60)
+        self.matrix, self.meta = g.generate(seed=2, walk_steps=20)
         self.text = g.render_board(self.matrix, self.meta)
 
     def test_missing_key(self):
@@ -203,33 +204,32 @@ class TestValidation(unittest.TestCase):
 class TestGenerate(unittest.TestCase):
     def test_meta_and_level(self):
         for seed in (1, 2, 3):
-            matrix, meta = g.generate(seed=seed, walk_steps=60)
+            matrix, meta = g.generate(seed=seed, walk_steps=20)
             self.assertEqual(meta["level"], g.level_of(meta["moves"]))
             self.assertEqual(meta["tubes"], g.TUBES)
             self.assertEqual(meta["colors"], g.COLOR_LETTERS[: g.COLORS])
-            self.assertEqual(meta["steps"], 60)
+            self.assertEqual(meta["steps"], 20)
             self.assertEqual(len(matrix), g.TUBES)
             self.assertEqual(len(matrix[0]), g.CAPACITY)
-            # 用记录下来的 seed + steps 必须能复现出同一道题
-            again = g.walk_state(meta["steps"], random.Random(meta["seed"]))
-            self.assertEqual(again, matrix)
+            # 用记录下来的 seed + steps 必须能复现出同一道题（新算法是确定性的）
+            again, _raw, _sol = walk_gen.walk(meta["seed"], 20)
+            self.assertEqual([list(t) for t in again], matrix)
 
     def test_generated_puzzle_is_solvable_and_solution_matches_moves(self):
-        matrix, meta = g.generate(seed=5, walk_steps=60)
-        moves = solve_any(matrix, time_limit=5.0)
-        self.assertIsNotNone(moves)
-        self.assertTrue(verify(matrix, moves))
-        # 同一个局面、同一套求解器，解出来的步数应当和记录的一致
+        """题目自带的 solution 必须真的能解开，而且步数和 moves 对得上。"""
+        matrix, meta = g.generate(seed=5, walk_steps=20)
+        moves = g.parse_moves(str(meta["solution"]))
         self.assertEqual(len(moves), meta["moves"])
+        self.assertTrue(verify(matrix, moves))
 
     def test_same_seed_reproduces(self):
-        a, ma = g.generate(seed=7, walk_steps=60)
-        b, mb = g.generate(seed=7, walk_steps=60)
+        a, ma = g.generate(seed=7, walk_steps=20)
+        b, mb = g.generate(seed=7, walk_steps=20)
         self.assertEqual(a, b)
         self.assertEqual(ma["moves"], mb["moves"])
 
     def test_puzzle_is_not_finished(self):
-        matrix, _meta = g.generate(seed=9, walk_steps=60)
+        matrix, _meta = g.generate(seed=9, walk_steps=20)
         self.assertFalse(is_finished(matrix))
 
 

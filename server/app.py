@@ -57,6 +57,9 @@ class NextRequest(BaseModel):
     matrix: List[List[int]] = Field(
         ..., description="矩阵[柱子][位置]；位置 0 = 最顶端那一格，0 表示空位"
     )
+    id: Optional[str] = Field(
+        None, description="题目 id。给了就用题目文件里的标准解法（又快又准），不用现算"
+    )
 
 
 # --------------------------------------------------------------------------
@@ -165,18 +168,40 @@ def api_random(
 def api_next(req: NextRequest) -> Dict[str, object]:
     """提示下一步怎么走。
 
-    ⚠️ **暂定接口**（docs/requirement.md §9 第 3 条还没定稿）：现在收整个矩阵，
-    现算一条解、返回第一步 + 剩余步数。等接口定稿后这里可能要改。
+    ⚠️ **暂定接口**（docs/requirement.md §9 第 3 条还没定稿）。
+
+    两种用法：
+    * 带 `id`（推荐）：直接用题目文件里的标准解法 —— 又快又准，还不用求解器；
+      前提是 `matrix` 还是这题的初始局面（孩子还没动过）。
+    * 不带 `id`：拿矩阵现算一条解（用我们自己的 DFS，**可能算不出来**，那就 504）。
     """
     _check_matrix(req.matrix)
     if is_finished(req.matrix):
         return {"finished": True, "move": None, "move_text": "", "remaining": 0}
+
+    if req.id:
+        path = g.find_puzzle_path(PUZZLE_DIR, req.id)
+        if path is not None:
+            start, meta = g.load_board(path)
+            if [list(t) for t in start] == req.matrix:
+                moves = g.parse_moves(str(meta["solution"]))
+                first = moves[0]
+                return {
+                    "finished": False,
+                    "source": "puzzle",
+                    "move": {"from": first[0], "to": first[1]},
+                    "move_text": format_moves([first]),
+                    "remaining": len(moves),
+                    "solution": format_moves(moves),
+                }
+
     moves = solve_any(req.matrix, time_limit=5.0)
     if not moves:
         raise HTTPException(504, "这一步没算出来（超预算），可以再试一次")
     first = moves[0]
     return {
         "finished": False,
+        "source": "solver",
         "move": {"from": first[0], "to": first[1]},          # 0 起
         "move_text": format_moves([first]),                  # 1 起，跟文件格式一致
         "remaining": len(moves),
@@ -195,12 +220,20 @@ def api_generate(req: GenerateRequest) -> Dict[str, object]:
 
 @app.post("/api/play")
 def api_play(req: NextRequest) -> Dict[str, object]:
-    """把整个标准解法算出来（给前端做"演示解法"动画用）。"""
+    """把整条解给出来（给前端做"演示解法"动画用）。带 `id` 就直接读题目文件。"""
     _check_matrix(req.matrix)
+    if req.id:
+        path = g.find_puzzle_path(PUZZLE_DIR, req.id)
+        if path is not None:
+            start, meta = g.load_board(path)
+            if [list(t) for t in start] == req.matrix:
+                moves = g.parse_moves(str(meta["solution"]))
+                return {"moves": format_moves(moves), "count": len(moves),
+                        "source": "puzzle"}
     moves = solve_any(req.matrix, time_limit=5.0)
     if moves is None:
         raise HTTPException(504, "没算出来（超预算）")
-    return {"moves": format_moves(moves), "count": len(moves)}
+    return {"moves": format_moves(moves), "count": len(moves), "source": "solver"}
 
 
 # --------------------------------------------------------------------------

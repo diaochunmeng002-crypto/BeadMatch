@@ -60,15 +60,18 @@ class TestLibrary(unittest.TestCase):
                              [x["level"] for x in body["levels"]])  # 有序
 
     def test_list_and_get_puzzle(self):
-        listed = client.get("/api/puzzles", params={"level": 3}).json()
+        levels = [x["level"] for x in client.get("/api/levels").json()["levels"]]
+        if not levels:
+            self.skipTest("题库是空的")
+        listed = client.get("/api/puzzles", params={"level": levels[0]}).json()
         if listed["count"] == 0:
-            self.skipTest("题库里没有 3 级的题")
+            self.skipTest("这一级没有题")
         item = listed["puzzles"][0]
         got = client.get("/api/puzzles/%s" % item["id"])
         self.assertEqual(got.status_code, 200)
         body = got.json()
         self.assertEqual(body["id"], item["id"])
-        self.assertEqual(body["level"], 3)
+        self.assertEqual(body["level"], levels[0])
         self.assertEqual(len(body["matrix"]), body["tubes"])
         self.assertEqual(len(body["matrix"][0]), body["capacity"])
         self.assertTrue(body["solution"], "题目应当带标准解法")
@@ -81,16 +84,22 @@ class TestLibrary(unittest.TestCase):
 
 class TestRandom(unittest.TestCase):
     def test_random_from_level(self):
-        r = client.get("/api/random", params={"level": 3})
+        levels = [x["level"] for x in client.get("/api/levels").json()["levels"]]
+        if not levels:
+            self.skipTest("题库是空的")
+        r = client.get("/api/random", params={"level": levels[0]})
         self.assertEqual(r.status_code, 200)
         body = r.json()
-        self.assertEqual(body["level"], 3)
+        self.assertEqual(body["level"], levels[0])
         self.assertTrue(body["solution"])
         self.assertTrue(verify(body["matrix"], g.parse_moves(body["solution"])))
         self.assertGreater(body["pool_size"], 0)
 
     def test_random_covers_every_level(self):
-        for lv in (2, 3, 4, 5):
+        levels = [x["level"] for x in client.get("/api/levels").json()["levels"]]
+        if not levels:
+            self.skipTest("题库是空的")
+        for lv in levels:
             r = client.get("/api/random", params={"level": lv})
             self.assertEqual(r.status_code, 200)
             self.assertEqual(r.json()["level"], lv)
@@ -105,20 +114,21 @@ class TestRandom(unittest.TestCase):
 
 
 class TestNext(unittest.TestCase):
-    def _easy_puzzle(self):
-        listed = client.get("/api/puzzles", params={"level": 2}).json()
-        if listed["count"] == 0:
-            listed = client.get("/api/puzzles").json()
+    def _any_puzzle(self):
+        """随便拿一道题（题库空就跳过）。优先用「题目文件里的解法」这条路。"""
+        listed = client.get("/api/puzzles").json()
         if listed["count"] == 0:
             self.skipTest("题库是空的")
         return client.get("/api/puzzles/%s" % listed["puzzles"][0]["id"]).json()
 
-    def test_next_returns_legal_move(self):
-        puzzle = self._easy_puzzle()
-        r = client.post("/api/next", json={"matrix": puzzle["matrix"]})
+    def test_next_with_id_uses_stored_solution(self):
+        """带 id 时用题目文件里的标准解法：第一步合法、整条解能解开。"""
+        puzzle = self._any_puzzle()
+        r = client.post("/api/next", json={"matrix": puzzle["matrix"], "id": puzzle["id"]})
         self.assertEqual(r.status_code, 200)
         body = r.json()
         self.assertFalse(body["finished"])
+        self.assertEqual(body["source"], "puzzle")
         mv = (body["move"]["from"], body["move"]["to"])
         apply_move(puzzle["matrix"], mv)   # 走法不合法会直接抛错
         self.assertEqual(body["remaining"], len(body["solution"].split()))
@@ -143,10 +153,11 @@ class TestNext(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_play_returns_full_solution(self):
-        puzzle = self._easy_puzzle()
-        r = client.post("/api/play", json={"matrix": puzzle["matrix"]})
+        puzzle = self._any_puzzle()
+        r = client.post("/api/play", json={"matrix": puzzle["matrix"], "id": puzzle["id"]})
         self.assertEqual(r.status_code, 200)
         body = r.json()
+        self.assertEqual(body["source"], "puzzle")
         self.assertTrue(verify(puzzle["matrix"], g.parse_moves(body["moves"])))
         self.assertEqual(body["count"], len(body["moves"].split()))
 

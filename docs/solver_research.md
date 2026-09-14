@@ -5,10 +5,13 @@
 > 本项目的规则、参数、数据格式看 [requirement.md](requirement.md)；讨论过程看
 > [discussion-2026-09.md](discussion-2026-09.md)。
 >
-> ⚠️ **注意**：下面这些求解器（包括我们移植的 `solver/kociemba_solver.py`）实现的是
-> **旧规则**——只能把珠子放到空柱或顶色相同的柱子上。
+> ⚠️ **注意**：下面这些求解器实现的是**旧规则**——只能把珠子放到空柱或顶色相同的柱子上。
 > 本项目**没有这条限制**（见 [requirement.md](requirement.md) §2.2），
 > 所以它们的「有解比例」「最优步数」不等于本项目的结论，只在「借它求一条短解」时有用（§8）。
+>
+> **2026-09-14 更新**：我们**已经不再用它们**——出题改用「引导式走法 + 反走即解」
+> （[requirement.md](requirement.md) §4.1），解是白送的，不需要任何求解器。
+> 当年移植的那份 `solver/kociemba_solver.py` 也已删除（§8.2）。本文只剩"调研留档"的作用。
 
 ## 结论速览
 
@@ -52,8 +55,8 @@
 
 工程细节：同一局面内的柱子按字典序排序做归一化（消除空柱位置不同导致的重复）；用 2³² 位的哈希表去重。
 
-> 我们的移植版在 [../solver/kociemba_solver.py](../solver/kociemba_solver.py)，
-> 用法和在项目里的定位见 [requirement.md](requirement.md) §8。
+> 我们当年移植的版本（`solver/kociemba_solver.py`）**已于 2026-09-14 删除**，
+> 原因见 [requirement.md](requirement.md) §8.2。
 
 ## 2. 关卡生成器（基本没有现成的）
 

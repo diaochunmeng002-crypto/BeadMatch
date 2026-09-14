@@ -55,7 +55,7 @@ python make_puzzles.py
 
 ```bash
 python -m unittest test_generator
+python -m unittest test_walk_gen
 python -m unittest server.test_app
 python -m unittest solver.test_free_solver
-python -m unittest solver.test_kociemba_solver
 ```
