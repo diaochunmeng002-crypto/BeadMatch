@@ -18,7 +18,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import random
 import re
 import sys
@@ -340,64 +339,62 @@ def load_board(path) -> Tuple[List[List[int]], Dict[str, object]]:
 # --------------------------------------------------------------------------
 
 
-def load_index(root=PUZZLE_DIR) -> List[Dict[str, object]]:
-    """读题库的 ``index.csv``，每道题一条记录（含没被收下的，``keep=0``）。"""
-    path = Path(root) / "index.csv"
-    if not path.exists():
+# 题库（puzzles/）的「唯一真相」是**文件本身**：目录名就是等级，文件名就是 id。
+# 2026-09-14 之前这里读的是 index.csv，结果「save=true 新存的题不会出现在接口里」——
+# 台账和文件打架。现在全部改成扫目录（实测 409 道全扫一遍约 20 毫秒）。
+
+
+def read_head(path) -> Dict[str, str]:
+    """只读题目文件的元信息段（读到网格就停），比整份读进来快。"""
+    meta: Dict[str, str] = {}
+    with Path(path).open(encoding="utf-8") as fh:
+        for line in fh:
+            s = line.strip()
+            if not s or s.startswith("#"):
+                continue
+            if "=" not in s:          # 到网格了
+                break
+            k, v = s.split("=", 1)
+            meta[k] = v
+    return meta
+
+
+def _level_dirs(root) -> List[Path]:
+    """题库根目录下形如 ``1/ 2/ 3/`` 的等级目录，按等级排序。"""
+    root = Path(root)
+    if not root.is_dir():
         return []
-    rows: List[Dict[str, object]] = []
-    with path.open(encoding="utf-8", newline="") as f:
-        for raw in csv.DictReader(f):
-            row: Dict[str, object] = dict(raw)
-            for k in ("series", "seed", "ok", "keep", "moves", "level", "lower_bound"):
-                v = row.get(k)
-                if v not in (None, ""):
-                    row[k] = int(v)          # type: ignore[arg-type]
-            for k in ("ratio", "seconds"):
-                v = row.get(k)
-                if v not in (None, ""):
-                    row[k] = float(v)        # type: ignore[arg-type]
-            rows.append(row)
-    return rows
+    return sorted((d for d in root.iterdir() if d.is_dir() and d.name.isdigit()),
+                  key=lambda d: int(d.name))
 
 
 def list_levels(root=PUZZLE_DIR) -> List[Dict[str, int]]:
-    """题库里每个等级各有多少道题（只算收下的）。"""
-    counts: Dict[int, int] = {}
-    for row in load_index(root):
-        if int(row.get("keep") or 0) != 1:
-            continue
-        level = int(row["level"])           # type: ignore[arg-type]
-        counts[level] = counts.get(level, 0) + 1
-    return [{"level": lv, "count": counts[lv]} for lv in sorted(counts)]
+    """题库里每个等级各有多少道题 —— 直接数目录里的题目文件。"""
+    return [{"level": int(d.name), "count": len(list(d.glob("*.txt")))}
+            for d in _level_dirs(root) if list(d.glob("*.txt"))]
 
 
 def list_puzzles(root=PUZZLE_DIR, level: Optional[int] = None) -> List[Dict[str, object]]:
-    """列出收下的题目（可按等级筛）。"""
+    """列出题目（可按等级筛）—— 扫目录 + 只读每道题的文件头。"""
     out: List[Dict[str, object]] = []
-    for row in load_index(root):
-        if int(row.get("keep") or 0) != 1:
+    for d in _level_dirs(root):
+        if level is not None and int(d.name) != level:
             continue
-        if level is not None and int(row["level"]) != level:   # type: ignore[arg-type]
-            continue
-        out.append({
-            "id": row.get("id", ""),
-            "level": int(row["level"]),       # type: ignore[arg-type]
-            "moves": int(row["moves"]),       # type: ignore[arg-type]
-            "series": int(row.get("series") or 0),
-            "seed": int(row.get("seed") or 0),
-            "path": row.get("path", ""),
-        })
+        for f in sorted(d.glob("*.txt")):
+            head = read_head(f)
+            out.append({
+                "id": f.stem,
+                "level": int(head.get("level", d.name)),
+                "moves": int(head.get("moves") or 0),
+                "series": int(head.get("steps") or 0),
+                "seed": int(head.get("seed") or 0),
+                "path": str(f),
+            })
     return out
 
 
 def find_puzzle_path(root, puzzle_id: str) -> Optional[Path]:
-    """按 id 找题目文件：先查 index，再退化成在等级目录里找。"""
-    for row in load_index(root):
-        if str(row.get("id")) == puzzle_id and row.get("path"):
-            p = Path(str(row["path"]))
-            if p.exists():
-                return p
+    """按 id 找题目文件：在等级目录里找同名文件。"""
     hits = sorted(Path(root).glob("*/%s.txt" % puzzle_id))
     return hits[0] if hits else None
 

@@ -181,6 +181,32 @@ class TestGenerate(unittest.TestCase):
             app_module.PUZZLE_DIR = old
             shutil.rmtree(tmp, ignore_errors=True)
 
+    def test_saved_puzzle_shows_up_immediately(self):
+        """回归测试：save=true 存下的题，必须立刻出现在 /api/levels 和列表里。
+
+        （之前后端读 index.csv，新题不在台账里就"看不见"——2026-09-14 已改成扫目录。）
+        """
+        import server.app as app_module
+
+        tmp = ROOT / "_tmp_server_puzzles2"
+        shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir(parents=True, exist_ok=True)
+        old = app_module.PUZZLE_DIR
+        app_module.PUZZLE_DIR = tmp
+        try:
+            before = client.get("/api/levels").json()["levels"]
+            r = client.post("/api/generate", json={"walk_steps": 1, "seed": 1, "save": True})
+            self.assertEqual(r.status_code, 200)
+            body = r.json()
+            after = client.get("/api/levels").json()["levels"]
+            listed = client.get("/api/puzzles", params={"level": body["level"]}).json()
+            self.assertEqual(sum(x["count"] for x in after) - sum(x["count"] for x in before), 1)
+            self.assertIn(body["id"], [p["id"] for p in listed["puzzles"]])
+            self.assertEqual(client.get("/api/puzzles/%s" % body["id"]).status_code, 200)
+        finally:
+            app_module.PUZZLE_DIR = old
+            shutil.rmtree(tmp, ignore_errors=True)
+
 
 if __name__ == "__main__":
     unittest.main()

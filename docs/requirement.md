@@ -294,7 +294,13 @@ puzzles/
 ```
 
 - 一题一文件，文件名 = `<id>.txt`；**不静默覆盖**同名文件。
-- `index.csv` 列：`series, seed, ok, keep, source, moves, level, lower_bound, ratio, seconds, id, generator, created_by, path`。
+- **目录就是索引**（2026-09-14 改）：等级看目录名、id 看文件名，后端 `list_levels` / `list_puzzles` /
+  `find_puzzle_path` 直接扫目录（409 道全扫约 20 毫秒）。**题库的唯一真相是这些题目文件本身**，
+  不再依赖任何台账。
+  （原因：之前读 `index.csv`，结果 `POST /api/generate?save=true` 新存的题不会出现在接口里——
+  台账和文件打架。回归测试见 `server/test_app.py::test_saved_puzzle_shows_up_immediately`。）
+- `index.csv` 现在只是**批次日志**（`make_puzzles.py` 仍在写，代码不再读它）；以后计划挪到 `logs/`。
+  它的列：`series, seed, ok, keep, source, moves, level, lower_bound, ratio, seconds, id, generator, created_by, path`。
 - 单道出题：`python generator.py`；批量：`python make_puzzles.py`。
 
 ### 5.7 函数（`generator.py`）
@@ -323,7 +329,7 @@ puzzles/
 | --- | --- |
 | `GET /api/health` | 活着没 + 题库目录 |
 | `GET /api/levels` | 每个等级各多少道题 |
-| `GET /api/puzzles?level=3` | 列出题目（可按等级筛，只列收下的） |
+| `GET /api/puzzles?level=3` | 列出题目（可按等级筛） |
 | `GET /api/puzzles/{id}` | 取一道题：`matrix` + `solution` + 元信息 |
 | `GET /api/random?level=3` | **从某一个等级里随机抽一道**（`level` 必填） |
 | `POST /api/next {matrix}` | **暂定接口**（第 3 条未定稿）：提示下一步，返回第一步 + 剩余步数 + 整条解 |
@@ -331,6 +337,9 @@ puzzles/
 | `POST /api/play {matrix}` | 算整条解（给「演示解法」动画用） |
 
 - 入参会校验（行列数、颜色取值、空位在顶端、每色颗数），对不上返回 400。
+- **题库靠扫目录**（不读台账）：`/api/levels` 数 `puzzles/<等级>/` 里的文件，
+  `/api/puzzles` 只读每道题的**文件头**拿 `level` / `moves`。所以新存一道题，
+  下一次请求就能看到，不需要改任何索引。
 - 前端静态文件放 `web/`：起服务时挂到 `/static`，`web/index.html` 存在时根路径直接返回它。
 
 ---
@@ -410,3 +419,4 @@ puzzles/
 | v2.2 | 2026-09-14 | `# created:` 从注释区挪进正文，改名 **`created_at`** 并固定为 **正文第一行**、`created_by` 第二行（注释区只剩 `# colors:`）；读入时校验时间格式；现有 409 道题已迁移 |
 | v2.3 | 2026-09-14 | 题库字段加 **`solution_by`**（这条解是谁给的：`kociemba` / `dfs` / 以后可能的 `walk`）；`solve_any_with_source()` 会把来源一起返回；现有 409 道题已回填 `solution_by=kociemba`（按 `index.csv` 的 `source` 列：收下的 409 道全部来自 Kociemba） |
 | v2.4 | 2026-09-14 | `solution_by` 挪到正文第三行（紧跟 `created_at` / `created_by`），409 道题已同步 |
+| v2.5 | 2026-09-14 | **题库改为扫目录**（文件是唯一真相）：`list_levels` / `list_puzzles` / `find_puzzle_path` 不再读 `index.csv`；修掉「`save=true` 新存的题不出现在接口里」这个 bug，并加了回归测试；`index.csv` 降级为批次日志（计划挪到 `logs/`） |

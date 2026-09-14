@@ -1,0 +1,24 @@
+# colors: Yellow Green Red Purple Blue Orange
+# created: 2026-09-14 19:48:38
+
+id=20260914-194838-e3a8
+tubes=7
+colors=YGRPBO
+capacity=10
+balls_per_color=10
+level=1
+moves=1
+seed=0
+steps=1
+solution=7-4
+
+Y G R X B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O X
+Y G R P B O P
