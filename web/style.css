@@ -1,9 +1,39 @@
 :root {
   --ball: 30px;          /* 球的直径 */
   --gap: 5px;
-  --tube-bg: #eeecea;
+  /* ---- 浅色主题 ---- */
   --bg: #faf9f7;
   --ink: #33312e;
+  --muted: #8a857f;
+  --tube-bg: #eeecea;
+  --tube-hover: #e6e3df;
+  --panel: #fff;          /* 按钮/下拉的底色 */
+  --border: #d9d5d0;
+  --reading: #ffe9c7;     /* 正在朗读的柱子 */
+  --selected: #e9e6e2;    /* 被选中的柱子 */
+  --hl: #33312e;          /* 下拉里"当前项"的底色 */
+  --hl-fg: #fff;
+  --slot: rgba(0, 0, 0, .045);
+  color-scheme: light;
+}
+
+/* ---- 深色主题：浏览器是深色模式（或被"强制深色"）时用它 ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --ink: #ececec;
+    --muted: #9aa0a6;
+    --tube-bg: #24262a;
+    --tube-hover: #2d3035;
+    --panel: #212327;
+    --border: #3a3d42;
+    --reading: #5a4a24;
+    --selected: #2f3238;
+    --hl: #4a4e55;
+    --hl-fg: #fff;
+    --slot: rgba(255, 255, 255, .05);
+    color-scheme: dark;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -45,14 +75,36 @@ select, button, .switch {
   font: inherit;
   font-size: .9rem;
   border-radius: 10px;
-  border: 1px solid #d9d5d0;
-  background: #fff;
+  border: 1px solid var(--border);
+  background: var(--panel);
   padding: 7px 12px;
   color: inherit;
   cursor: pointer;
 }
 
-button.primary { background: #33312e; color: #fff; border-color: #33312e; }
+select {
+  padding-right: 26px;                    /* 给右边的箭头留位 */
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+                    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) center, calc(100% - 10px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+
+/* 下拉展开后的列表：跟随主题配色，选中项用对比明显的底色（浅色下深、深色下浅） */
+select option {
+  background-color: var(--panel);
+  color: var(--ink);
+  padding: 6px 10px;
+}
+select option:checked {
+  background-color: var(--hl);
+  color: var(--hl-fg);
+  font-weight: 600;
+}
+
+button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 button:disabled { opacity: .45; cursor: default; }
 .switch { display: flex; align-items: center; gap: 5px; user-select: none; }
 .switch input { margin: 0; }
@@ -77,14 +129,21 @@ button:disabled { opacity: .45; cursor: default; }
   transition: transform .15s ease, background .15s ease;
 }
 
-.tube:hover { transform: translateY(-3px); background: #e6e3df; }
-.tube.reading { background: #ffe9c7; transform: translateY(-3px); }
+.tube:hover { transform: translateY(-3px); background: var(--tube-hover); }
+.tube.reading { background: var(--reading); transform: translateY(-3px); }
+
+/* 选中的柱子（键盘操作靠它认位置） */
+.tube.selected {
+  background: var(--selected);
+  box-shadow: 0 0 0 3px var(--ink);
+}
+.tube.selected.reading { background: var(--reading); }
 
 .slot {
   width: var(--ball);
   height: var(--ball);
   border-radius: 50%;
-  background: rgba(0, 0, 0, .045);   /* 空位：淡淡的一格 */
+  background: var(--slot);           /* 空位：淡淡的一格 */
 }
 
 .slot .ball {
@@ -116,16 +175,16 @@ button:disabled { opacity: .45; cursor: default; }
 
 /* ---- 文案 ---- */
 
-.hint { font-size: .85rem; color: #8a857f; margin: 6px 0 0; }
-.status { font-size: .85rem; color: #8a857f; margin-top: 18px; }
+.hint { font-size: .85rem; color: var(--muted); margin: 6px 0 0; }
+.status { font-size: .85rem; color: var(--muted); margin-top: 18px; }
 
 .toast {
   position: fixed;
   left: 50%;
   bottom: 36px;
   transform: translate(-50%, 12px);
-  background: rgba(40, 38, 36, .92);
-  color: #fff;
+  background: var(--ink);
+  color: var(--bg);
   padding: 10px 18px;
   border-radius: 999px;
   font-size: 1rem;

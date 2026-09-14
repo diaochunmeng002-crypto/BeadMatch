@@ -24,9 +24,12 @@ const state = {
   matrix: null,
   meta: null,
   playing: false,
+  selected: null,        // 当前选中的柱子（键盘操作靠它）
 };
 
-const settings = { sfx: true, speech: false };
+// 朗读参数：组内连读，组与组之间静音这么久（毫秒）
+const SPEECH_GROUP_GAP = 300;
+const SPEECH_RATE = 1.2;      // 语速：组内读得快一点（1.0 = 系统默认，越大越快）
 
 // ---------------------------------------------------------------------------
 // 小工具：跟后端 free_solver 里那套规则一一对应
@@ -70,7 +73,6 @@ function audioCtx() {
 
 /** 落珠："嗒" */
 function playTick(pitch = 1) {
-  if (!settings.sfx) return;
   try {
     const ctx = audioCtx();
     const t = ctx.currentTime;
@@ -89,7 +91,6 @@ function playTick(pitch = 1) {
 
 /** 解开一根柱子："叮" */
 function playDing() {
-  if (!settings.sfx) return;
   try {
     const ctx = audioCtx();
     const t = ctx.currentTime;
@@ -108,12 +109,31 @@ function playDing() {
   } catch (e) { /* 同上 */ }
 }
 
+/** 到头了："咚" —— 比落珠声更低更闷，一听就知道是"没有了" */
+function playThud() {
+  try {
+    const ctx = audioCtx();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, t);
+    osc.frequency.exponentialRampToValueAtTime(70, t + 0.22);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.3, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.4);
+  } catch (e) { /* 没声音也不影响 */ }
+}
+
 // ---------------------------------------------------------------------------
 // 朗读
 // ---------------------------------------------------------------------------
 
 function speak(text) {
-  if (!settings.speech || !('speechSynthesis' in window)) return;
+  if (!('speechSynthesis' in window)) return;
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -121,6 +141,47 @@ function speak(text) {
     u.rate = 0.95;
     window.speechSynthesis.speak(u);
   } catch (e) { /* 不支持就算了 */ }
+}
+
+/** 挑一个中文语音（挑不到就用系统默认，别因此不出声） */
+function pickVoice() {
+  try {
+    const voices = window.speechSynthesis.getVoices() || [];
+    return voices.find((v) => /^zh/i.test(v.lang)) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+/** 分组朗读：传进来的是**已经拼好的字符串数组**（如 ["绿、黄", "红、蓝"]），
+ *  组内连读，组与组之间留一段静音（Web Speech 不支持 SSML，只能这样控停顿）。 */
+function speakGroups(lines) {
+  if (!('speechSynthesis' in window)) {
+    console.warn('[BeadMatch] 这个浏览器不支持 speechSynthesis，没法朗读');
+    return;
+  }
+  try {
+    window.speechSynthesis.cancel();
+    const voice = pickVoice();
+    if (!voice) console.warn('[BeadMatch] 没找到中文语音，用系统默认语音读');
+    let i = 0;
+    const next = () => {
+      if (i >= lines.length) return;
+      const text = lines[i];
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'zh-CN';
+      u.rate = SPEECH_RATE;
+      if (voice) u.voice = voice;
+      i += 1;
+      u.onend = () => { if (i < lines.length) setTimeout(next, SPEECH_GROUP_GAP); };
+      u.onerror = (e) => console.warn('[BeadMatch] 朗读出错：', e.error || e);
+      console.log('[BeadMatch] 朗读：', text);
+      window.speechSynthesis.speak(u);
+    };
+    next();
+  } catch (e) {
+    console.warn('[BeadMatch] 朗读失败：', e);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -135,7 +196,8 @@ function render(animateIn = true) {
     const el = document.createElement('div');
     el.className = 'tube';
     el.dataset.tube = String(t);
-    el.addEventListener('click', () => readTube(t));
+    if (t === state.selected) el.classList.add('selected');
+    el.addEventListener('click', () => selectTube(t));
     for (let p = 0; p < capacity; p++) {
       const slot = document.createElement('div');
       slot.className = 'slot';
@@ -154,14 +216,33 @@ function render(animateIn = true) {
   });
 }
 
-/** 点一根柱子：从上到下把颜色读出来 */
-function readTube(t) {
-  const tube = state.matrix[t];
-  const names = tube.filter((v) => v !== 0).map((v) => COLORS[v].name);
-  const text = names.length ? names.join('、') : '空柱子';
-  toast(`第 ${t + 1} 根：${text}`);
-  speak(`第${t + 1}根，${text}`);
+/** 把一根柱子按「由下到上」拆成朗读分组：**每 5 颗一组**（8 颗 = 5 + 3，10 颗 = 5 + 5） */
+function groupTube(tube) {
+  const names = tube.filter((v) => v !== 0).reverse()      // 内部是"顶在前"，反过来就是由下到上
+                    .map((v) => COLORS[v].name);
+  const groups = [];
+  for (let i = 0; i < names.length; i += 5) groups.push(names.slice(i, i + 5));
+  return groups.length ? groups : [[]];
+}
+
+/** 选中一根柱子并朗读（点击、方向键、空格都走这里） */
+function selectTube(t, read = true) {
+  state.selected = t;
+  board.querySelectorAll('.tube').forEach((el) => {
+    el.classList.toggle('selected', Number(el.dataset.tube) === t);
+  });
+
+  const groups = groupTube(state.matrix[t]);
+  const shown = groups.map((g) => g.join('、')).filter(Boolean);
+  const text = shown.length ? shown.join('　／　') : '空柱子';
+  toast(`第 ${t + 1} 根（由下到上）：${text}`);
+  if (read) {
+    // 先报「第 X 根」，跟第一组连在一起读（不额外加停顿）
+    const head = `第${t + 1}根，`;
+    speakGroups(shown.length ? [head + shown[0], ...shown.slice(1)] : [head + '空柱子']);
+  }
   playTick(1.2);
+
   const el = board.querySelector(`.tube[data-tube="${t}"]`);
   if (el) {
     el.classList.add('reading');
@@ -316,11 +397,33 @@ async function newPuzzle() {
 
 $('new').addEventListener('click', newPuzzle);
 $('demo').addEventListener('click', playSolution);
-$('level').addEventListener('change', newPuzzle);
-$('sfx').addEventListener('change', (e) => { settings.sfx = e.target.checked; });
-$('speech').addEventListener('change', (e) => {
-  settings.speech = e.target.checked;
-  if (settings.speech) speak('朗读已打开');
+$('level').addEventListener('change', (e) => { newPuzzle(); e.target.blur(); });
+
+// 键盘：← → 换柱子（到头"咚"一声），空格重读选中的柱子
+window.addEventListener('keydown', (e) => {
+  if (!state.matrix) return;
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;   // 别抢表单的键
+
+  if (e.key === ' ' || e.code === 'Space') {
+    e.preventDefault();
+    if (state.selected !== null) selectTube(state.selected);
+    return;
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    const step = e.key === 'ArrowLeft' ? -1 : 1;
+    if (state.selected === null) {
+      selectTube(0);
+      return;
+    }
+    const next = state.selected + step;
+    if (next < 0 || next >= state.matrix.length) {
+      playThud();          // 左边/右边没有了
+      return;
+    }
+    selectTube(next);
+  }
 });
 
 loadLevels().then(newPuzzle);

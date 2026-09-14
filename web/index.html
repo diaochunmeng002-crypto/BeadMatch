@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BeadMatch · 出题</title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/style.css?v=20260914k">
 </head>
 <body>
 
@@ -17,33 +17,52 @@
     </label>
     <button id="new" class="primary">换一题</button>
     <button id="demo">演示解法</button>
-    <label class="switch"><input type="checkbox" id="sfx" checked> 音效</label>
-    <label class="switch"><input type="checkbox" id="speech"> 朗读</label>
   </div>
 </header>
 
 <main>
   <div id="board" class="board"></div>
-  <p id="hint" class="hint">点一根柱子，会按从上到下的顺序把颜色读出来</p>
+  <p id="hint" class="hint">点一根柱子：从下往上读颜色（五五分组）　·　← → 换柱子　·　空格重读</p>
   <div id="status" class="status"></div>
 </main>
 
 <div id="toast" class="toast" aria-live="polite"></div>
 
-<script src="/static/app.js"></script>
-
-<!-- 静态文件没加载起来时给个明白的提示（样式内联，故意不用 style.css） -->
+<!-- 自诊断：必须在 app.js 之前注册，否则 app.js 自己挂了就来不及显示 -->
 <script>
+function showBootError(html) {
+  var el = document.getElementById('boot-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'boot-error';
+    el.style.cssText = 'position:fixed;inset:0 0 auto 0;padding:14px 18px;z-index:99;'
+      + 'background:#8c2f2f;color:#fff;font:15px/1.7 "Microsoft YaHei",system-ui,sans-serif';
+    document.body.prepend(el);
+  }
+  el.innerHTML = html;
+}
+window.addEventListener('error', function (e) {
+  showBootError('<b>页面出错了</b>　' + (e.message || (e.target && e.target.src) || '未知错误')
+    + '<br>顺序：① 重启后端 <code>python -m server.app</code>　② Ctrl+F5 硬刷新　'
+    + '③ 还不行就把这行连同 F12 控制台的红字发我。', true);
+});
 setTimeout(function () {
-  if (window.__beadmatch_loaded) return;
-  var el = document.createElement('div');
-  el.style.cssText = 'position:fixed;inset:0 0 auto 0;padding:14px 18px;z-index:99;'
-    + 'background:#8c2f2f;color:#fff;font:15px/1.7 "Microsoft YaHei",system-ui,sans-serif';
-  el.innerHTML = '<b>页面没加载起来：取不到 /static/app.js</b><br>'
-    + '　① 后端多半是旧进程 —— 重启一下：<code>python -m server.app</code><br>'
-    + '　② 或者你不是用 http://127.0.0.1:8000 打开的（比如直接双击了 html 文件）';
-  document.body.prepend(el);
-}, 800);
+  if (!window.__beadmatch_loaded) {
+    showBootError('<b>app.js 没跑起来</b>（页面骨架能显示，但脚本没执行）<br>'
+      + '　① 先 Ctrl+F5 硬刷新 —— 九成是浏览器缓存了旧的 app.js<br>'
+      + '　② 后端要是旧进程，重启：<code>python -m server.app</code><br>'
+      + '　③ 确认地址是 http://127.0.0.1:8000（别直接双击 html 文件）');
+    return;
+  }
+  var sel = document.getElementById('level');
+  if (sel && sel.options.length === 0) {
+    showBootError('<b>读不到题库</b>（难度下拉是空的）<br>'
+      + '　① 后端重启过了吗：<code>python -m server.app</code><br>'
+      + '　② 或者题库是空的：<code>python generator.py --level 5</code> 先出一道试试');
+  }
+}, 1500);
 </script>
+
+<script src="/static/app.js?v=20260914i"></script>
 </body>
 </html>
