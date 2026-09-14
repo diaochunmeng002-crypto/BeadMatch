@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeadMatch · 出题</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="top">
+  <h1>BeadMatch</h1>
+  <div class="controls">
+    <label class="field">
+      难度
+      <select id="level"></select>
+    </label>
+    <button id="new" class="primary">换一题</button>
+    <button id="demo">演示解法</button>
+    <label class="switch"><input type="checkbox" id="sfx" checked> 音效</label>
+    <label class="switch"><input type="checkbox" id="speech"> 朗读</label>
+  </div>
+</header>
+
+<main>
+  <div id="board" class="board"></div>
+  <p id="hint" class="hint">点一根柱子，会按从上到下的顺序把颜色读出来</p>
+  <div id="status" class="status"></div>
+</main>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script src="/static/app.js"></script>
+
+<!-- 静态文件没加载起来时给个明白的提示（样式内联，故意不用 style.css） -->
+<script>
+setTimeout(function () {
+  if (window.__beadmatch_loaded) return;
+  var el = document.createElement('div');
+  el.style.cssText = 'position:fixed;inset:0 0 auto 0;padding:14px 18px;z-index:99;'
+    + 'background:#8c2f2f;color:#fff;font:15px/1.7 "Microsoft YaHei",system-ui,sans-serif';
+  el.innerHTML = '<b>页面没加载起来：取不到 /static/app.js</b><br>'
+    + '　① 后端多半是旧进程 —— 重启一下：<code>python -m server.app</code><br>'
+    + '　② 或者你不是用 http://127.0.0.1:8000 打开的（比如直接双击了 html 文件）';
+  document.body.prepend(el);
+}, 800);
+</script>
+</body>
+</html>

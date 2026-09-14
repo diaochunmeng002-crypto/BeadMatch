@@ -1,0 +1,143 @@
+:root {
+  --ball: 30px;          /* 球的直径 */
+  --gap: 5px;
+  --tube-bg: #eeecea;
+  --bg: #faf9f7;
+  --ink: #33312e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px 20px 40px;
+  font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.top {
+  width: 100%;
+  max-width: 46rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+h1 { font-size: 1.25rem; margin: 0; letter-spacing: .02em; }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.field { font-size: .9rem; display: flex; align-items: center; gap: 6px; }
+
+select, button, .switch {
+  font: inherit;
+  font-size: .9rem;
+  border-radius: 10px;
+  border: 1px solid #d9d5d0;
+  background: #fff;
+  padding: 7px 12px;
+  color: inherit;
+  cursor: pointer;
+}
+
+button.primary { background: #33312e; color: #fff; border-color: #33312e; }
+button:disabled { opacity: .45; cursor: default; }
+.switch { display: flex; align-items: center; gap: 5px; user-select: none; }
+.switch input { margin: 0; }
+
+/* ---- 棋盘 ---- */
+
+.board {
+  margin: 40px 0 8px;
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.tube {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: 8px 6px;
+  border-radius: 999px;
+  background: var(--tube-bg);
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+
+.tube:hover { transform: translateY(-3px); background: #e6e3df; }
+.tube.reading { background: #ffe9c7; transform: translateY(-3px); }
+
+.slot {
+  width: var(--ball);
+  height: var(--ball);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .045);   /* 空位：淡淡的一格 */
+}
+
+.slot .ball {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
+}
+
+/* 落珠入场：一颗一颗掉下来 */
+@keyframes drop {
+  from { transform: translateY(-22px) scale(.85); opacity: 0; }
+  60%  { transform: translateY(2px) scale(1.02); opacity: 1; }
+  to   { transform: none; opacity: 1; }
+}
+
+.slot .ball.drop {
+  animation: drop .38s cubic-bezier(.3, 1.4, .5, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+/* 飞行中的替身（FLIP） */
+.ghost {
+  z-index: 50;
+  pointer-events: none;
+  border-radius: 50%;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .22);
+}
+
+/* ---- 文案 ---- */
+
+.hint { font-size: .85rem; color: #8a857f; margin: 6px 0 0; }
+.status { font-size: .85rem; color: #8a857f; margin-top: 18px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translate(-50%, 12px);
+  background: rgba(40, 38, 36, .92);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events: none;
+  max-width: 90vw;
+}
+
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .slot .ball.drop { animation: none; }
+  .tube { transition: none; }
+}

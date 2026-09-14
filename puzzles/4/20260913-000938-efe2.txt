@@ -1,0 +1,27 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-13 00:09:38
+created_by=beadmatch
+solution_by=kociemba
+id=20260913-000938-efe2
+tubes=7
+colors=YGRPBO
+capacity=10
+balls_per_color=10
+level=4
+moves=32
+seed=6
+steps=100
+generator=random_walk@1
+solution=1-2 7-5 7-5 7-4 7-2 6-7 5-7 5-7 5-7 5-4 3-5 3-6 3-7 3-5 1-3 1-7 6-1 6-1 6-3 6-5 6-2 6-3 6-3 7-6 7-6 7-6 7-6 7-6 7-6 7-6 7-1 7-5
+
+G X B X X O X
+R X Y X X Y X
+O X O P O R X
+Y G B P P B O
+Y G R P B G O
+Y G R P B R P
+Y G R P B R G
+Y G R P B O O
+Y G R P B O Y
+Y G R P B O B
