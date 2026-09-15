@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:15:20
+created_by=manual
+solution_by=manual
+id=20260915-221520-e6df
+title=彩色小火车 🚂
+level=7
+participants=R B G Y P O R
+answer=Y P R B O G R
+
+🟡 黄色和橙色相隔三个位置。
+🟣 紫色和橙色中间隔两个。
+🔵 蓝色和绿色中间隔一个。
+🟢 绿色一定在后3个位置。
+🔴 红色不能排在第1位。

@@ -1,0 +1,17 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:15:29
+created_by=manual
+solution_by=manual
+id=20260915-221529-9114
+title=睡觉时间到了 🌙
+level=7
+participants=R B G Y P O Y
+answer=Y R P B G O Y
+
+🔴 红色在紫色前面。
+🔴 红色在蓝色前面，但不能紧挨着。
+🔴 红色和绿色中间隔两个。
+🔴 红色和橙色相隔三个位置。
+🟡 黄色一定在后3个位置。
+🔴 红色不能排在第1位。

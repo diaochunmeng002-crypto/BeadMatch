@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:43:47
+created_by=manual
+solution_by=manual
+id=20260915-214347-e7df
+title=去买冰淇淋 🍦
+level=3
+participants=R B G Y P O
+answer=O B R P Y G
+
+橙色排在第一个。
+紫色排在第四个。
+蓝色在橙色和紫色中间。
+红色在紫色和蓝色中间。
+黄色在紫色和绿色中间。

@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:54:52
+created_by=manual
+solution_by=manual
+id=20260915-215452-5db8
+title=吃冰淇淋 🍦
+level=4
+participants=R B G Y P O
+answer=R G B Y O P
+
+红色第一个拿到冰淇淋。
+黄色在蓝色和紫色中间。
+蓝色在绿色和橙色中间。
+橙色第五个拿到冰淇淋。

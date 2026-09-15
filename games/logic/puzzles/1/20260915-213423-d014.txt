@@ -1,0 +1,17 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:34:23
+created_by=manual
+solution_by=manual
+id=20260915-213423-d014
+title=谁先到公园？
+level=1
+participants=R B G Y P O
+answer=Y R B G P O
+
+🟡 黄色第一个到公园。
+🔴 红色第二个到。
+🔵 蓝色第三个到。
+🟢 绿色在蓝色后面。
+🟣 紫色在绿色后面。
+🟠 橙色最后到。

@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:10:21
+created_by=manual
+solution_by=manual
+id=20260915-221021-ed95
+title=去动物园 🦁
+level=6
+participants=R B G Y P O B
+answer=Y P R O G B B
+
+🟠 橙色在第四个。
+🟢 绿色在第五个。
+🟡 黄色和红色中间隔一个。
+🔴 红色在紫色和橙色中间。

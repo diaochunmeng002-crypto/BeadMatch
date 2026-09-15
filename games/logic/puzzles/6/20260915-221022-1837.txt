@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:10:22
+created_by=manual
+solution_by=manual
+id=20260915-221022-1837
+title=吃冰淇淋 🍦
+level=6
+participants=R B G Y P O G
+answer=O B R G P G Y
+
+🔴 红色在第三个。
+🟣 紫色在第五个。
+🟠 橙色和蓝色挨着。
+🟣 紫色和黄色中间隔一个。
+🔵 蓝色在橙色和红色中间。

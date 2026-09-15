@@ -4,9 +4,9 @@
 `core/`（纯逻辑）、`api.py`（后端接口）、`web/`（页面）、`puzzles/`（题库）、`tests/`。
 
 - 广场靠 **`game.toml`** 发现游戏：没有这个文件的文件夹**对广场是隐形的**（不会被列到首页）。
-- `group/ sort/ space/ plan/ logic/ memory/` 是**按认知分类先建的占位**
-  （每个里头一个 README：中文写"核心能力 + 例子"，英文一句简单说明）。真做某个游戏时，建 `games/<游戏英文名>/`，
-  把分类写进它的 `game.toml`（例如 `category = "memory"`）。
+- **分类文件夹**：`plan` 里已经有游戏（`beadmatch`）；`logic` 已经开工（题目格式 + 校验 + 3 道题，还没界面）；
+  `group` / `sort` / `space` / `memory` 还是占位（只有一个 README，中文写"核心能力 + 例子"，英文一句说明）。
+- 真做某个游戏时，建 `games/<游戏英文名>/`，把分类写进它的 `game.toml`（例如 `category = "memory"`）。
 - 广场的整体规划见 [../docs/plaza.md](../docs/plaza.md)。
 
 ## 六大类（按认知能力）

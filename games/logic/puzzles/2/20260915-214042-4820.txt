@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:40:42
+created_by=manual
+solution_by=manual
+id=20260915-214042-4820
+title=准备睡觉啦 🌙
+level=2
+participants=R B G Y P O
+answer=P R B G O Y
+
+紫色躺在最前面。
+黄色躺在最后面。
+蓝色和绿色挨在一起。
+红色在蓝色前面。
+橙色在绿色后面。

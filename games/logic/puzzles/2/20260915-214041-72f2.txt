@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:40:41
+created_by=manual
+solution_by=manual
+id=20260915-214041-72f2
+title=谁在公园里？ 🌳
+level=2
+participants=R B G Y P O
+answer=G R P Y B O
+
+绿色站在第一个。
+橙色站在最后。
+紫色在黄色前面。
+黄色和蓝色挨在一起。
+红色在紫色前面。

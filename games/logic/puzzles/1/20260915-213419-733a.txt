@@ -1,0 +1,17 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:34:19
+created_by=manual
+solution_by=manual
+id=20260915-213419-733a
+title=小火车出发啦
+level=1
+participants=R B G Y P O
+answer=R B G Y P O
+
+🟠 橙色小火车在最后。
+🟣 紫色小火车就在橙色前面。
+🟡 黄色小火车排在第四个。
+🟢 绿色小火车在黄色前面。
+🔵 蓝色小火车排在第二个。
+🔴 红色小火车在最前面。

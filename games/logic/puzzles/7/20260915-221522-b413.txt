@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:15:22
+created_by=manual
+solution_by=manual
+id=20260915-221522-b413
+title=吃冰淇淋 🍦
+level=7
+participants=R B G Y P O G
+answer=G Y G R O P B
+
+🟡 黄色在红色前面，但不能紧挨着。
+🟡 黄色和紫色相隔三个位置。
+🟠 橙色在蓝色前面，但不能紧挨着。
+🟠 橙色一定在后3个位置。

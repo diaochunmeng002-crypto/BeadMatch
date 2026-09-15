@@ -1,0 +1,17 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:34:18
+created_by=manual
+solution_by=manual
+id=20260915-213418-0857
+title=彩虹排队
+level=1
+participants=R B G Y P O
+answer=R B G Y P O
+
+🔴 红色珠子排在最前面。
+🔵 蓝色珠子紧跟在红色后面。
+🟢 绿色珠子排在第三个。
+🟡 黄色珠子在绿色后面。
+🟣 紫色珠子在黄色后面。
+🟠 橙色珠子排在最后面。

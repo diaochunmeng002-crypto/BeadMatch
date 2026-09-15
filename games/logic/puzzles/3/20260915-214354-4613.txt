@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:43:54
+created_by=manual
+solution_by=manual
+id=20260915-214354-4613
+title=睡觉时间到了 🌙
+level=3
+participants=R B G Y P O
+answer=R G O Y P B
+
+红色在最前面。
+橙色在第三个。
+绿色在紫色和红色中间。
+黄色在橙色和蓝色中间。
+蓝色和黄色中间隔一个。

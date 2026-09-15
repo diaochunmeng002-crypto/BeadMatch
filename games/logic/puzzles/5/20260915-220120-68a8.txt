@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:01:20
+created_by=manual
+solution_by=manual
+id=20260915-220120-68a8
+title=彩色小伙伴排队 🎈
+level=5
+participants=R B G Y P O
+answer=R G B P Y O
+
+🔴 红色和蓝色中间隔一个。
+🟢 绿色和紫色中间隔一个。
+🟣 紫色和橙色中间隔一个。
+🔴 红色在绿色前面。
+🟢 绿色在紫色前面。

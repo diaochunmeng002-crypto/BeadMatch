@@ -1,0 +1,259 @@
+:root {
+  --ball: 34px;          /* 珠子的直径 */
+  --gap: 5px;
+  /* ---- 浅色主题 ---- */
+  --bg: #faf9f7;
+  --ink: #33312e;
+  --muted: #8a857f;
+  --card: #fff;
+  --panel: #fff;          /* 按钮/下拉的底色 */
+  --border: #d9d5d0;
+  --slot: rgba(0, 0, 0, .05);
+  --reading: #ffe9c7;     /* 正在朗读的线索 */
+  --selected: #e9e6e2;    /* 被选中的线索 */
+  --ok: #2f7d4f;          /* 排对了 */
+  --bad: #c0392b;         /* 这条线索没满足 */
+  --hl: #33312e;          /* 下拉里"当前项"的底色 */
+  --hl-fg: #fff;
+  color-scheme: light;
+}
+
+/* ---- 深色主题：浏览器是深色模式（或被"强制深色"）时用它 ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --ink: #ececec;
+    --muted: #9aa0a6;
+    --card: #1e2023;
+    --panel: #212327;
+    --border: #3a3d42;
+    --slot: rgba(255, 255, 255, .05);
+    --reading: #5a4a24;
+    --selected: #2f3238;
+    --ok: #4caf72;
+    --bad: #e5484d;
+    --hl: #4a4e55;
+    --hl-fg: #fff;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px 20px 40px;
+  font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.top {
+  width: 100%;
+  max-width: 46rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+h1 { font-size: 1.25rem; margin: 0; letter-spacing: .02em; }
+
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.field { font-size: .9rem; display: flex; align-items: center; gap: 6px; }
+
+select, button {
+  font: inherit;
+  font-size: .9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 7px 12px;
+  color: inherit;
+  cursor: pointer;
+}
+
+select {
+  padding-right: 26px;                    /* 给右边的箭头留位 */
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+                    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) center, calc(100% - 10px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+
+select option { background-color: var(--panel); color: var(--ink); padding: 6px 10px; }
+select option:checked { background-color: var(--hl); color: var(--hl-fg); font-weight: 600; }
+
+button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+button:disabled { opacity: .45; cursor: default; }
+
+main { width: 100%; max-width: 46rem; }
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 20px 2px 0;
+  letter-spacing: .02em;
+}
+
+.title[hidden] { display: none; }
+
+/* ---- 三块面板 ---- */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 18px;
+}
+
+.label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 0 0 12px;
+  letter-spacing: .06em;
+}
+
+/* ---- 珠子 ---- */
+
+.pool { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.bead {
+  width: var(--ball);
+  height: var(--ball);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
+  transition: transform .12s ease, opacity .12s ease;
+  position: relative;
+}
+
+.bead:hover { transform: translateY(-3px); }
+.bead.used { opacity: .28; cursor: default; transform: none; }
+
+/* 珠子上的小字：颜色名（放不下就藏起来） */
+.bead .tag {
+  position: absolute;
+  inset: auto 0 -1.15rem 0;
+  font-size: .7rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.pool .bead { margin-bottom: 1.1rem; }
+
+/* ---- 题目（线索） ---- */
+
+.clues { margin: 0; padding-left: 1.4rem; }
+
+.clues li {
+  padding: 7px 10px;
+  margin: 3px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  line-height: 1.7;
+}
+
+.clues li:hover { background: var(--slot); }
+.clues li.selected { background: var(--selected); box-shadow: 0 0 0 2px var(--ink) inset; }
+.clues li.reading { background: var(--reading); }
+
+/* 检查完：没满足的线索标红 */
+.clues li.broken { color: var(--bad); font-weight: 600; }
+.clues li.broken::after { content: "　✗"; }
+.clues li.done::after { content: "　✓"; color: var(--ok); }
+
+/* ---- 答案槽 ---- */
+
+.slots { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 1.5rem; }
+
+.slotbox {
+  width: var(--ball);
+  height: var(--ball);
+  border-radius: 50%;
+  background: var(--slot);
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.slotbox .num {
+  position: absolute;
+  bottom: -1.35rem;
+  font-size: .72rem;
+  color: var(--muted);
+}
+
+.slotbox.filled { border-style: solid; border-color: transparent; }
+
+.slotbox .bead { width: 100%; height: 100%; }
+
+.slots.ok .slotbox { box-shadow: 0 0 0 3px var(--ok); }
+.slots.bad .slotbox { box-shadow: 0 0 0 3px var(--bad); }
+
+/* 落槽：掉下来一下 */
+@keyframes drop {
+  from { transform: translateY(-18px) scale(.9); opacity: 0; }
+  60%  { transform: translateY(1px) scale(1.03); opacity: 1; }
+  to   { transform: none; opacity: 1; }
+}
+
+.slotbox .bead.drop { animation: drop .32s cubic-bezier(.3, 1.4, .5, 1) both; }
+
+/* ---- 文案 ---- */
+
+.hint {
+  font-size: .82rem;
+  color: var(--muted);
+  margin: 16px 2px 0;
+  line-height: 2;
+}
+
+.status { font-size: .85rem; color: var(--muted); margin: 14px 2px 0; }
+
+kbd {
+  font: inherit;
+  font-size: .78rem;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0 5px;
+  background: var(--panel);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translate(-50%, 12px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events: none;
+  max-width: 90vw;
+}
+
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bead { transition: none; }
+  .slotbox .bead.drop { animation: none; }
+}

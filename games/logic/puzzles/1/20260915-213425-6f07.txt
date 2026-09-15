@@ -1,0 +1,17 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:34:25
+created_by=manual
+solution_by=manual
+id=20260915-213425-6f07
+title=珠子去看电影
+level=1
+participants=R B G Y P O
+answer=R G B Y P O
+
+🔴 红色买到了第一张票。
+🟢 绿色排在红色后面。
+🔵 蓝色排在绿色后面。
+🟡 黄色坐在第四个位置。
+🟣 紫色坐在黄色后面。
+🟠 橙色坐在最后。

@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:15:27
+created_by=manual
+solution_by=manual
+id=20260915-221527-5a43
+title=去看电影 🎬
+level=7
+participants=R B G Y P O B
+answer=O G B B R Y P
+
+🟢 绿色和红色中间隔两个。
+🟢 绿色和黄色相隔三个位置。
+🔴 红色在紫色前面，但不能紧挨着。
+🔴 红色一定在后3个位置。
+🔵 蓝色不能排在第1位。

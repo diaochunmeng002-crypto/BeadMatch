@@ -58,6 +58,30 @@ python -m unittest games.beadmatch.tests.test_app
 python -m unittest games.beadmatch.tests.test_free_solver
 ```
 
+## 检查 logic 题库
+
+```bash
+python -m games.logic.core.puzzles
+```
+
+每道题报一次「解有几个」—— **多解就是题目有问题**（线索不够）。详细说明见
+[games/logic/README.md](../games/logic/README.md)。
+
+## 起 logic 的后端（第二个游戏，暂时是独立的一个服务）
+
+```bash
+python -m games.logic.api
+```
+
+然后浏览器打开：
+
+```
+http://127.0.0.1:8010          ← 玩的页面（前端）
+http://127.0.0.1:8010/docs     ← 接口文档
+```
+
+（换端口：`--port 8020`。前端不用单独起，后端顺手托管了 `web/`。）
+
 ## 打包成 exe（Windows 桌面版）
 
 先装一次打包工具：

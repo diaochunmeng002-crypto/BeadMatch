@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 22:01:18
+created_by=manual
+solution_by=manual
+id=20260915-220118-a0fa
+title=一起去野餐 🧺
+level=5
+participants=R B G Y P O
+answer=G P Y R O B
+
+🟢 绿色和黄色中间隔一个。
+🟣 紫色和红色中间隔一个。
+🔴 红色和蓝色中间隔一个。
+🟢 绿色在紫色前面。
+🟣 紫色在红色前面。

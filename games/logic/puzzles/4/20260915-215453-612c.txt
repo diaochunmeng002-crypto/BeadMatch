@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:54:53
+created_by=manual
+solution_by=manual
+id=20260915-215453-612c
+title=去公园玩 🌳
+level=4
+participants=R B G Y P O
+answer=B O R P Y G
+
+红色坐在第三个位置。
+橙色在蓝色和红色中间。
+黄色在紫色和绿色中间。
+蓝色在第一个。
+紫色在第四个。

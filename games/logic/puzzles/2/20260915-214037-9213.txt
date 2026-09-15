@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:40:37
+created_by=manual
+solution_by=manual
+id=20260915-214037-9213
+title=珠子去野餐 🧺
+level=2
+participants=R B G Y P O
+answer=R G B Y P O
+
+绿色排在第二个。
+红色在绿色前面。
+蓝色在绿色后面。
+黄色和紫色挨在一起。
+橙色在最后。

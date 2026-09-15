@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-15 21:54:56
+created_by=manual
+solution_by=manual
+id=20260915-215456-eb48
+title=彩色气球排队 🎈
+level=4
+participants=R B G Y P O
+answer=Y R O B P G
+
+红色站在第二个位置。
+蓝色紧挨着橙色，站在橙色后面。
+紫色在蓝色和绿色中间。
+橙色在第三个。
