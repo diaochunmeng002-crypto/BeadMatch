@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import random
 import sys
 from pathlib import Path
@@ -31,8 +32,10 @@ sys.path.insert(0, str(ROOT))
 import generator as g  # noqa: E402
 from free_solver import format_moves, is_finished, solve_any  # noqa: E402
 
-PUZZLE_DIR = ROOT / "puzzles"
-WEB_DIR = ROOT / "web"
+# 目录可以用环境变量覆盖 —— 打包成 exe 后，数据要放 exe 旁边、只读资源在解压目录，
+# 由 launcher.py 在 import 之前设好这两个变量（不设就是开发时的仓库根目录）。
+PUZZLE_DIR = Path(os.environ.get("BEADMATCH_PUZZLES") or (ROOT / "puzzles"))
+WEB_DIR = Path(os.environ.get("BEADMATCH_WEB") or (ROOT / "web"))
 
 app = FastAPI(
     title="BeadMatch",
