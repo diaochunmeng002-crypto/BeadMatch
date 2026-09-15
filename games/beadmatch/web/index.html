@@ -43,22 +43,22 @@ function showBootError(html) {
 }
 window.addEventListener('error', function (e) {
   showBootError('<b>页面出错了</b>　' + (e.message || (e.target && e.target.src) || '未知错误')
-    + '<br>顺序：① 重启后端 <code>python -m server.app</code>　② Ctrl+F5 硬刷新　'
+    + '<br>顺序：① 重启后端 <code>python run.py</code>　② Ctrl+F5 硬刷新　'
     + '③ 还不行就把这行连同 F12 控制台的红字发我。', true);
 });
 setTimeout(function () {
   if (!window.__beadmatch_loaded) {
     showBootError('<b>app.js 没跑起来</b>（页面骨架能显示，但脚本没执行）<br>'
       + '　① 先 Ctrl+F5 硬刷新 —— 九成是浏览器缓存了旧的 app.js<br>'
-      + '　② 后端要是旧进程，重启：<code>python -m server.app</code><br>'
+      + '　② 后端要是旧进程，重启：<code>python run.py</code><br>'
       + '　③ 确认地址是 http://127.0.0.1:8000（别直接双击 html 文件）');
     return;
   }
   var sel = document.getElementById('level');
   if (sel && sel.options.length === 0) {
     showBootError('<b>读不到题库</b>（难度下拉是空的）<br>'
-      + '　① 后端重启过了吗：<code>python -m server.app</code><br>'
-      + '　② 或者题库是空的：<code>python generator.py --level 5</code> 先出一道试试');
+      + '　① 后端重启过了吗：<code>python run.py</code><br>'
+      + '　② 或者题库是空的：<code>python -m games.beadmatch.core.generator --level 5</code> 先出一道试试');
   }
 }, 1500);
 </script>

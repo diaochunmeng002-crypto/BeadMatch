@@ -19,7 +19,7 @@ from __future__ import annotations
 import random
 from typing import Dict, List, Sequence, Tuple
 
-from free_solver import EMPTY, apply_move, key, legal_moves
+from .free_solver import EMPTY, apply_move, key, legal_moves
 
 State = Tuple[Tuple[int, ...], ...]
 Move = Tuple[int, int]
@@ -198,5 +198,5 @@ def walk(seed: int, steps: int) -> Tuple[State, List[Move], List[Move]]:
 
 def _solved_state():
     """已解局面（延迟 import，避免和 generator 互相引用）。"""
-    from generator import solved_state
+    from .generator import solved_state
     return solved_state()

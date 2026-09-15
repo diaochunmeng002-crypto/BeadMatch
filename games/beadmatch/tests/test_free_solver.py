@@ -1,14 +1,10 @@
 """free_solver 的测试：规则、格式不变量、以及与独立暴力搜索对拍。"""
 
 import random
-import sys
 import unittest
 from collections import deque
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from free_solver import (  # noqa: E402
+from games.beadmatch.core.free_solver import (
     EMPTY,
     apply_move,
     color_count,

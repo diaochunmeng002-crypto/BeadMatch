@@ -2,15 +2,12 @@
 
 import random
 import shutil
-import sys
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-import generator as g  # noqa: E402
-import walk_gen  # noqa: E402
-from free_solver import is_finished, verify  # noqa: E402
+from games.beadmatch.core import generator as g
+from games.beadmatch.core import walk_gen
+from games.beadmatch.core.free_solver import is_finished, verify
 
 
 class TempDir:

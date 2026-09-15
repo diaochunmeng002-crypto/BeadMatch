@@ -3,7 +3,7 @@
 画法：深色圆角方块 + 一根白色立柱 + 串在柱子上的 4 颗彩珠 —— 就是游戏里的一根珠子柱。
 配色跟网页里的一致（Y/G/R/P/B/O 六个球色，这里取前四个保证在小尺寸下也看得清）。
 
-想改配色/颗数就改下面的常量，然后重跑：python make_icon.py
+想改配色/颗数就改下面的常量，然后重跑：python start/make_icon.py
 """
 
 from __future__ import annotations
@@ -12,8 +12,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-OUT_ICO = Path("beadmatch.ico")
-OUT_PNG = Path("beadmatch.png")
+HERE = Path(__file__).resolve().parent     # start\
+OUT_ICO = HERE / "beadmatch.ico"
+OUT_PNG = HERE / "beadmatch.png"
 SIZE = 256          # 最终图标尺寸
 SS = 4              # 超采样倍数（先画大再缩小，边缘更顺滑）
 

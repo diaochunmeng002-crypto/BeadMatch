@@ -1,14 +1,10 @@
 """walk_gen（引导式走法出题）的测试。"""
 
-import sys
 import unittest
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-import generator as g  # noqa: E402
-import walk_gen as wg  # noqa: E402
-from free_solver import verify  # noqa: E402
+from games.beadmatch.core import generator as g
+from games.beadmatch.core import walk_gen as wg
+from games.beadmatch.core.free_solver import verify
 
 
 class TestMetrics(unittest.TestCase):

@@ -1,10 +1,10 @@
 __pycache__/
 *.pyc
 
-# 第三方原版源码存档（Pascal），只作本机对照，不随仓库分发
-vendor/
-
 # 打包产物（几十 MB，别提交）
 build/
 dist/
 *.spec
+
+# 启动器写出来的日志（开发时落在仓库根目录，打包后落在 exe 旁边）
+BeadMatch.log

@@ -2,13 +2,13 @@
 
 用法：
 
-    python make_puzzles.py                          # 默认：走 85 步 × 10 道（9 级）
-    python make_puzzles.py --series 85 160 --count 50 20
-    python make_puzzles.py --series 40 --count 100
+    python -m games.beadmatch.tools.make_puzzles                          # 默认：走 85 步 × 10 道（9 级）
+    python -m games.beadmatch.tools.make_puzzles --series 85 160 --count 50 20
+    python -m games.beadmatch.tools.make_puzzles --series 40 --count 100
 
 产出：
 
-    puzzles/
+    games/beadmatch/puzzles/
     ├─ 4/<id>.txt        等级 4 的题（走 40 步 → 解 40 步）
     ├─ 9/<id>.txt
     └─ …
@@ -21,16 +21,16 @@
 from __future__ import annotations
 
 import argparse
-import sys
 import time
 from pathlib import Path
 from typing import Dict, List
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+from ..core import generator as g
+from ..core import walk_gen
+from ..core.free_solver import format_moves, homes, verify
 
-import generator as g  # noqa: E402
-import walk_gen  # noqa: E402
-from free_solver import format_moves, homes, verify  # noqa: E402
+# 题库默认写进本游戏自己的 puzzles/（锚在文件位置上，跟工作目录无关）
+PUZZLE_DIR = Path(__file__).resolve().parent.parent / "puzzles"
 
 
 def lower_bound(state) -> int:
@@ -137,7 +137,8 @@ def main(argv=None) -> int:
     p.add_argument("--count", type=int, nargs="+", default=[10],
                    help="每个系列多少道（默认 10；只给一个值时所有系列共用）")
     p.add_argument("--seed0", type=int, default=1, help="起始随机种子")
-    p.add_argument("--out-dir", default="puzzles", help="题库根目录（默认 puzzles）")
+    p.add_argument("--out-dir", default=str(PUZZLE_DIR),
+                   help="题库根目录（默认本游戏的 puzzles/）")
     p.add_argument("--quiet", action="store_true", help="不逐题打印，每 50 道报一次进度")
     args = p.parse_args(argv)
 

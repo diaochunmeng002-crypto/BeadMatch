@@ -1,23 +1,21 @@
-"""BeadMatch 后端 —— FastAPI。
+"""串珠的后端接口（FastAPI）。
 
 职责很小：把题库读出来给前端、算「下一步怎么走」、需要时现出一题。
-出题和求解都在 Python 里（`generator.py` / `solver/free_solver.py`），这里只做包装。
+出题和求解都在 Python 里（`core/generator.py` / `core/free_solver.py`），这里只做包装。
 
-跑起来（在仓库根目录）：
+起服务别直接跑这个文件 —— 用仓库根目录的入口：
 
-    uvicorn server.app:app --reload            # 开发
-    python -m server.app                       # 等价，默认 127.0.0.1:8000
-    python -m server.app --host 0.0.0.0        # 想让平板/手机连就用这个
+    python run.py                    # 默认 127.0.0.1:8000
+    python run.py --reload           # 开发用，改代码自动重启
+    python run.py --host 0.0.0.0     # 想让平板/手机连就用这个
 
 接口文档：起服务后打开 http://127.0.0.1:8000/docs
 """
 
 from __future__ import annotations
 
-import argparse
 import os
 import random
-import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -26,16 +24,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-
-import generator as g  # noqa: E402
-from free_solver import format_moves, is_finished, solve_any  # noqa: E402
+from .core import generator as g
+from .core.free_solver import format_moves, is_finished, solve_any
 
 # 目录可以用环境变量覆盖 —— 打包成 exe 后，数据要放 exe 旁边、只读资源在解压目录，
-# 由 launcher.py 在 import 之前设好这两个变量（不设就是开发时的仓库根目录）。
-PUZZLE_DIR = Path(os.environ.get("BEADMATCH_PUZZLES") or (ROOT / "puzzles"))
-WEB_DIR = Path(os.environ.get("BEADMATCH_WEB") or (ROOT / "web"))
+# 由 launcher.py 在 import 之前设好这两个变量（不设就用本游戏文件夹里的 puzzles/ 和 web/）。
+GAME_DIR = Path(__file__).resolve().parent
+PUZZLE_DIR = Path(os.environ.get("BEADMATCH_PUZZLES") or (GAME_DIR / "puzzles"))
+WEB_DIR = Path(os.environ.get("BEADMATCH_WEB") or (GAME_DIR / "web"))
 
 app = FastAPI(
     title="BeadMatch",
@@ -291,19 +287,3 @@ def index() -> str:
 WEB_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
-
-def main(argv=None) -> int:
-    import uvicorn
-
-    p = argparse.ArgumentParser(description="跑 BeadMatch 后端")
-    p.add_argument("--host", default="127.0.0.1", help="想给平板/手机连就写 0.0.0.0")
-    p.add_argument("--port", type=int, default=8000)
-    p.add_argument("--reload", action="store_true", help="改代码自动重启（开发用）")
-    args = p.parse_args(argv)
-    uvicorn.run("server.app:app" if args.reload else app,
-                host=args.host, port=args.port, reload=args.reload)
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

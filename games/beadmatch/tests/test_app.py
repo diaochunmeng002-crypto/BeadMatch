@@ -1,18 +1,17 @@
 """后端接口测试（用 FastAPI 自带的 TestClient，不用真起服务）。"""
 
-import sys
 import shutil
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
+from fastapi.testclient import TestClient
 
-from fastapi.testclient import TestClient  # noqa: E402
+from games.beadmatch.api import app
+from games.beadmatch.core import generator as g
+from games.beadmatch.core.free_solver import apply_move, is_finished, verify
 
-import generator as g  # noqa: E402
-from free_solver import apply_move, is_finished, verify  # noqa: E402
-from server.app import PUZZLE_DIR, app  # noqa: E402
+# 临时目录放在测试文件旁边（工作区里能删掉），不用系统 temp
+HERE = Path(__file__).resolve().parent
 
 client = TestClient(app)
 
@@ -33,9 +32,9 @@ class TestLibrary(unittest.TestCase):
 
     def test_placeholder_when_no_frontend(self):
         """`web/index.html` 不存在时（比如前端还没做），退回说明页，要把接口都列出来。"""
-        import server.app as app_module
+        from games.beadmatch import api as app_module
 
-        tmp = ROOT / "_tmp_server_web"
+        tmp = HERE / "_tmp_server_web"
         shutil.rmtree(tmp, ignore_errors=True)
         tmp.mkdir(parents=True, exist_ok=True)
         old = app_module.WEB_DIR
@@ -175,9 +174,9 @@ class TestGenerate(unittest.TestCase):
 
     def test_generate_saves_when_asked(self):
         """落盘这一步要用临时题库目录，别污染真题库。"""
-        import server.app as app_module
+        from games.beadmatch import api as app_module
 
-        tmp = ROOT / "_tmp_server_puzzles"
+        tmp = HERE / "_tmp_server_puzzles"
         shutil.rmtree(tmp, ignore_errors=True)
         tmp.mkdir(parents=True, exist_ok=True)
         old = app_module.PUZZLE_DIR
@@ -197,9 +196,9 @@ class TestGenerate(unittest.TestCase):
 
         （之前后端读 index.csv，新题不在台账里就"看不见"——2026-09-14 已改成扫目录。）
         """
-        import server.app as app_module
+        from games.beadmatch import api as app_module
 
-        tmp = ROOT / "_tmp_server_puzzles2"
+        tmp = HERE / "_tmp_server_puzzles2"
         shutil.rmtree(tmp, ignore_errors=True)
         tmp.mkdir(parents=True, exist_ok=True)
         old = app_module.PUZZLE_DIR

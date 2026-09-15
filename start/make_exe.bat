@@ -6,7 +6,8 @@ rem  (messages are in English on purpose: cmd + Chinese needs chcp
 rem   tricks and can end up as mojibake)
 rem ===================================================================
 setlocal
-cd /d "%~dp0"
+rem 脚本在 start\ 下，但所有相对路径都是相对仓库根目录的 —— 先退到上一级
+cd /d "%~dp0.."
 
 echo [1/4] Working dir: %cd%
 where python >nul 2>nul
@@ -21,11 +22,11 @@ if errorlevel 1 goto noinstall
 
 echo [3/4] Building (this takes a minute or two)...
 python -m PyInstaller --noconfirm --onedir --noconsole --name BeadMatch ^
-  --icon "beadmatch.ico" ^
-  --add-data "web;web" ^
-  --add-data "puzzles;puzzles" ^
-  --paths "solver" ^
-  --hidden-import free_solver ^
+  --icon "%cd%\start\beadmatch.ico" ^
+  --paths "%cd%" ^
+  --specpath "build" ^
+  --add-data "%cd%\games\beadmatch\web;games/beadmatch/web" ^
+  --add-data "%cd%\games\beadmatch\puzzles;games/beadmatch/puzzles" ^
   --exclude-module numpy ^
   --exclude-module PIL ^
   --exclude-module cryptography ^
@@ -38,13 +39,13 @@ python -m PyInstaller --noconfirm --onedir --noconsole --name BeadMatch ^
   --hidden-import uvicorn.protocols.http.auto ^
   --hidden-import uvicorn.protocols.websockets.auto ^
   --hidden-import uvicorn.lifespan.on ^
-  launcher.py
+  "%cd%\start\launcher.py"
 if errorlevel 1 goto buildfail
 
 echo [4/4] Done.
 echo.
 echo   Program : %cd%\dist\BeadMatch\BeadMatch.exe
-echo   Data dir: same folder as the exe (puzzles\ and BeadMatch.log live there)
+echo   Data dir: same folder as the exe (games\beadmatch\puzzles and BeadMatch.log live there)
 echo.
 pause
 exit /b 0

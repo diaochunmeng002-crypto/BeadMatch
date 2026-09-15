@@ -1,12 +1,12 @@
 """BeadMatch 桌面版启动器（打包成 exe 时用这个当入口）。
 
 做的事：
-  1. 确定「数据目录」（题库、日志）和「资源目录」（web/ 前端）；
+  1. 确定「数据目录」（题库、日志）和「资源目录」（前端 web/ 和内置题库）；
   2. 找一个**空闲端口**起本地 FastAPI 服务（不写死 8000，避免被占）；
   3. 用 pywebview 开一个**原生窗口**；没有 WebView2 / 没装 pywebview 就退回系统浏览器；
   4. 出错了写日志 + 弹一个消息框（打包后没有控制台，得让用户看得见）。
 
-开发时也可以直接跑：``python launcher.py``
+开发时也可以直接跑：``python start/launcher.py``（或 ``python -m start.launcher``）
 """
 
 from __future__ import annotations
@@ -25,6 +25,15 @@ from pathlib import Path
 
 APP_NAME = "BeadMatch"
 WINDOW_W, WINDOW_H = 1180, 780
+
+# start\ 在仓库根目录的下一级
+ROOT = Path(__file__).resolve().parent.parent
+
+# 开发时是 `python start\launcher.py` 跑的（Python 只会把 start\ 放进模块搜索路径），
+# 这里把仓库根目录补上，`import games.beadmatch.api` 才找得到。
+# 打包后（frozen）这行没有影响。
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 class _NullWriter:
@@ -51,7 +60,7 @@ def data_dir() -> Path:
     """可写目录：打包后 = exe 所在目录；开发时 = 仓库根目录。"""
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
-    return Path(__file__).resolve().parent
+    return ROOT
 
 
 def writable(path: Path) -> bool:
@@ -79,7 +88,7 @@ def resource_dir() -> Path:
     """只读资源目录：打包后 = PyInstaller 的解压目录（_MEIPASS）；开发时 = 仓库根目录。"""
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(getattr(sys, "_MEIPASS"))
-    return Path(__file__).resolve().parent
+    return ROOT
 
 
 def free_port() -> int:
@@ -90,11 +99,14 @@ def free_port() -> int:
 
 
 def ensure_puzzles(data: Path, res: Path) -> Path:
-    """题库目录放在数据目录下；第一次运行（空题库）时把内置题库拷一份过去。"""
-    puzzles = data / "puzzles"
+    """串珠的题库目录：``<数据目录>/games/beadmatch/puzzles``。
+
+    第一次运行（题库还是空的）时，把打包进去的内置题库拷一份过去。
+    """
+    puzzles = data / "games" / "beadmatch" / "puzzles"
     puzzles.mkdir(parents=True, exist_ok=True)
     if not any(puzzles.glob("*/*.txt")):
-        builtin = res / "puzzles"
+        builtin = res / "games" / "beadmatch" / "puzzles"
         if builtin.is_dir() and builtin.resolve() != puzzles.resolve():
             shutil.copytree(builtin, puzzles, dirs_exist_ok=True)
     return puzzles
@@ -135,13 +147,13 @@ def main() -> int:
     )
 
     puzzles = ensure_puzzles(data, res)
-    # 必须在 import server.app 之前设好：静态目录挂载和题库目录都是 import 时确定的
+    # 必须在 import games.beadmatch.api 之前设好：静态目录挂载和题库目录都是 import 时确定的
     os.environ["BEADMATCH_PUZZLES"] = str(puzzles)
-    os.environ["BEADMATCH_WEB"] = str(res / "web")
+    os.environ["BEADMATCH_WEB"] = str(res / "games" / "beadmatch" / "web")
 
     import uvicorn
 
-    import server.app as app_module
+    import games.beadmatch.api as app_module
 
     port = free_port()
     url = "http://127.0.0.1:%d" % port

@@ -9,10 +9,10 @@
 
 用法：
 
-    python generator.py                      # 出一道题，存进 puzzles/，并打印
-    python generator.py --steps 300 --seed 7  # 指定乱走步数 / 随机种子
-    python generator.py --print-only          # 只打印，不落盘
-    python generator.py --show puzzles/xxx.txt  # 读一道题并打印
+    python -m games.beadmatch.core.generator                        # 出一道题，存进题库，并打印
+    python -m games.beadmatch.core.generator --steps 300 --seed 7   # 指定乱走步数 / 随机种子
+    python -m games.beadmatch.core.generator --print-only           # 只打印，不落盘
+    python -m games.beadmatch.core.generator --show <题目文件>      # 读一道题并打印
 """
 
 from __future__ import annotations
@@ -25,10 +25,8 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "solver"))
-
-import walk_gen  # noqa: E402
-from free_solver import (  # noqa: E402
+from . import walk_gen
+from .free_solver import (
     apply_move,
     format_moves,
     legal_moves,
@@ -48,8 +46,9 @@ CAPACITY = 10           # 每根柱子的容量（能装几格）
 # 出题时乱走多少步的兜底值（正常情况下由 difficulty × 10 算出来）。
 WALK_STEPS = 100
 
-# 题库目录（一题一文件，文件名 = <id>.txt）
-PUZZLE_DIR = Path("puzzles")
+# 题库目录（一题一文件，文件名 = <id>.txt）。
+# **锚在文件位置上**，别用相对路径 —— 否则换个工作目录跑就悄悄写到别处去了。
+PUZZLE_DIR = Path(__file__).resolve().parent.parent / "puzzles"
 
 # 颜色写死就这 6 个，不许改（docs/requirement.md §3.2）。
 # 顺序就是代码里 1..6 的编号：1=Y 2=G 3=R 4=P 5=B 6=O。
