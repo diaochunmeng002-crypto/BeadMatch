@@ -406,7 +406,7 @@ function cancelRound() {
 async function loadLevels() {
   try {
     const r = await fetch('/api/memory/levels');
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    if (!r.ok) throw new Error(await errText(r));
     const data = await r.json();
     const sel = $('level');
     sel.innerHTML = '';
@@ -439,7 +439,7 @@ async function newCard() {
   $('new').disabled = true;
   try {
     const r = await fetch(`/api/memory/random?level=${encodeURIComponent(level)}`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    if (!r.ok) throw new Error(await errText(r));
     const p = await r.json();
     state.card = p;
     state.result = null;
@@ -454,6 +454,23 @@ async function newCard() {
 }
 
 function nextCard() { backToCard(); newCard(); }
+
+/** 后端报错时，把它自己的说明也带出来 —— 不然只看到 "HTTP 500"，查不出原因。
+ *
+ * 最常见的 500 是"后端还是旧进程"（代码改过之后没重启），所以顺手提一句。
+ */
+async function errText(r) {
+  let detail = '';
+  try {
+    const data = await r.json();
+    detail = (data && data.detail) || '';
+  } catch (e) { /* 不是 JSON 就算了 */ }
+  const tail = detail ? '：' + detail : '';
+  if (r.status === 500) {
+    return `HTTP 500${tail}（后端像是旧进程，重启一下：python -m games.memory.api）`;
+  }
+  return `HTTP ${r.status}${tail}`;
+}
 
 // ---------------------------------------------------------------------------
 // 绑定

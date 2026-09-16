@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:01:15
+created_by=manual
+id=20260916-110115-13e4
+title=两红两蓝一黄
+level=9
+task=add
+participants=Y R R B B
+answer=5
+
+红色 2 颗、蓝色 2 颗、黄色 1 颗，合起来一共几颗？

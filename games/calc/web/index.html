@@ -3,50 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BeadMatch · 记忆</title>
-<link rel="stylesheet" href="/static/style.css?v=20260916e">
+<title>BeadMatch · 计算</title>
+<link rel="stylesheet" href="/static/style.css?v=20260916c">
 </head>
 <body>
 
 <header class="top">
-  <h1>记忆</h1>
+  <h1>计算</h1>
   <div class="controls">
     <label class="field">
       难度
       <select id="level"></select>
     </label>
     <button id="read">读一遍</button>
+    <button id="peek">看答案</button>
     <button id="new" class="primary">换一题</button>
   </div>
 </header>
 
 <main>
-  <!-- 卡的名字（"三红一黄"这种）：有就显示，没有就空着 -->
+  <!-- 卡的名字（"数一数"这种）：有就显示，没有就空着 -->
   <p id="card-title" class="title" hidden></p>
 
   <section class="card">
-    <h2 class="label">材料</h2>
+    <h2 class="label">材料（按这个准备珠子）</h2>
     <div id="materials" class="materials"></div>
   </section>
 
   <section class="card">
     <h2 class="label">题目</h2>
-    <ol id="tasks" class="tasks"></ol>
+    <p id="rule" class="rule"></p>
+    <!-- 答案：平时藏着，按「看答案」才出现 -->
+    <p id="prompt" class="prompt" hidden></p>
   </section>
-
-  <!-- 例子：只示意，不是要照着摆的答案 -->
-  <section id="demo-wrap" class="card" hidden>
-    <h2 class="label">例子 <span class="aside">（只示意，随便摆）</span></h2>
-    <div id="demo" class="demo"></div>
-  </section>
-
-  <p id="count" class="count" hidden></p>
-  <p id="prompt" class="prompt" hidden></p>
-
-  <div class="actions">
-    <button id="yes" class="primary" hidden>一样，成功</button>
-    <button id="no" hidden>没对</button>
-  </div>
 
   <p id="status" class="status"></p>
 </main>
@@ -68,26 +57,26 @@ function showBootError(html) {
 }
 window.addEventListener('error', function (e) {
   showBootError('<b>页面出错了</b>　' + (e.message || (e.target && e.target.src) || '未知错误')
-    + '<br>顺序：① 重启后端 <code>python -m games.memory.api</code>　② Ctrl+F5 硬刷新　'
+    + '<br>顺序：① 重启后端 <code>python -m games.calc.api</code>　② Ctrl+F5 硬刷新　'
     + '③ 还不行就把这行连同 F12 控制台的红字发我。', true);
 });
 setTimeout(function () {
-  if (!window.__memory_loaded) {
+  if (!window.__calc_loaded) {
     showBootError('<b>app.js 没跑起来</b>（页面骨架能显示，但脚本没执行）<br>'
       + '　① 先 Ctrl+F5 硬刷新 —— 九成是浏览器缓存了旧的 app.js<br>'
-      + '　② 后端要是旧进程，重启：<code>python -m games.memory.api</code><br>'
-      + '　③ 确认地址是 http://127.0.0.1:8020（别直接双击 html 文件）');
+      + '　② 后端要是旧进程，重启：<code>python -m games.calc.api</code><br>'
+      + '　③ 确认地址是 http://127.0.0.1:8030（别直接双击 html 文件）');
     return;
   }
   var sel = document.getElementById('level');
   if (sel && sel.options.length === 0) {
-    showBootError('<b>读不到卡片库</b>（难度下拉是空的）<br>'
-      + '　① 后端重启过了吗：<code>python -m games.memory.api</code><br>'
-      + '　② 或者卡片库是空的：<code>python -m games.memory.core.cards</code> 看看');
+    showBootError('<b>读不到题库</b>（难度下拉是空的）<br>'
+      + '　① 后端重启过了吗：<code>python -m games.calc.api</code><br>'
+      + '　② 或者题库是空的：<code>python -m games.calc.core.cards</code> 看看');
   }
 }, 1500);
 </script>
 
-<script src="/static/app.js?v=20260916e"></script>
+<script src="/static/app.js?v=20260916c"></script>
 </body>
 </html>

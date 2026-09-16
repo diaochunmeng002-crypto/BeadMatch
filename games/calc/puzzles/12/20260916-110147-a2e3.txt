@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:01:47
+created_by=manual
+id=20260916-110147-a2e3
+title=三绿三蓝三橙
+level=12
+task=make
+participants=G G G B B B O O O
+answer=3
+
+用绿色、蓝色、橙色 三种颜色凑出 8 颗，每种颜色至少 1 颗，一共有几种凑法？

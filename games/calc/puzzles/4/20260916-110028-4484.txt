@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:00:28
+created_by=manual
+id=20260916-110028-4484
+title=四橙一紫
+level=4
+task=add
+participants=P O O O O
+answer=5
+
+橙色 4 颗和紫色 1 颗合起来，一共几颗？

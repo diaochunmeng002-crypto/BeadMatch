@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:00:59
+created_by=manual
+id=20260916-110059-3a6a
+title=四黄四紫
+level=7
+task=group
+participants=Y Y Y Y P P P P
+answer=5
+
+把 8 颗分成两堆：一堆 3 颗，另一堆几颗？

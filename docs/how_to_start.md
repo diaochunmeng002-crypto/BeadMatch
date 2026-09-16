@@ -114,6 +114,38 @@ http://127.0.0.1:8020/docs     ← 接口文档
 （换端口：`--port 8030`。接口只有 5 个，**没有 `/check`** —— 记忆游戏的排列是出题人当场摆的，
 程序手里没有答案。）
 
+## 检查 calc 题库
+
+```bash
+python -m games.calc.core.cards
+```
+
+每张计算卡报一行「读得进来吗 / 什么玩法 / 答案写得对不对（类型）」—— **只有"读不进来"算问题**
+（颜色认不出、`task` 不认识、答案类型跟玩法对不上这种）。详细说明见
+[games/calc/README.md](../games/calc/README.md)。
+
+想看某一张卡（附带程序读到的字段）：
+
+```bash
+python -m games.calc.core.cards --show games/calc/puzzles/1/20260916-101500-a3f1.txt
+```
+
+## 起 calc 的后端（第四个游戏，暂时也是独立的一个服务）
+
+```bash
+python -m games.calc.api
+```
+
+然后浏览器打开：
+
+```
+http://127.0.0.1:8030          ← 玩的页面（前端）
+http://127.0.0.1:8030/docs     ← 接口文档
+```
+
+（换端口：`--port 8040`。跟别的游戏不一样的是**有 `POST /api/calc/check`** ——
+交一个答案（`5` / `"五"` / `"蓝"` / `"equal"` 都行）就能判对错。）
+
 ## 打包成 exe（Windows 桌面版）
 
 先装一次打包工具：

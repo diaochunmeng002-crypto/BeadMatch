@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:01:10
+created_by=manual
+id=20260916-110110-1667
+title=两黄两红
+level=9
+task=chain
+participants=Y Y R R
+answer=5
+
+原来有 4 颗，先添 2 颗，再拿走 1 颗，现在还剩几颗？

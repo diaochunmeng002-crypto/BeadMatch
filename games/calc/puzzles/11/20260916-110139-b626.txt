@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:01:39
+created_by=manual
+id=20260916-110139-b626
+title=五黄三紫
+level=11
+task=make
+participants=Y Y Y Y Y P P P
+answer=3
+
+用黄色和紫色凑出 6 颗，一共有几种凑法？

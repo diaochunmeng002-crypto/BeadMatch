@@ -1,0 +1,12 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 11:01:27
+created_by=manual
+id=20260916-110127-6505
+title=四蓝四橙
+level=10
+task=group
+participants=B B B B O O O O
+answer=4
+
+把 8 颗分成两堆，每堆至少 1 颗，不管哪堆在前，一共有几种分法？
