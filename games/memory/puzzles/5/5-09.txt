@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 10:00:00
+created_by=manual
+id=5-09
+title=四绿两紫两蓝
+level=5
+materials=G G G G P P B B
+shape=row
+observe=4
+restore=order
+delay=0
+reverse=no
+
+摆的时候别让颜色成规律（比如红黄红黄），也别让同色扎堆 —— 不然孩子能靠规律推出来，不用真记。

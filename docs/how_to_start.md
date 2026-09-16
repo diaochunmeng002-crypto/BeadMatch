@@ -82,6 +82,38 @@ http://127.0.0.1:8010/docs     ← 接口文档
 
 （换端口：`--port 8020`。前端不用单独起，后端顺手托管了 `web/`。）
 
+## 检查 memory 卡片库
+
+```bash
+python -m games.memory.core.cards
+```
+
+每张规则卡报一行「读得进来吗 / 什么难度 / demo 跟材料对不对」—— **只有"读不进来"算问题**
+（材料认不出、形状记号不认识、id 跟文件名对不上这种）。demo 跟材料对不上只提示一句。
+详细说明见 [games/memory/README.md](../games/memory/README.md)。
+
+想看某一张卡（附带程序读到的字段）：
+
+```bash
+python -m games.memory.core.cards --show games/memory/puzzles/1/1-01.txt
+```
+
+## 起 memory 的后端（第三个游戏，暂时也是独立的一个服务）
+
+```bash
+python -m games.memory.api
+```
+
+然后浏览器打开：
+
+```
+http://127.0.0.1:8020          ← 玩的页面（前端）
+http://127.0.0.1:8020/docs     ← 接口文档
+```
+
+（换端口：`--port 8030`。接口只有 5 个，**没有 `/check`** —— 记忆游戏的排列是出题人当场摆的，
+程序手里没有答案。）
+
 ## 打包成 exe（Windows 桌面版）
 
 先装一次打包工具：

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeadMatch · 记忆</title>
+<link rel="stylesheet" href="/static/style.css?v=20260916d">
+</head>
+<body>
+
+<header class="top">
+  <h1>记忆</h1>
+  <div class="controls">
+    <label class="field">
+      难度
+      <select id="level"></select>
+    </label>
+    <button id="read">读一遍</button>
+    <button id="new" class="primary">换一题</button>
+  </div>
+</header>
+
+<main>
+  <!-- 卡的名字（"三红一黄"这种）：有就显示，没有就空着 -->
+  <p id="card-title" class="title" hidden></p>
+
+  <section class="card">
+    <h2 class="label">材料</h2>
+    <div id="materials" class="materials"></div>
+  </section>
+
+  <section class="card">
+    <h2 class="label">题目</h2>
+    <ol id="tasks" class="tasks"></ol>
+  </section>
+
+  <!-- 例子：只示意，不是要照着摆的答案 -->
+  <section id="demo-wrap" class="card" hidden>
+    <h2 class="label">例子 <span class="aside">（只示意，随便摆）</span></h2>
+    <div id="demo" class="demo"></div>
+  </section>
+
+  <p id="count" class="count" hidden></p>
+  <p id="prompt" class="prompt" hidden></p>
+
+  <div class="actions">
+    <button id="yes" class="primary" hidden>一样，成功</button>
+    <button id="no" hidden>没对</button>
+  </div>
+
+  <p id="status" class="status"></p>
+</main>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<!-- 自诊断：必须在 app.js 之前注册，否则 app.js 自己挂了就来不及显示 -->
+<script>
+function showBootError(html) {
+  var el = document.getElementById('boot-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'boot-error';
+    el.style.cssText = 'position:fixed;inset:0 0 auto 0;padding:14px 18px;z-index:99;'
+      + 'background:#8c2f2f;color:#fff;font:15px/1.7 "Microsoft YaHei",system-ui,sans-serif';
+    document.body.prepend(el);
+  }
+  el.innerHTML = html;
+}
+window.addEventListener('error', function (e) {
+  showBootError('<b>页面出错了</b>　' + (e.message || (e.target && e.target.src) || '未知错误')
+    + '<br>顺序：① 重启后端 <code>python -m games.memory.api</code>　② Ctrl+F5 硬刷新　'
+    + '③ 还不行就把这行连同 F12 控制台的红字发我。', true);
+});
+setTimeout(function () {
+  if (!window.__memory_loaded) {
+    showBootError('<b>app.js 没跑起来</b>（页面骨架能显示，但脚本没执行）<br>'
+      + '　① 先 Ctrl+F5 硬刷新 —— 九成是浏览器缓存了旧的 app.js<br>'
+      + '　② 后端要是旧进程，重启：<code>python -m games.memory.api</code><br>'
+      + '　③ 确认地址是 http://127.0.0.1:8020（别直接双击 html 文件）');
+    return;
+  }
+  var sel = document.getElementById('level');
+  if (sel && sel.options.length === 0) {
+    showBootError('<b>读不到卡片库</b>（难度下拉是空的）<br>'
+      + '　① 后端重启过了吗：<code>python -m games.memory.api</code><br>'
+      + '　② 或者卡片库是空的：<code>python -m games.memory.core.cards</code> 看看');
+  }
+}, 1500);
+</script>
+
+<script src="/static/app.js?v=20260916d"></script>
+</body>
+</html>

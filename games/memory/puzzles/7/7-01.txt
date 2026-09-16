@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 10:00:00
+created_by=manual
+id=7-01
+title=三红两紫两蓝一绿
+level=7
+materials=G R R R P P B B
+shape=rows2
+observe=5
+restore=layout
+delay=0
+reverse=no
+
+摆的时候别让颜色成规律（比如红黄红黄），也别让同色扎堆 —— 不然孩子能靠规律推出来，不用真记。
+摆成两排，每排 4 颗。

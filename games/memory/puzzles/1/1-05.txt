@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 10:00:00
+created_by=manual
+id=1-05
+title=三红一绿
+level=1
+materials=R R R G
+shape=row
+observe=5
+restore=order
+delay=0
+reverse=no
+demo=G R R R

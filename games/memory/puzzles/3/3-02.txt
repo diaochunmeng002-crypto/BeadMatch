@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 10:00:00
+created_by=manual
+id=3-02
+title=两红两紫两蓝
+level=3
+materials=R R P P B B
+shape=row
+observe=5
+restore=order
+delay=0
+reverse=no
+demo=P R R P B B

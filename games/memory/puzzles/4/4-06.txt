@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-16 10:00:00
+created_by=manual
+id=4-06
+title=四紫两橙一绿
+level=4
+materials=G P P P P O O
+shape=row
+observe=4
+restore=order
+delay=0
+reverse=no
+demo=P G P P O O P
