@@ -11,7 +11,7 @@ python run.py
 然后浏览器打开：
 
 ```
-http://127.0.0.1:8000                ← 广场首页（串珠 / 推理 / 记忆 / 计算）
+http://127.0.0.1:8000                ← 广场首页（宝宝串珠 / 推理 / 记忆 / 计算）
 http://127.0.0.1:8000/games/calc/    ← 某个游戏的页面
 http://127.0.0.1:8000/api/games      ← 有哪些游戏（JSON）
 http://127.0.0.1:8000/docs           ← 所有游戏的接口文档（都在一个页面里）
@@ -20,7 +20,7 @@ http://127.0.0.1:8000/docs           ← 所有游戏的接口文档（都在一
 | 页面 | 是哪个游戏 |
 | --- | --- |
 | `/` | 广场首页（列出所有游戏） |
-| `/games/beadmatch/` | 串珠（规划） |
+| `/games/beadmatch/` | 宝宝串珠（规划） |
 | `/games/logic/` | 推理 |
 | `/games/memory/` | 记忆 |
 | `/games/calc/` | 计算 |
@@ -37,7 +37,7 @@ http://127.0.0.1:8000/docs           ← 所有游戏的接口文档（都在一
 
 | 游戏 | 命令 | 端口 |
 | --- | --- | --- |
-| 串珠 | `python -m games.beadmatch.api` | 8000 |
+| 宝宝串珠 | `python -m games.beadmatch.api` | 8000 |
 | 推理 | `python -m games.logic.api` | 8010 |
 | 记忆 | `python -m games.memory.api` | 8020 |
 | 计算 | `python -m games.calc.api` | 8030 |

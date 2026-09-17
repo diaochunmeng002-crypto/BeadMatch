@@ -1,4 +1,4 @@
-/* BeadMatch 前端：拿题 → 画柱子 → 点柱子读颜色 → 演示解法（飞球 + 声音 + 朗读）
+/* 宝宝串珠（BeadMatch）前端：拿题 → 画柱子 → 点柱子读颜色 → 演示解法（飞球 + 声音 + 朗读）
  *
  * 数据约定（跟后端一致）：
  *   matrix[柱子][位置]，位置 0 = 最顶端那一格，0 表示空位
@@ -160,13 +160,13 @@ function pickVoice() {
  *  组内连读，组与组之间留一段静音（Web Speech 不支持 SSML，只能这样控停顿）。 */
 function speakGroups(lines) {
   if (!('speechSynthesis' in window)) {
-    console.warn('[BeadMatch] 这个浏览器不支持 speechSynthesis，没法朗读');
+    console.warn('[beadmatch] 这个浏览器不支持 speechSynthesis，没法朗读');
     return;
   }
   try {
     window.speechSynthesis.cancel();
     const voice = pickVoice();
-    if (!voice) console.warn('[BeadMatch] 没找到中文语音，用系统默认语音读');
+    if (!voice) console.warn('[beadmatch] 没找到中文语音，用系统默认语音读');
     let i = 0;
     const next = () => {
       if (i >= lines.length) return;
@@ -177,13 +177,13 @@ function speakGroups(lines) {
       if (voice) u.voice = voice;
       i += 1;
       u.onend = () => { if (i < lines.length) setTimeout(next, SPEECH_GROUP_GAP); };
-      u.onerror = (e) => console.warn('[BeadMatch] 朗读出错：', e.error || e);
-      console.log('[BeadMatch] 朗读：', text);
+      u.onerror = (e) => console.warn('[beadmatch] 朗读出错：', e.error || e);
+      console.log('[beadmatch] 朗读：', text);
       window.speechSynthesis.speak(u);
     };
     next();
   } catch (e) {
-    console.warn('[BeadMatch] 朗读失败：', e);
+    console.warn('[beadmatch] 朗读失败：', e);
   }
 }
 

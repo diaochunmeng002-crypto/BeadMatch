@@ -35,7 +35,7 @@ PUZZLE_DIR = Path(os.environ.get("BEADMATCH_PUZZLES") or (GAME_DIR / "puzzles"))
 WEB_DIR = Path(os.environ.get("BEADMATCH_WEB") or (GAME_DIR / "web"))
 
 app = FastAPI(
-    title="BeadMatch",
+    title="BeadMatch · 宝宝串珠",
     description="出题器的后端：题库浏览 + 下一步提示 + 现场出题",
     version="0.1.0",
 )
@@ -247,9 +247,9 @@ def api_play(req: NextRequest) -> Dict[str, object]:
 
 _PLACEHOLDER = """<!doctype html>
 <meta charset="utf-8">
-<title>BeadMatch 后端</title>
+<title>宝宝串珠 后端</title>
 <body style="font-family: sans-serif; padding: 2rem; line-height: 1.8; max-width: 46rem">
-<h1>BeadMatch 后端在跑</h1>
+<h1>宝宝串珠 后端在跑</h1>
 <p>前端还没做。接口可以点着看，或者去 <a href="/docs">/docs</a> 交互式试（POST 的接口只能在那边试）。</p>
 
 <h3>题库</h3>
