@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "memory"
+name = "记忆"
+category = "memory"
+summary = "看几秒，盖住，凭记忆把排列摆回来"

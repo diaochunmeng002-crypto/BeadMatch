@@ -42,9 +42,10 @@ PUZZLE_DIR = Path(os.environ.get("BEADMATCH_LOGIC_PUZZLES") or p.PUZZLE_DIR)
 WEB_DIR = Path(os.environ.get("BEADMATCH_LOGIC_WEB")
                or (Path(__file__).resolve().parent / "web"))
 
+# 单独跑的时候接口挂在 /api/logic 底下；广场里由广场挂到 /api/games/logic
 PREFIX = "/api/logic"
 
-router = APIRouter(prefix=PREFIX, tags=["logic"])
+router = APIRouter(tags=["logic"])
 
 
 # --------------------------------------------------------------------------
@@ -200,7 +201,7 @@ app = FastAPI(
     description="推理游戏的题库接口：参与者 + 题目 + 答案。",
     version="0.1.0",
 )
-app.include_router(router)
+app.include_router(router, prefix=PREFIX)
 
 
 # --------------------------------------------------------------------------

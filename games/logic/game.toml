@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "logic"
+name = "推理"
+category = "logic"
+summary = "从线索里推出珠子的顺序"

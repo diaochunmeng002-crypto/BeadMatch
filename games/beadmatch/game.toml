@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "beadmatch"
+name = "串珠"
+category = "plan"
+summary = "把珠子按颜色归位"

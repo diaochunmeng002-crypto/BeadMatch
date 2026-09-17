@@ -27,8 +27,10 @@ class TestLibrary(unittest.TestCase):
         r = client.get("/")
         self.assertEqual(r.status_code, 200)
         self.assertIn("BeadMatch", r.text)
-        self.assertIn("/static/app.js", r.text)
-        self.assertIn("/static/style.css", r.text)
+        # 静态资源写成**相对路径**（`static/app.js`）：单独跑时页面在 `/`、
+        # 广场里页面在 `/games/beadmatch/`，同一份代码两种跑法都对。
+        self.assertIn("static/app.js", r.text)
+        self.assertIn("static/style.css", r.text)
 
     def test_placeholder_when_no_frontend(self):
         """`web/index.html` 不存在时（比如前端还没做），退回说明页，要把接口都列出来。"""

@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "calc"
+name = "计算"
+category = "calc"
+summary = "用串珠数一数、比多少、做加减、分一分"

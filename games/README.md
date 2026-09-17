@@ -4,6 +4,8 @@
 `core/`（纯逻辑）、`api.py`（后端接口）、`web/`（页面）、`puzzles/`（题库）、`tests/`。
 
 - 广场靠 **`game.toml`** 发现游戏：没有这个文件的文件夹**对广场是隐形的**（不会被列到首页）。
+- 现在四个游戏都有 `game.toml` 了 —— `python run.py` 起的就是**广场**（首页 `/` 列出所有游戏，
+  每个游戏在 `/games/<名字>/`，接口在 `/api/games/<名字>/...`，见 [../docs/plaza.md](../docs/plaza.md)）。
 - **已经有游戏的**：`beadmatch`（规划）、`logic`（推理）、`memory`（记忆）—— 每个都是
   `core/ + api.py + web/ + puzzles/ + README` 一整套；`calc`（计算）开了个头
   （卡片格式 + L1~L12 共 120 张题 + 后端 + 前端）；`pattern`（找规律）还是占位 ——

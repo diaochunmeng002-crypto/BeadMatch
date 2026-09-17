@@ -42,9 +42,10 @@ PUZZLE_DIR = Path(os.environ.get("BEADMATCH_MEMORY_PUZZLES") or c.PUZZLE_DIR)
 WEB_DIR = Path(os.environ.get("BEADMATCH_MEMORY_WEB")
                or (Path(__file__).resolve().parent / "web"))
 
+# 单独跑的时候接口挂在 /api/memory 底下；广场里由广场挂到 /api/games/memory
 PREFIX = "/api/memory"
 
-router = APIRouter(prefix=PREFIX, tags=["memory"])
+router = APIRouter(tags=["memory"])
 
 
 # --------------------------------------------------------------------------
@@ -147,7 +148,7 @@ app = FastAPI(
                 "**没有答案** —— 排列由出题人当场摆。",
     version="0.1.0",
 )
-app.include_router(router)
+app.include_router(router, prefix=PREFIX)
 
 
 # --------------------------------------------------------------------------

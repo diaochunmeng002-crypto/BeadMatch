@@ -19,6 +19,9 @@ const COLORS = {
 };
 
 const $ = (id) => document.getElementById(id);
+// 接口基址：单独跑时是 /api/logic，广场里由广场往页面里注入 window.API_BASE
+const API = window.API_BASE || '/api/logic';
+
 const poolEl = $('pool');
 const cluesEl = $('clues');
 const slotsEl = $('slots');
@@ -287,7 +290,7 @@ function maybeCheck() {
 async function check({ silent = false } = {}) {
   if (!state.puzzle || state.pick.includes(null)) return;
   try {
-    const r = await fetch('/api/logic/check', {
+    const r = await fetch(API + '/check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: state.puzzle.id, order: state.pick }),
@@ -356,7 +359,7 @@ function selectClue(index, read = true) {
 
 async function loadLevels() {
   try {
-    const r = await fetch('/api/logic/levels');
+    const r = await fetch(API + '/levels');
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
     const sel = $('level');
@@ -382,12 +385,14 @@ async function loadLevels() {
   }
 }
 
-async function newPuzzle() {
+/** 拿一道新题。``opts.silent`` 用在**刚打开页面**那一次 —— 点链接跳过来不该"嗒"一声，
+ *  只有自己按「换一题」时才响。 */
+async function newPuzzle(opts = {}) {
   const level = $('level').value;
   if (!level) return;
   $('new').disabled = true;
   try {
-    const r = await fetch(`/api/logic/random?level=${encodeURIComponent(level)}`);
+    const r = await fetch(`${API}/random?level=${encodeURIComponent(level)}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const p = await r.json();
     state.puzzle = p;
@@ -403,7 +408,7 @@ async function newPuzzle() {
     titleEl.hidden = !name;
 
     setStatus(`${name ? name + ' · ' : ''}等级 ${p.level} · ${(p.clues || []).length} 条线索 · id ${p.id}`);
-    playTick(0.8);
+    if (!(opts && opts.silent)) playTick(0.8);
   } catch (e) {
     toast('拿题失败：' + e.message);
   } finally {
@@ -453,4 +458,4 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-loadLevels().then(newPuzzle);
+loadLevels().then(() => newPuzzle({ silent: true }));

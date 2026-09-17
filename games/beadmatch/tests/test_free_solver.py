@@ -163,9 +163,12 @@ class TestSolver(unittest.TestCase):
 
         注意 100 步以上不是每道题都解得动 —— 那是出题器用"换个种子重走"兜底的
         （见 generator.generate 的 attempts）。
+
+        预算给了 20 秒（原来是 5 秒）：这道题的解要搜十几秒，机器一忙 5 秒就不够，
+        测试会随机器快慢时红时绿。要测的是"解得开"，不是"5 秒内解得开"。
         """
         state = random_walk(6, 10, 1, 60, seed=1)
-        moves = solve_any(state, time_limit=5.0, node_limit=200_000)
+        moves = solve_any(state, time_limit=20.0, node_limit=2_000_000)
         self.assertIsNotNone(moves, "真实参数的题没解出来")
         self.assertTrue(verify(state, moves))
 

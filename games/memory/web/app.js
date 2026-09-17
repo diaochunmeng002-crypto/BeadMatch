@@ -22,6 +22,9 @@ const COLORS = {
 };
 
 const $ = (id) => document.getElementById(id);
+// 接口基址：单独跑时是 /api/memory，广场里由广场往页面里注入 window.API_BASE
+const API = window.API_BASE || '/api/memory';
+
 const materialsEl = $('materials');
 const tasksEl = $('tasks');
 const demoEl = $('demo');
@@ -405,7 +408,7 @@ function cancelRound() {
 
 async function loadLevels() {
   try {
-    const r = await fetch('/api/memory/levels');
+    const r = await fetch(API + '/levels');
     if (!r.ok) throw new Error(await errText(r));
     const data = await r.json();
     const sel = $('level');
@@ -431,21 +434,23 @@ async function loadLevels() {
   }
 }
 
-async function newCard() {
+/** 拿一张新卡。``opts.silent`` 用在**刚打开页面**那一次 —— 点链接跳过来不该"嗒"一声，
+ *  只有自己按「换一题」/空格时才响。 */
+async function newCard(opts = {}) {
   const level = $('level').value;
   if (!level) return;
   clearTimers();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   $('new').disabled = true;
   try {
-    const r = await fetch(`/api/memory/random?level=${encodeURIComponent(level)}`);
+    const r = await fetch(`${API}/random?level=${encodeURIComponent(level)}`);
     if (!r.ok) throw new Error(await errText(r));
     const p = await r.json();
     state.card = p;
     state.result = null;
     renderCard(p);
     setPhase('card');
-    playTick(0.9);
+    if (!(opts && opts.silent)) playTick(0.9);
   } catch (e) {
     toast('拿卡失败：' + e.message);
   } finally {
@@ -517,4 +522,4 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-loadLevels().then(newCard);
+loadLevels().then(() => newCard({ silent: true }));

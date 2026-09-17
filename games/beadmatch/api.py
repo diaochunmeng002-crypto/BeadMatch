@@ -14,12 +14,13 @@
 
 from __future__ import annotations
 
+import argparse
 import os
 import random
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import APIRouter, FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -38,6 +39,10 @@ app = FastAPI(
     description="出题器的后端：题库浏览 + 下一步提示 + 现场出题",
     version="0.1.0",
 )
+
+# 接口都挂在这个 router 上（**不带前缀**）：单独跑时 app 给它加上 `/api`，
+# 广场里则由广场挂到 `/api/games/beadmatch` 底下 —— 同一个 router，两处都能用。
+router = APIRouter(tags=["beadmatch"])
 
 
 # --------------------------------------------------------------------------
@@ -115,26 +120,26 @@ def _puzzle_payload(matrix, meta: Dict[str, object]) -> Dict[str, object]:
 # --------------------------------------------------------------------------
 
 
-@app.get("/api/health")
+@router.get("/health")
 def health() -> Dict[str, object]:
     return {"ok": True, "puzzles_dir": str(PUZZLE_DIR), "exists": PUZZLE_DIR.exists()}
 
 
-@app.get("/api/levels")
+@router.get("/levels")
 def levels() -> Dict[str, object]:
     """题库里每个等级各有多少道题。"""
     data = g.list_levels(PUZZLE_DIR)
     return {"levels": data, "total": sum(x["count"] for x in data)}
 
 
-@app.get("/api/puzzles")
+@router.get("/puzzles")
 def puzzles(level: Optional[int] = None) -> Dict[str, object]:
     """列出题目（可按等级筛），只返回收下的。"""
     data = g.list_puzzles(PUZZLE_DIR, level)
     return {"count": len(data), "puzzles": data}
 
 
-@app.get("/api/puzzles/{puzzle_id}")
+@router.get("/puzzles/{puzzle_id}")
 def puzzle(puzzle_id: str) -> Dict[str, object]:
     """按 id 取一道题（含标准解法）。"""
     path = g.find_puzzle_path(PUZZLE_DIR, puzzle_id)
@@ -144,7 +149,7 @@ def puzzle(puzzle_id: str) -> Dict[str, object]:
     return _puzzle_payload(matrix, meta)
 
 
-@app.get("/api/random")
+@router.get("/random")
 def api_random(
     level: int = Query(..., ge=0, description="从哪个等级里随机抽，例如 3"),
 ) -> Dict[str, object]:
@@ -163,7 +168,7 @@ def api_random(
     return payload
 
 
-@app.post("/api/next")
+@router.post("/next")
 def api_next(req: NextRequest) -> Dict[str, object]:
     """提示下一步怎么走。
 
@@ -208,7 +213,7 @@ def api_next(req: NextRequest) -> Dict[str, object]:
     }
 
 
-@app.post("/api/generate")
+@router.post("/generate")
 def api_generate(req: GenerateRequest) -> Dict[str, object]:
     """现场出一题（默认不落盘）。题库里已经有几百道，这个接口是留给"想现出"的场景。"""
     matrix, meta = g.generate(req.difficulty, seed=req.seed, walk_steps=req.walk_steps)
@@ -217,7 +222,7 @@ def api_generate(req: GenerateRequest) -> Dict[str, object]:
     return _puzzle_payload(matrix, meta)
 
 
-@app.post("/api/play")
+@router.post("/play")
 def api_play(req: NextRequest) -> Dict[str, object]:
     """把整条解给出来（给前端做"演示解法"动画用）。带 `id` 就直接读题目文件。"""
     _check_matrix(req.matrix)
@@ -275,6 +280,11 @@ _PLACEHOLDER = """<!doctype html>
 """
 
 
+# 单独跑的时候接口挂在 /api/... 底下（跟以前一模一样）；广场里由广场挂到
+# /api/games/beadmatch —— 同一个 router，前缀不一样而已。
+app.include_router(router, prefix="/api")
+
+
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     page = WEB_DIR / "index.html"
@@ -287,3 +297,24 @@ def index() -> str:
 WEB_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
+
+# --------------------------------------------------------------------------
+# 单独跑（平时用 python run.py 起广场，这条只在单调试这个游戏时用）
+# --------------------------------------------------------------------------
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    import uvicorn
+
+    parser = argparse.ArgumentParser(description="单独跑串珠（广场请用 python run.py）")
+    parser.add_argument("--host", default="127.0.0.1", help="想让平板/手机连就写 0.0.0.0")
+    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--reload", action="store_true", help="改代码自动重启（开发用）")
+    args = parser.parse_args(argv)
+    uvicorn.run("games.beadmatch.api:app" if args.reload else app,
+                host=args.host, port=args.port, reload=args.reload)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

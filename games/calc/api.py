@@ -44,9 +44,10 @@ PUZZLE_DIR = Path(os.environ.get("BEADMATCH_CALC_PUZZLES") or c.PUZZLE_DIR)
 WEB_DIR = Path(os.environ.get("BEADMATCH_CALC_WEB")
                or (Path(__file__).resolve().parent / "web"))
 
+# 单独跑的时候接口挂在 /api/calc 底下；广场里由广场挂到 /api/games/calc
 PREFIX = "/api/calc"
 
-router = APIRouter(prefix=PREFIX, tags=["calc"])
+router = APIRouter(tags=["calc"])
 
 
 # --------------------------------------------------------------------------
@@ -175,7 +176,7 @@ app = FastAPI(
     description="计算游戏的题库接口：参与者（哪些颜色各几颗）+ 玩法 + 规则 + 答案。",
     version="0.1.0",
 )
-app.include_router(router)
+app.include_router(router, prefix=PREFIX)
 
 
 # --------------------------------------------------------------------------
