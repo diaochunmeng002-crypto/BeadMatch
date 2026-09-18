@@ -304,13 +304,21 @@ app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    global PUZZLE_DIR
     import uvicorn
 
     parser = argparse.ArgumentParser(description="单独跑竞技串珠（广场请用 python run.py）")
     parser.add_argument("--host", default="127.0.0.1", help="想让平板/手机连就写 0.0.0.0")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--reload", action="store_true", help="改代码自动重启（开发用）")
+    parser.add_argument("--puzzles", metavar="目录", default=None,
+                        help="换一个题库目录（默认 %s）。例：--puzzles games/beadsort/puzzles_kociemba"
+                             % PUZZLE_DIR)
     args = parser.parse_args(argv)
+    if args.puzzles:                     # 2026-09-18：以前只能靠环境变量 BEADSORT_PUZZLES
+        PUZZLE_DIR = Path(args.puzzles).resolve()
+        os.environ["BEADSORT_PUZZLES"] = str(PUZZLE_DIR)   # --reload 会另起进程，得靠环境变量传下去
+        print("题库目录换成：%s（存在：%s）" % (PUZZLE_DIR, PUZZLE_DIR.exists()))
     uvicorn.run("games.beadsort.api:app" if args.reload else app,
                 host=args.host, port=args.port, reload=args.reload)
     return 0

@@ -15,10 +15,22 @@
 from __future__ import annotations
 
 import argparse
+import os
 
 import uvicorn
 
-from plaza.server import app
+
+def apply_puzzles(specs) -> None:
+    """把 `--puzzles <游戏id>=<目录>` 变成那个游戏读的环境变量。
+
+    每个游戏的 api 在**导入时**读自己的题库目录（`BEADSORT_PUZZLES` 这种），
+    所以这里必须先设环境变量、再导入 `plaza.server` —— 顺序反了就白设。
+    """
+    for spec in specs or []:
+        if "=" not in spec:
+            raise SystemExit("--puzzles 要写成 游戏id=目录，比如 beadsort=games/beadsort/puzzles_kociemba")
+        gid, path = spec.split("=", 1)
+        os.environ["%s_PUZZLES" % gid.strip().upper().replace("-", "_")] = path.strip()
 
 
 def main(argv=None) -> int:
@@ -26,7 +38,14 @@ def main(argv=None) -> int:
     p.add_argument("--host", default="127.0.0.1", help="想给平板/手机连就写 0.0.0.0")
     p.add_argument("--port", type=int, default=8000)
     p.add_argument("--reload", action="store_true", help="改代码自动重启（开发用）")
+    p.add_argument("--puzzles", action="append", metavar="游戏id=目录", default=None,
+                   help="换某个游戏的题库目录，可重复。"
+                        "例：python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba")
     args = p.parse_args(argv)
+    apply_puzzles(args.puzzles)
+
+    from plaza.server import app       # 必须在设完环境变量之后导入（见 apply_puzzles）
+
     uvicorn.run("plaza.server:app" if args.reload else app,
                 host=args.host, port=args.port, reload=args.reload)
     return 0

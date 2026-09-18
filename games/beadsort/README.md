@@ -46,11 +46,79 @@ python run.py        # 广场首页第 2 张卡片（/games/beadsort/）；也�
 
 施工式反走的好处：**不依赖求解器、秒级、起点一定有解**。
 
+> **"拿的时候不要求同色"行不行？** 不行（2026-09-18 实验）。如果把造法放宽成
+> **"随便从哪根柱子顶上拿、随便放到有位置的柱子上"**（直播间那种摆法），出来的题**会无解**：
+>
+> - 小棋盘穷举（4 柱 / 3 色 / 每色 2 / 柱容量 2，只有 1 根空柱）：随便拿能到达 48 个局面，
+>   **3 个无解**（6.2%）；按我们的造法只能到 45 个，**0 个无解**。
+> - 真实尺寸（7 柱 / 6 色 / 每色 10 / 容量 10，1 根空柱）：随便摆 5000 次，**32 次摆出了死局**
+>   （0.64%）—— 一步都走不动又没收齐，其中一例：
+>   `GYYYYYYYYY | GRPGGGGGGG | XXRRRRRRRR | BOPPPPPPPP | BGBBBBBBBB | XYOOOOOOOO | XXXXXXXORP`
+> - 但那两种"宽松"配置我没测到死局：**7 柱 5 色（2 根空柱）5000 次 0 个**；
+>   小棋盘上"柱子比珠子高"（容量 3 装 2 颗）时 4290 个局面**全都有解**。
+>
+> 所以"随便拿"看起来总行得通，多半是因为**空柱多、或者柱子有余量**；
+> 我们偏偏是最紧的"6 色 7 柱、柱子正好装满"，那条"拎起来还露着同色"的限制就是保命的那条。
+
 ```bash
+# 唯一入口（2026-09-18 起）：挑方法 + 跑 N 次 + 落盘
+python -m games.beadsort.tools.make --method walk --n 100000
+python -m games.beadsort.tools.make --method kociemba --n 100000 --out games/beadsort/puzzles_kociemba
+
+# 老脚本还在，单道/批量都能用
 python -m games.beadsort.tools.make_puzzles --series 10 --count 20   # 出 20 道 1 级（走 10 步）
 python -m games.beadsort.core.generator --steps 40 --seed 7          # 单出一道（40 步）
 python -m games.beadsort.core.generator --show <题目文件>             # 读一道并校验
 ```
+
+### 3.1 出题的两条路（唯一入口 `tools/make.py`）
+
+| 方法 | 怎么造题 | 一次尝试的产出 | 每档默认上限 |
+| --- | --- | --- | --- |
+| `walk` | 施工式反走（纯随机 + 防打转，见上） | ≈ 一道（几乎每次都出） | **20**（有产出压力，必须刹车） |
+| `kociemba` | 随机摆一个局面 → 让 Kociemba 解 → **解出来才留** | 约 1/2000（实测 5/10000，50 秒） | **0 = 不限**（产出太稀，截断就是白扔） |
+
+公共层只干三件事：**跑 `--n` 次尝试 / 去重分档 / 落盘报表**；"题怎么造"在 `core/methods/` 里，
+一个方法一个模块 —— **加第三种方法 = 加一个文件 + 注册一行**，公共层和前端都不用动。
+
+题库目录用 `--puzzles`（`--out` 是同一个参数的旧名字），默认 `games/beadsort/puzzles`。
+出题写进哪个库、后端读哪个库，是同一件事的两头：
+
+```bash
+python -m games.beadsort.tools.make --method kociemba --n 50000 --puzzles games/beadsort/puzzles_kociemba
+python -m games.beadsort.api --puzzles games/beadsort/puzzles_kociemba      # 单独跑时读这个库
+python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba            # 广场里也读这个库
+```
+
+两条硬规矩：
+
+* `--n` **永远是"尝试多少次"**，不是"要出几道"（两边产出率差 2000 倍）；
+* 真的发生截断，报表里必须写出来（`候选 25 → 写入 20，丢弃 5`），不许偷偷丢。
+
+结果完全由 `--n` + `--seed0` 决定，可以复现。`--rule` 是玩法规则（现在只有 `single`），
+以后加"一次倒一摞"的 `multi` 时，**方法不用改**。
+
+**种子（`--seed0`）—— 默认就是真随机起点**，所以同一条命令跑两次，是**两批不同的题**：
+
+| 写法 | 效果 |
+| --- | --- |
+| 不给（默认 `random`） | 每次用系统随机数取起点，**每跑一次都是一批新的** |
+| `--seed0 12345` | 固定起点：这一批**可以一字不差重跑**（工具开始时会打印"想重跑就加 `--seed0 …`"） |
+| `--seed0 time` | 用当前时间戳当起点（比 random 好记：看日志就知道是哪一批） |
+
+每道题文件里还各自写着它那次的 `seed=`，所以**单道题随时能精确重现**，
+跟整批的起点是什么无关。
+
+**看得见进度**：默认**每 1000 次尝试打一行"战绩"**（总次数小就自动加密），带命中率和预计剩余：
+
+```
+  [ 10000/50000]  出题 6 道  命中率 0.060%  已留 6 道  用时 25s  预计还要 1m40s
+  [ 20000/50000]  出题 11 道  命中率 0.055%  已留 11 道  用时 50s  预计还要 1m15s
+```
+
+（`walk` 的"命中率"恒为 100% —— 它试试都出题，真正受限的是"已留"那列。）
+想每次尝试都打用 `--progress every`，想每 N 次打用 `--progress 2000`，想闭嘴用 `--quiet`。
+另外**第一行会提前打**（跑到 30~50 次，也就是 0.2 秒左右），免得盯着空屏幕等一整个周期。
 
 **校验**：读题目文件时会**逐步**验合法性（每一步都得符合竞技规则）+ 走完必须收齐，
 不合规的题直接读不进来。
@@ -78,7 +146,7 @@ python -m games.beadsort.tools.sampler survey --scales 1000 10000 50000   # 看�
 python -m games.beadsort.tools.sampler survey --n 2000 --repeat allow     # 对照：不加防打转的老做法
 python -m games.beadsort.tools.sampler survey --n 3000 --csv out.csv --top 5   # 逐题明细 + 最乱的前 5 道
 python -m games.beadsort.tools.sampler dump --min-misplaced 20 --count 5       # 把最乱的另存成题目
-python -m games.beadsort.tools.sampler build --n 10000 --per-level 20 --clear  # 跑 1 万道，按步数重建题库
+python -m games.beadsort.tools.sampler build --n 10000 --per-level 20 --clear  # ⚠️ 已被 make 取代（等价于 --method walk），留着给老习惯用
 ```
 
 报表里看三样：
@@ -102,8 +170,9 @@ python -m games.beadsort.tools.sampler build --n 10000 --per-level 20 --clear  #
   所以只标"步数"，永远别标"最少步数"；
 - 但那套口径有个硬伤：**步数走不上去**（走满 200 步的题，解里全是废步）。
   采样器给的出路是**按最终局面的乱度分档**，`misplaced / segments` 已经写进题目文件里备查；
-- 现在这套题库是采样器建的：**跑 10 万道，按解的长度分档，每档最多 20 道** →
-  1~5 级各 20 道，一共 100 道。重建：`sampler build --n 100000 --per-level 20 --clear`。
+- 现在这套题库是 `walk` 方法建的：**跑 10 万次尝试，按解的长度分档，每档最多 20 道** →
+  1~5 级各 20 道，一共 100 道。重建：
+  `python -m games.beadsort.tools.make --method walk --n 100000 --clear`。
 - ⚠️ 默认 `--pick first` 是**先到先得**（按种子顺序取每档最早的那 20 道），所以
   "1 万道"和"10 万道"跑出来的 1~4 级是**同一批题** —— 多加的样本只对**稀少的档**有用
   （5 级要 41 步以上，1 万道里只有 1 道，10 万道才凑满 20 道）。
@@ -126,7 +195,8 @@ python -m games.beadsort.tools.sampler build --n 10000 --per-level 20 --clear  #
 ## 7. 现状与待定
 
 **已经好的**：规则、出题（施工式反走）、逐步合法性校验、**采样器（乱度分布 / 导候选）**、
-**100 道题（1~5 级，每级 20 道）**、页面上的规则说明、**73 项测试全过**。
+**两个出题方法 + 统一入口**、**100 道题（1~5 级，每级 20 道）**、页面上的规则说明、
+**98 项测试全过**。
 
 | 待定 | 备注 |
 | --- | --- |
@@ -146,3 +216,4 @@ python -m games.beadsort.tools.sampler build --n 10000 --per-level 20 --clear  #
 | 2026-09-17 | 用采样器**重建题库**：跑 1 万道，按解的长度分档，每档最多 20 道 → **81 道（1 级 20 / 2 级 20 / 3 级 20 / 4 级 20 / 5 级 1）**；离位随难度递增（7.5 → 17.9）；`generator=sampler@1`；旧的 10 道 3 级（`walk_guided@5`）清掉（每题 `seed` 都在文件里，能一条命令复现） |
 | 2026-09-17 | 采样器跑 **10 万道**重建题库：**100 道，1~5 级各 20 道**（5 级候选只有 25 道 0.025%，是唯一靠加样本量才填满的档）；顺带把 `build` 的内存压掉（`--pick first` 不再把 10 万个局面全留在内存里），10 万道从 311 秒降到不再受内存拖累 |
 | 2026-09-18 | 修**棋盘不居中**：下面的"规则"那行字把 `main` 撑到 616px，而 `.board` 是填满 `main` 的，珠子按默认 `justify-content: normal` 从左边排 → 右边空 166px。给 `.board` 加 `justify-content: center`，珠子中心回到页面中线（实测 451~829，中心 640）。`style.css` 的 `?v=` 顺手升到 `20260918a`，普通刷新就能生效 |
+| 2026-09-18 | **出题方式改成"方法制"**：新增唯一入口 `tools/make.py`（`--method` / `--n` 永远是尝试次数 / `--out` 默认 `puzzles` / `--per-level` 默认按方法给），`core/methods/` 里一个方法一个模块 —— 加第三种方法只要加一个文件。**方法二 = 随机摆 + Kociemba 筛**：把当年删掉的 Kociemba 移植从 git 历史里捞回来（字节没变、连它那份暴力对拍测试一起），随机摆一个局面让它解，**解出来才留**（失败是秒判，0.01 秒）。实测真配置 1 万次尝试 50 秒、出 5 道（0.05%），5 道都用我们的规则引擎验过是真解、解长 122~146 步 |

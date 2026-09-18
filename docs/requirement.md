@@ -271,7 +271,7 @@ Y G R P B O Y
 | --- | --- | --- |
 | `created_at` | `2026-09-13 00:09:17` | **什么时候生成的**（正文第一行）。格式固定 `YYYY-MM-DD HH:MM:SS`，读入时校验 |
 | `created_by` | `beadmatch` | **谁出的**（正文第二行）：生成工具的名字；以后手工摆的题可以写 `manual` 或人名 |
-| `solution_by` | `walk` | **这条解是谁给的**（正文第三行）：`walk` = 反走即解（现在的题全是）；`dfs` = 我们自己的兜底求解器；`kociemba` = **已删除**的旧求解器（只会出现在 2026-09-14 之前的老文件里）。**可选**，格式同 `generator` |
+| `solution_by` | `walk` | **这条解是谁给的**（正文第三行）：`walk` = 反走即解（现在的题全是）；`dfs` = 我们自己的兜底求解器；`kociemba` = Kociemba 移植（2026-09-14 删过，2026-09-18 在 `beadsort` 里当第二种出题方法复活）。**可选**，格式同 `generator` |
 | `id` | `20260913-000917-971c` | 题目唯一标识：**时间 + 随机后缀**。文件名直接用，生成后不再变。不要用「第 N 题」这种序号，也不要把等级写进 id |
 | `tubes` | `7` | 柱子数 = 网格列数 |
 | `colors` | `YGRPBO` | 本题用到的颜色字母（**不含 `X`**） |
@@ -416,7 +416,7 @@ games/beadmatch/puzzles/
 | `solve(state, ...)` | **随机化贪心 DFS + 启发式**（先给每种颜色定一个「家」，按「搬完离目标更近」排序，一条路走不通就换顺序重开）。**只保证能解开、不保证步数最少**；实测 100 步的题 5/5 能解出，200 步只有 3/5 |
 | `verify(state, moves)` | 把走法套回局面，检查是否真的解开 |
 
-### 8.2 历史：Kociemba 的移植（2026-09-14 已删除）
+### 8.2 Kociemba 的移植（删过，2026-09-18 为 beadsort 捞了回来）
 
 2026-09-11 移植过 hkociemba 的 WaterBallSortPuzzleOptimalSolver（Pascal → Python，即
 `solver/kociemba_solver.py`）。它实现的是商业球排序那套规则（只能放空柱或同色柱顶），很快
@@ -427,6 +427,12 @@ games/beadmatch/puzzles/
 1. **规则不一样**：它的「最少步数」在本项目规则下只是**上界**，它报「无解」也不代表我们解不开；
 2. **用不上了**：改用引导式走法出题后，解是白送的；拿它去解那些新题，10 道里 **0 道**能解出
    （唯一"解出"的那道给了 101 步，比我们白送的 100 步还长）。
+
+> **2026-09-18 更新**：它**又回来了**，在 `games/beadsort/` 里当**第二种出题方法**用
+> （`core/kociemba_solver.py`，从 git 历史 `git show 1ce96a1^:solver/kociemba_solver.py` 捞回来，字节没变）。
+> 上面那两条删除理由对 beadsort 都不成立：①它实现的规则**就是** beadsort 的规则（只能放空柱或同色柱顶）；
+> ②现在不是"拿它解反走出来的题"，而是"**随机摆 + 让它解，解出来才留**"，正是它的强项。
+> 用法和实测数据看 [../games/beadsort/README.md](../games/beadsort/README.md) §3.1。
 
 原版 Pascal 源码当年存在本机 `vendor/kociemba/`，**2026-09-15 已删除**（规则不同、代码里没有任何引用）；
 调研记录见 [solver_research.md](solver_research.md)。

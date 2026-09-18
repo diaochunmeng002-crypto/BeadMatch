@@ -31,6 +31,15 @@ http://127.0.0.1:8000/docs           ← 所有游戏的接口文档（都在一
 端口被占了换一个：`python run.py --port 8001`；想让平板/手机连：`--host 0.0.0.0`；
 改代码自动重启（开发用）：`--reload`。
 
+**给某个游戏换一个题库目录**（2026-09-18 加）：`--puzzles <游戏id>=<目录>`，可重复：
+
+```bash
+python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba
+```
+
+每个游戏的默认题库是它自己文件夹里的 `puzzles/`（竞技串珠就是 `games/beadsort/puzzles`）；
+单独跑也可以直接给：`python -m games.beadsort.api --puzzles <目录>`。
+
 ## 只想调某一个游戏
 
 四个游戏都能单独跑，端口互不打扰（平时用不到，改某个游戏时方便）：
@@ -62,8 +71,25 @@ python -m games.beadmatch.tools.make_puzzles
 
 ## 竞技串珠（beadsort）出题
 
-出题和宝宝串珠那套一样（`tools.make_puzzles` / `core.generator`）—— 把上面的命令换个名字就行，
-`--series 30 --count 10` 就是"走 30 步出 10 道（3 级）"。
+**唯一入口（2026-09-18 起）**：挑方法 + 跑 N 次 + 落盘。
+
+```bash
+python -m games.beadsort.tools.make --method walk --n 100000        # 反走：几乎每次尝试都出一道
+python -m games.beadsort.tools.make --method kociemba --n 100000 --out games/beadsort/puzzles_kociemba
+```
+
+`--n` **永远是"尝试多少次"**（不是"要出几道"）：`walk` 约 1 次出 1 道、`kociemba` 约 2000 次出 1 道。
+不写 `--out` 就写进默认的 `games/beadsort/puzzles`。每档上限 `--per-level` 不给就按方法定
+（walk 20、kociemba 不限）。
+
+**种子**：默认 `--seed0 random`，也就是**每跑一次都是一批新的题**；想重跑某一批就照它开头打印的
+那句加 `--seed0 <数字>`（每道题文件里也各自记着它那次的 `seed=`）。
+
+**进度**：默认每 1000 次尝试打一行战绩（出题数 / 命中率 / 已留 / 用时 / 预计还要），
+想每次尝试都打加 `--progress every`，想换频率写 `--progress 2000`，想安静加 `--quiet`。
+
+老脚本还在：`tools.make_puzzles --series 30 --count 10` 是"走 30 步出 10 道（3 级）"，
+`core.generator --steps 40 --seed 7` 是单出一道。
 
 另外多一个**采样器**，用来量"这套规则到底能把珠子打散到什么程度"：
 
