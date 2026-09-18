@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "beadsort"
+name = "竞技串珠"
+category = "plan"
+summary = "只能摞在同色柱顶或空柱上，把颜色收齐"

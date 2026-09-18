@@ -38,6 +38,7 @@ http://127.0.0.1:8000/docs           ← 所有游戏的接口文档（都在一
 | 游戏 | 命令 | 端口 |
 | --- | --- | --- |
 | 宝宝串珠 | `python -m games.beadmatch.api` | 8000 |
+| 竞技串珠 | `python -m games.beadsort.api` | 8000（跟宝宝串珠同一个默认端口，别同时开；换端口用 `--port`） |
 | 推理 | `python -m games.logic.api` | 8010 |
 | 记忆 | `python -m games.memory.api` | 8020 |
 | 计算 | `python -m games.calc.api` | 8030 |
@@ -58,6 +59,24 @@ python -m games.beadmatch.core.generator
 ```bash
 python -m games.beadmatch.tools.make_puzzles
 ```
+
+## 竞技串珠（beadsort）出题
+
+出题和宝宝串珠那套一样（`tools.make_puzzles` / `core.generator`）—— 把上面的命令换个名字就行，
+`--series 30 --count 10` 就是"走 30 步出 10 道（3 级）"。
+
+另外多一个**采样器**，用来量"这套规则到底能把珠子打散到什么程度"：
+
+```bash
+python -m games.beadsort.tools.sampler survey --n 10000                    # 跑 1 万道，看离位分布
+python -m games.beadsort.tools.sampler survey --scales 1000 10000 50000    # 看天花板会不会随样本量涨
+python -m games.beadsort.tools.sampler survey --n 2000 --repeat allow      # 对照：不加防打转的老做法
+python -m games.beadsort.tools.sampler dump --min-misplaced 20 --count 5   # 把最乱的另存成题目
+python -m games.beadsort.tools.sampler build --n 10000 --per-level 20     # 跑 1 万道重建题库（加 --clear 先清旧题）
+```
+
+速度：单条约 1~3 毫秒，所以 1 万道十几秒到半分钟、10 万道 5 分钟上下（看机器忙不忙）。
+想细看就 `--csv out.csv`（逐题明细）和 `--top 5`（最乱的前 5 道）。
 
 ## 跑测试
 
