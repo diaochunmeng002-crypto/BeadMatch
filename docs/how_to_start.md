@@ -76,6 +76,7 @@ python -m games.beadmatch.tools.make_puzzles
 ```bash
 python -m games.beadsort.tools.make --method walk --n 100000        # 反走：几乎每次尝试都出一道
 python -m games.beadsort.tools.make --method kociemba --n 100000 --out games/beadsort/puzzles_kociemba
+python -m games.beadsort.tools.make --method layershuffle --n 20 --out games/beadsort/puzzles_layershuffle
 ```
 
 `--n` **永远是"尝试多少次"**（不是"要出几道"）：`walk` 约 1 次出 1 道、`kociemba` 约 2000 次出 1 道。

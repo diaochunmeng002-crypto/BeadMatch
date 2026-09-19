@@ -77,4 +77,5 @@ def names() -> List[str]:
 
 # 导入即注册（放最后：上面那些名字得先定义好）
 from . import kociemba as _kociemba      # noqa: E402,F401
+from . import layershuffle as _layers    # noqa: E402,F401
 from . import walk as _walk              # noqa: E402,F401

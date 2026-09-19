@@ -1,5 +1,6 @@
-"""统一出题入口（tools/make.py）与两个出题方法的测试。"""
+"""统一出题入口（tools/make.py）与三个出题方法的测试。"""
 
+import random
 import shutil
 import time
 import unittest
@@ -31,13 +32,14 @@ class TempDir:
 
 
 class TestRegistry(unittest.TestCase):
-    def test_two_methods_registered(self):
-        self.assertEqual(methods.names(), ["kociemba", "walk"])
+    def test_three_methods_registered(self):
+        self.assertEqual(methods.names(), ["kociemba", "layershuffle", "walk"])
 
     def test_per_level_default_is_per_method(self):
         """walk 有产出压力所以要刹车；kociemba 产出太稀，默认不限。"""
         self.assertEqual(methods.get("walk").per_level_default, 20)
         self.assertEqual(methods.get("kociemba").per_level_default, 0)
+        self.assertEqual(methods.get("layershuffle").per_level_default, 20)
 
     def test_unknown_method(self):
         with self.assertRaises(KeyError):
@@ -180,6 +182,64 @@ class TestKociembaMethod(unittest.TestCase):
             bars = [ln for ln in text.splitlines() if ln.strip().startswith("[")]
             self.assertGreaterEqual(len(bars), 3, "一次没出也必须照打战绩：\n" + text)
             self.assertIn("命中率", bars[0])
+
+
+class TestLayerShuffleMethod(unittest.TestCase):
+    """按层构造：每一排（同一层的所有彩柱）必须每色各一颗，不多不少。"""
+
+    SMALL = ["--method", "layershuffle", "--colors", "4", "--per", "4", "--tubes", "5"]
+
+    def _method(self, more=(), argv=None):
+        method = methods.get("layershuffle")
+        args = make.build_parser(method).parse_args(argv or (self.SMALL + list(more)))
+        if args.capacity is None:
+            args.capacity = args.per
+        method.setup(args)
+        return method
+
+    def test_every_row_has_each_color_exactly_once(self):
+        method = self._method()
+        board = method._random_puzzle(random.Random(1))
+        for row in range(4):
+            self.assertEqual(sorted(board[t][row] for t in range(4)), [1, 2, 3, 4],
+                             "第 %d 排不是 4 色各一颗：%s" % (row, [board[t][row] for t in range(4)]))
+        self.assertEqual(board[4], [0, 0, 0, 0], "空柱应该留在最后且全是空的")
+
+    def test_rows_are_independent_not_one_rotation(self):
+        """真随机：把一排的排列原样搬到下一排的概率极低，10 排不该整整齐齐。"""
+        method = self._method()
+        board = method._random_puzzle(random.Random(7))
+        rows = [tuple(board[t][row] for t in range(4)) for row in range(4)]
+        self.assertGreater(len(set(rows)), 1, "四排一模一样，不像真随机")
+
+    def test_attempt_gives_a_solvable_puzzle(self):
+        method = self._method()
+        cand = None
+        for seed in range(1, 10):
+            cand = method.attempt(seed)
+            if cand is not None:
+                break
+        self.assertIsNotNone(cand, "小棋盘 9 次尝试一道都没出")
+        self.assertTrue(verify(cand.board, cand.solution))
+        self.assertEqual(cand.generator, "layershuffle@1")
+        self.assertEqual(cand.solution_by, "kociemba")
+        self.assertIn("misplaced", cand.extra)
+
+    def test_run_writes_puzzles_that_load_back(self):
+        with TempDir("_tmp_make_layers") as tmp:
+            rc = make.main(self.SMALL + ["--n", "5", "--per-level", "2", "--out", str(tmp),
+                                         "--quiet", "--seed0", "1"])
+            self.assertEqual(rc, 0)
+            files = sorted(tmp.glob("*/*.txt"))
+            self.assertTrue(files)
+            per_level = {}
+            for f in files:
+                _matrix, meta = g.load_board(f)      # 读入即逐步验合法性
+                self.assertEqual(meta["generator"], "layershuffle@1")
+                self.assertEqual(meta["solution_by"], "kociemba")
+                self.assertEqual(meta["level"], g.level_of(meta["moves"]))
+                per_level[f.parent.name] = per_level.get(f.parent.name, 0) + 1
+            self.assertTrue(all(n <= 2 for n in per_level.values()), per_level)
 
 
 class TestCli(unittest.TestCase):
