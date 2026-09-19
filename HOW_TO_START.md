@@ -38,6 +38,7 @@ python -m games.beadsort.tools.make --method kociemba --n 30000
 python -m games.beadsort.tools.make --method kociemba --n 30000 --node-limit 2000000 --out games/beadsort/puzzles_kociemba
 
 python -m games.beadsort.tools.make --method layershuffle --n 20
+python -m games.beadsort.tools.make --method layershuffle --n 500 --shuffle 3 --out games/beadsort/puzzles_layershuffle_30k
 python -m games.beadsort.tools.make --method layershuffle --n 30000 --per-level 200 --out games/beadsort/puzzles_layershuffle_30k
 ```
 

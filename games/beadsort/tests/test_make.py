@@ -225,6 +225,35 @@ class TestLayerShuffleMethod(unittest.TestCase):
         self.assertEqual(cand.solution_by, "kociemba")
         self.assertIn("misplaced", cand.extra)
 
+    def test_shuffle_keeps_the_row_rule(self):
+        """--shuffle 只是在"已解局面"上做排内换位，每排 6 色各一这条不能破。"""
+        method = self._method(["--shuffle", "5"])
+        board = method._random_puzzle(random.Random(3))
+        for row in range(4):
+            self.assertEqual(sorted(board[t][row] for t in range(4)), [1, 2, 3, 4])
+        self.assertEqual(board[4], [0, 0, 0, 0])
+
+    def test_shuffle_zero_is_the_solved_board(self):
+        method = self._method(["--shuffle", "0"])
+        cand = method.attempt(1)
+        self.assertIsNotNone(cand)
+        self.assertEqual(cand.extra["misplaced"], 0)
+        self.assertEqual(len(cand.solution), 0, "0 次换位就是已解，不该有步子")
+        for t in range(4):
+            self.assertEqual(len(set(cand.board[t])), 1, "每根彩柱该是单色")
+
+    def test_one_swap_moves_at_most_two_balls(self):
+        """换位次数 ×2 就是错位球数的上界 —— 这是"打乱几下"能当难度旋钮的根据。"""
+        method = self._method(["--shuffle", "3"])
+        cand = method.attempt(2)
+        self.assertIsNotNone(cand)
+        self.assertLessEqual(cand.extra["misplaced"], 6)
+        self.assertLess(len(cand.solution), 60, "打得少，解就不该长")
+
+    def test_negative_shuffle_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self._method(["--shuffle", "-1"])
+
     def test_run_writes_puzzles_that_load_back(self):
         with TempDir("_tmp_make_layers") as tmp:
             rc = make.main(self.SMALL + ["--n", "5", "--per-level", "2", "--out", str(tmp),
