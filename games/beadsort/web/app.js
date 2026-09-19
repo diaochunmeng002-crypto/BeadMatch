@@ -24,9 +24,14 @@ const API = window.API_BASE || '/api';
 const board = $('board');
 
 const state = {
-  matrix: null,
+  matrix: null,          // 当前摆在场上的局面
+  base: null,            // 这道题的初始局面（回放的起点）
   meta: null,
-  playing: false,
+  cursor: 0,             // 回放到第几步：0 = 题目初始局面
+  playing: false,        // 演示中
+  busy: false,           // 这颗球正在飞
+  timer: null,
+  run: 0,                // 自动播放的批次号：停下来就作废，防止旧的一轮还在跑
   selected: null,        // 当前选中的柱子（键盘操作靠它）
 };
 
@@ -305,39 +310,154 @@ function animateBall(from, to) {
 }
 
 // ---------------------------------------------------------------------------
-// 演示解法
+// 回放：局面 = 从题目开局重放 moves[0..cursor)
+//
+// 上一步不去"撤销"，而是重放到 cursor-1 —— 走多少步都只有这一个来源，
+// 所以前进、后退、回到题目、自动播放永远不会互相错位。
 // ---------------------------------------------------------------------------
 
-async function playSolution() {
-  if (state.playing || !state.meta) return;
-  const moves = parseMoves(state.meta.solution);
-  if (!moves.length) { toast('这道题没有解法信息'); return; }
+function movesOf() {
+  return state.meta ? parseMoves(state.meta.solution) : [];
+}
 
-  state.playing = true;
-  $('demo').disabled = true;
-  $('new').disabled = true;
+/** 重放到第 n 步的局面（n = 0 就是题目初始局面） */
+function matrixAt(n) {
+  const moves = movesOf();
+  let m = state.base.map((t) => t.slice());
+  for (let i = 0; i < n; i++) m = applyMove(m, moves[i][0], moves[i][1]);
+  return m;
+}
 
+/** 把画面切到第 n 步（不动画，动画由调用方控制） */
+function showAt(n) {
+  state.cursor = n;
+  state.matrix = matrixAt(n);
+  render(false);
+  updateTransport();
+}
+
+function updateTransport() {
+  const total = movesOf().length;
+  const c = state.cursor;
+  $('counter').textContent = `第 ${c} / ${total} 步`;
+  $('reset').disabled = c === 0;
+  $('prev').disabled = c === 0;
+  $('next').disabled = c >= total;
+  $('demo').textContent = state.playing ? '暂停' : '演示解法';
+  $('demo').disabled = !state.playing && c >= total;
+}
+
+/** 等正在飞的这颗球落地（动画 330ms），免得点击被吞掉 */
+async function waitIdle() {
+  while (state.busy) await new Promise((r) => setTimeout(r, 30));
+}
+
+/** 可被打断的等待：stopPlay 会立刻叫醒它，别让播放循环卡在睡眠里 */
+let sleepWake = null;
+function pause(ms) {
+  return new Promise((resolve) => {
+    sleepWake = () => { sleepWake = null; resolve(); };
+    state.timer = setTimeout(() => { if (sleepWake) sleepWake(); }, ms);
+  });
+}
+
+/** 走一步：飞球 + 落珠声。调用前请自行置 state.busy。 */
+async function stepForward() {
+  const moves = movesOf();
+  if (state.cursor >= moves.length) return false;
+  const [from, to] = moves[state.cursor];
+  state.matrix = matrixAt(state.cursor);
+  render(false);
+  await animateBall(from, to);
+  state.cursor += 1;
+  state.matrix = matrixAt(state.cursor);
+  render(false);
+  playTick();
+  updateTransport();
+  return true;
+}
+
+/** 退一步：把刚搬过去的那颗球飞回来 */
+async function stepBack() {
+  const moves = movesOf();
+  if (state.cursor <= 0) return false;
+  const [from, to] = moves[state.cursor - 1];
+  state.matrix = matrixAt(state.cursor);
+  render(false);
+  await animateBall(to, from);
+  state.cursor -= 1;
+  state.matrix = matrixAt(state.cursor);
+  render(false);
+  playTick(0.8);
+  updateTransport();
+  return true;
+}
+
+function stopPlay() {
+  state.playing = false;
+  state.run += 1;                       // 还在跑的那一轮看到批次号变了就退出
+  if (state.timer) { clearTimeout(state.timer); state.timer = null; }
+  if (sleepWake) sleepWake();           // 叫醒正卡在 pause() 里的那一轮
+  updateTransport();
+}
+
+/** 手动接管：先停下自动播放，再走这一步 */
+async function doStep(dir) {
+  if (!state.meta) return;
+  stopPlay();
+  await waitIdle();
+  state.busy = true;
   try {
-    for (let i = 0; i < moves.length; i++) {
-      const [from, to] = moves[i];
-      const before = state.matrix.map((t) => t.slice());
-      await animateBall(from, to);
-      state.matrix = applyMove(before, from, to);
-      render(false);
-      playTick();
-      setStatus(`演示中… 第 ${i + 1} / ${moves.length} 步`);
-      await new Promise((r) => setTimeout(r, 90));
+    if (dir > 0) await stepForward(); else await stepBack();
+  } catch (e) {
+    toast('走不动了：' + e.message);
+  } finally {
+    state.busy = false;
+  }
+}
+
+async function resetBoard() {
+  if (!state.meta) return;
+  stopPlay();
+  await waitIdle();
+  showAt(0);
+  toast('回到题目');
+  playTick(0.8);
+}
+
+async function playSolution() {
+  if (!state.meta) return;
+  const moves = movesOf();
+  if (!moves.length) { toast('这道题没有解法信息'); return; }
+  if (state.playing) { stopPlay(); return; }          // 再点一次 = 暂停
+  if (state.cursor >= moves.length) return;
+
+  await waitIdle();
+  const myRun = state.run + 1;
+  state.run = myRun;
+  state.playing = true;
+  updateTransport();
+  try {
+    while (state.playing && state.run === myRun && state.cursor < moves.length) {
+      state.busy = true;
+      await stepForward();
+      state.busy = false;
+      if (!state.playing || state.cursor >= moves.length) break;
+      await pause(90);
     }
-    playDing();
-    toast('解开了！');
-    speak('解开了');
-    setStatus(`演示完成：共 ${moves.length} 步（等级 ${state.meta.level}）`);
   } catch (e) {
     toast('演示出错了：' + e.message);
   } finally {
+    const done = state.cursor >= moves.length;
     state.playing = false;
-    $('demo').disabled = false;
-    $('new').disabled = false;
+    state.busy = false;
+    updateTransport();
+    if (done) {
+      playDing();
+      toast('解开了！');
+      speak('解开了');
+      setStatus(`演示完成：共 ${moves.length} 步（等级 ${state.meta.level}）`);
+    }
   }
 }
 
@@ -376,17 +496,22 @@ async function loadLevels() {
 /** 拿一道新题。``opts.silent`` 用在**刚打开页面**那一次 —— 点链接跳过来不该"嗒"一声，
  *  只有自己按「换一题」时才响。 */
 async function newPuzzle(opts = {}) {
-  if (state.playing) return;
   const level = $('level').value;
   if (!level) return;
+  stopPlay();                     // 演示中也能换题：先停，不锁按钮
+  await waitIdle();
   $('new').disabled = true;
   try {
     const r = await fetch(`${API}/random?level=${encodeURIComponent(level)}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const p = await r.json();
     state.meta = p;
-    state.matrix = p.matrix.map((t) => t.slice());
+    state.base = p.matrix.map((t) => t.slice());
+    state.cursor = 0;
+    state.selected = null;
+    state.matrix = matrixAt(0);
     render(true);
+    updateTransport();
     setStatus(`等级 ${p.level} · ${p.moves} 步 · id ${p.id}`);
     if (!(opts && opts.silent)) playTick(0.8);
   } catch (e) {
@@ -402,13 +527,27 @@ async function newPuzzle(opts = {}) {
 
 $('new').addEventListener('click', newPuzzle);
 $('demo').addEventListener('click', playSolution);
+$('reset').addEventListener('click', resetBoard);
+$('prev').addEventListener('click', () => doStep(-1));
+$('next').addEventListener('click', () => doStep(1));
 $('level').addEventListener('change', (e) => { newPuzzle(); e.target.blur(); });
 
-// 键盘：← → 换柱子（到头"咚"一声），空格重读选中的柱子
+// 键盘：
+//   ← →        换柱子（到头"咚"一声）—— 给读屏用的，别占
+//   空格       重读选中的柱子
+//   Home       回到题目
+//   PageUp     上一步
+//   PageDown   下一步
+//   End        演示解法 / 暂停
 window.addEventListener('keydown', (e) => {
   if (!state.matrix) return;
   const tag = (e.target && e.target.tagName) || '';
   if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;   // 别抢表单的键
+
+  if (e.key === 'Home') { e.preventDefault(); resetBoard(); return; }
+  if (e.key === 'PageUp') { e.preventDefault(); doStep(-1); return; }
+  if (e.key === 'PageDown') { e.preventDefault(); doStep(1); return; }
+  if (e.key === 'End') { e.preventDefault(); playSolution(); return; }
 
   if (e.key === ' ' || e.code === 'Space') {
     e.preventDefault();
@@ -431,4 +570,5 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
+updateTransport();          // 还没拿到题：先让回放条是灰的
 loadLevels().then(() => newPuzzle({ silent: true }));

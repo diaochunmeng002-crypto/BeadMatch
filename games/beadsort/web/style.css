@@ -181,6 +181,32 @@ button:disabled { opacity: .45; cursor: default; }
 .hint { font-size: .85rem; color: var(--muted); margin: 6px 0 0; }
 .status { font-size: .85rem; color: var(--muted); margin-top: 18px; }
 
+/* ---- 回放条（棋盘下方那一条）---- */
+
+.transport {
+  width: 100%;
+  max-width: 30rem;          /* 跟棋盘差不多宽，居中摆在它下面 */
+  margin: 22px auto 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.counter {
+  font-size: .9rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;   /* 步数跳动时宽度不抖 */
+  min-width: 9rem;
+}
+
+.transport-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.transport-buttons button { min-width: 4.6rem; }
+#demo { min-width: 5.2rem; }
+
 .toast {
   position: fixed;
   left: 50%;

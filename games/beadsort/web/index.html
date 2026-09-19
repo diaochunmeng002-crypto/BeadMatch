@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BeadMatch · 竞技串珠</title>
-<link rel="stylesheet" href="static/style.css?v=20260918a">
+<link rel="stylesheet" href="static/style.css?v=20260919a">
 </head>
 <body>
 
@@ -16,15 +16,27 @@
       <select id="level"></select>
     </label>
     <button id="new" class="primary">换一题</button>
-    <button id="demo">演示解法</button>
   </div>
 </header>
 
 <main>
   <div id="board" class="board"></div>
+
+  <div class="transport">
+    <span id="counter" class="counter">第 0 / 0 步</span>
+    <div class="transport-buttons">
+      <button id="reset">回到题目</button>
+      <button id="prev">上一步</button>
+      <button id="next">下一步</button>
+      <button id="demo" class="primary">演示解法</button>
+    </div>
+  </div>
+
   <p id="hint" class="hint">
     <b>规则：</b>一次搬最顶上那颗，<b>只能放到空柱上、或顶色相同的柱子上</b>；每种颜色收齐到一根柱子就算赢。<br>
-    点柱子：从下往上读颜色（五五分组）　·　← → 换柱子　·　空格重读　·　「演示解法」一步步给你看
+    点柱子：从下往上读颜色（五五分组）　·　← → 换柱子　·　空格重读<br>
+    回放：<b>回到题目</b> · <b>上一步 / 下一步</b> 一步一步 · <b>演示解法</b> 自动播（再点一次是暂停，播放中点任何一个都会先停下来）<br>
+    回放快捷键：<b>Home</b> 回到题目　·　<b>PageUp</b> 上一步　·　<b>PageDown</b> 下一步　·　<b>End</b> 演示 / 暂停
   </p>
   <div id="status" class="status"></div>
 </main>
@@ -66,6 +78,6 @@ setTimeout(function () {
 }, 1500);
 </script>
 
-<script src="static/app.js?v=20260918a"></script>
+<script src="static/app.js?v=20260919a"></script>
 </body>
 </html>
