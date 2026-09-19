@@ -242,6 +242,54 @@ class TestLayerShuffleMethod(unittest.TestCase):
             self.assertTrue(all(n <= 2 for n in per_level.values()), per_level)
 
 
+class TestIdCollision(unittest.TestCase):
+    """一次跑几千道时，落盘全挤在最后几秒 —— id（秒级时间戳 + 4 位随机）会撞。
+    老实现撞了就 FileExistsError：题都出完了，最后一步崩掉，整批白跑。"""
+
+    class _FixedTime:
+        """把"写盘时刻"钉死，好让 id 可预测（run() 里的 time.time() 照旧走真表）。"""
+
+        def __init__(self, real):
+            self._real = real
+
+        def strftime(self, *a, **k):
+            return "20260919-000000"
+
+        def __getattr__(self, name):
+            return getattr(self._real, name)
+
+    def test_id_is_seed_based_so_one_batch_never_collides(self):
+        with TempDir("_tmp_make_id") as tmp:
+            real = make.time
+            make.time = self._FixedTime(real)
+            try:
+                make.main(["--method", "walk", "--n", "3", "--per-level", "0",
+                           "--out", str(tmp), "--quiet", "--seed0", "1"])
+            finally:
+                make.time = real
+            names = sorted(f.stem for f in tmp.glob("*/*.txt"))
+            self.assertEqual(names, ["20260919-000000-%04x" % s for s in (1, 2, 3)],
+                             "同一批里 id 靠 seed 区分，不该撞")
+
+    def test_existing_file_makes_it_take_another_id(self):
+        """万一还是撞上（比如同一秒里第二批同样的种子），换一个 id 接着写，不能崩。"""
+        with TempDir("_tmp_make_id") as tmp:
+            real = make.time
+            make.time = self._FixedTime(real)
+            try:
+                args = ["--method", "walk", "--n", "1", "--per-level", "0",
+                        "--out", str(tmp), "--quiet", "--seed0", "1"]
+                self.assertEqual(make.main(args), 0)
+                first = sorted(tmp.glob("*/*.txt"))[0].stem
+                self.assertEqual(make.main(args), 0)          # 同一秒、同一颗 seed，必然撞
+            finally:
+                make.time = real
+            names = sorted(f.stem for f in tmp.glob("*/*.txt"))
+            self.assertEqual(len(names), 2, "撞了 id 也要写成两道")
+            self.assertEqual(names[0], first)
+            self.assertNotEqual(names[1], first)
+
+
 class TestCli(unittest.TestCase):
     def test_seed0_accepts_number_random_time(self):
         """固定数字 = 可复现；random / time = 每次换一批。"""

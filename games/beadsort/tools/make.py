@@ -99,11 +99,15 @@ def keep(bucket: List[methods.Candidate], cand: methods.Candidate, cap: int) -> 
 
 
 def build_meta(cand: methods.Candidate, args, level: int, seed: int) -> Dict[str, object]:
+    # id = 写盘的时刻 + 这道题自己的 seed。别再用随机后缀：一次写几千道时时间戳
+    # 全都一样，随机后缀只有 4 位，几千个抢 65536 个桶，撞车是常态（而且撞在不同
+    # 等级的目录里也照样算重名，`/puzzles/{id}` 会取错题）。seed 在一批里唯一。
+    stamp = time.strftime("%Y%m%d-%H%M%S")
     meta: Dict[str, object] = {
         "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "created_by": g.CREATED_BY,
         "solution_by": cand.solution_by,
-        "id": g.make_id(),
+        "id": "%s-%04x" % (stamp, seed % 0x10000),
         "tubes": args.tubes,
         "colors": g.COLOR_LETTERS[: args.colors],
         "capacity": args.capacity or args.per,
@@ -121,6 +125,23 @@ def build_meta(cand: methods.Candidate, args, level: int, seed: int) -> Dict[str
         if k in cand.extra:
             meta[k] = cand.extra[k]
     return meta
+
+
+def save_unique(root: Path, board, meta: Dict[str, object], tries: int = 50) -> Path:
+    """写一道题；id 撞车就**换一个 id 再写**。
+
+    为什么必须防：题目 id 是「秒级时间戳 + 4 位十六进制随机」，而落盘集中在最后
+    几秒里 —— 一次写几千道，同一秒内几千个 id 抢 65536 个桶，生日问题下几乎必撞。
+    老实现于是"题全出完了，最后一步 FileExistsError"，整批白跑。
+    `save_board` 自己「不覆盖」是对的，撞了该换 id，而不是覆盖别人的题。
+    """
+    for _ in range(tries):
+        try:
+            return g.save_board(root, board, meta)
+        except FileExistsError:
+            meta = dict(meta)
+            meta["id"] = g.make_id()
+    raise RuntimeError("连着 %d 次都撞 id，这一道放弃：%s" % (tries, meta.get("id")))
 
 
 # --------------------------------------------------------------------------
@@ -256,7 +277,7 @@ def run(args) -> int:
     for level in sorted(buckets):
         for cand in buckets[level]:
             meta = build_meta(cand, args, level, cand.seed)
-            g.save_board(root, cand.board, meta)
+            save_unique(root, cand.board, meta)
             written += 1
 
     # 报表

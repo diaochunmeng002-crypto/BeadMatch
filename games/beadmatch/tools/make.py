@@ -34,6 +34,18 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def save_unique(root: Path, matrix, meta: dict, tries: int = 50) -> Path:
+    """写一道题；id 撞车就换一个 id 再写（一口气写几百上千道时，落盘都挤在
+    同一秒里，秒级时间戳 + 4 位随机后缀很容易撞）。"""
+    for _ in range(tries):
+        try:
+            return g.save_board(root, matrix, meta)
+        except FileExistsError:
+            meta = dict(meta)
+            meta["id"] = g.make_id()
+    raise RuntimeError("连着 %d 次都撞 id，这一道放弃：%s" % (tries, meta.get("id")))
+
+
 def run(args) -> int:
     root = Path(args.out)
     seed0 = random.SystemRandom().randrange(1, 2 ** 31)     # 每次都是新的一批；打印出来备查
@@ -48,7 +60,7 @@ def run(args) -> int:
     for i in range(args.n):
         seed = seed0 + i
         matrix, meta = g.generate(args.level, seed=seed)
-        g.save_board(root, matrix, meta)
+        save_unique(root, matrix, meta)
         levels[meta["level"]] = levels.get(meta["level"], 0) + 1
         if period == 1 or (i + 1) % period == 0 or i + 1 == args.n:
             print("  %5d/%d  %s  等级 %s / %s 步" % (i + 1, args.n, meta["id"],

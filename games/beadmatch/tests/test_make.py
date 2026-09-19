@@ -55,6 +55,21 @@ class TestMake(unittest.TestCase):
             f = sorted(tmp.glob("*/*.txt"))[0]
             self.assertEqual(f.parent.name, "7")
 
+    def test_same_id_twice_still_writes_both(self):
+        """一口气写几百上千道时，落盘全挤在同一秒，id 会撞 —— 撞了换一个，不能崩。"""
+        with TempDir("_tmp_make_id") as tmp:
+            seq = iter(["dup", "dup", "uniq1", "uniq2"])
+            real = g.make_id
+            g.make_id = lambda *a, **k: next(seq)
+            try:
+                rc = make.main(["--n", "2", "--level", "1", "--out", str(tmp)])
+            finally:
+                g.make_id = real
+            self.assertEqual(rc, 0)
+            files = sorted(tmp.glob("*/*.txt"))
+            self.assertEqual(len(files), 2)
+            self.assertEqual(sorted(f.stem for f in files), ["dup", "uniq1"])
+
 
 if __name__ == "__main__":
     unittest.main()
