@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:56
 created_by=manual
 id=20260916-110056-6f1f
-title=五橙两绿
+title=气球 🎈
 level=7
 task=group
 participants=G G O O O O O
 answer=5
 
-把 7 颗分成两堆：一堆 2 颗，另一堆几颗？
+把 7 个气球分成两束：一束 2 个，另一束几个？

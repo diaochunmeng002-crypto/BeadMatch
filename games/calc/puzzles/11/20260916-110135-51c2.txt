@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:35
 created_by=manual
 id=20260916-110135-51c2
-title=四紫三绿
+title=小皮球 ⚽
 level=11
 task=make
 participants=G G G P P P P
 answer=3
 
-用紫色和绿色凑出 5 颗，一共有几种凑法？
+用紫色小皮球和绿色小皮球凑出 5 个，一共有几种凑法？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:47
 created_by=manual
 id=20260916-110047-e949
-title=三蓝三橙
+title=小星星 ⭐
 level=6
 task=missing
 participants=B B B O O O
 answer=3
 
-桌上有 6 颗，再添几颗就到 9 颗了？
+天上有 6 颗小星星，再添几颗就到 9 颗了？

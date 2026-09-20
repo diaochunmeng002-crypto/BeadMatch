@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:05
 created_by=manual
 id=20260916-101505-c902
-title=两橙两红
+title=草莓甜又甜 🍓
 level=1
 task=count
 participants=O O R R
 answer=2
 
-红色的珠子有几颗？
+数一数：红色的草莓有几颗？

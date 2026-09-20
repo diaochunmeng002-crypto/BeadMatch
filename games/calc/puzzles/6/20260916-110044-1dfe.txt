@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:44
 created_by=manual
 id=20260916-110044-1dfe
-title=三蓝两黄
+title=小鱼 🐟
 level=6
 task=missing
 participants=Y Y B B B
 answer=3
 
-桌上有 5 颗，再添几颗就到 8 颗了？
+鱼缸里有 5 条小鱼，再添几条就到 8 条了？

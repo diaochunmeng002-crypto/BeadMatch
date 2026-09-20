@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:41
 created_by=manual
 id=20260916-110141-0c4d
-title=三黄三绿三红
+title=小蘑菇 🍄
 level=12
 task=make
 participants=Y Y Y G G G R R R
 answer=7
 
-用黄色、绿色、红色 三种颜色凑出 6 颗，每种颜色至少 1 颗，一共有几种凑法？
+用黄色、绿色、红色 三种小蘑菇凑出 6 个，每种颜色至少 1 个，一共有几种凑法？

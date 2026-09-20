@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:06
 created_by=manual
 id=20260916-101506-31bd
-title=三色各一颗
+title=小饼干 🍪
 level=1
 task=count
 participants=R Y B
 answer=3
 
-数一数：一共有几颗珠子？
+数一数：盘子上一共有几块小饼干？

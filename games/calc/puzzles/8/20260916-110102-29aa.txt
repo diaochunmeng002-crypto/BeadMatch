@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:02
 created_by=manual
 id=20260916-110102-29aa
-title=一红一蓝
+title=气球 🎈
 level=8
 task=missing
 participants=R B
 answer=6
 
-不用摆珠子，直接算：2 颗再加几颗，正好是 8 颗？
+不用摆珠子，直接算：2 个再加几个，正好是 8 个？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:54
 created_by=manual
 id=20260916-110054-3ced
-title=四蓝两黄
+title=小鱼 🐟
 level=7
 task=group
 participants=Y Y B B B B
 answer=4
 
-把 6 颗分成两堆：一堆 2 颗，另一堆几颗？
+把 6 条小鱼分成两缸：一缸 2 条，另一缸几条？

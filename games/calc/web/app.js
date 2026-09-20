@@ -186,21 +186,26 @@ function answerText(card) {
 // ---------------------------------------------------------------------------
 
 function renderCard(p) {
-  // 材料：珠子 + 颜色名 + ×几颗
+  // 材料：把珠子**画出来**（几颗就画几个圆点，孩子能直接点数）+ 颜色名 + 几颗
   materialsEl.innerHTML = '';
   (p.participants || []).forEach((m) => {
     const row = document.createElement('div');
     row.className = 'material';
-    const dot = document.createElement('span');
-    dot.className = 'dot';
-    dot.style.background = (COLORS[m.color] || {}).css || '#888';
+    const dots = document.createElement('span');
+    dots.className = 'dots';
+    for (let i = 0; i < m.count; i += 1) {
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.style.background = (COLORS[m.color] || {}).css || '#888';
+      dots.appendChild(dot);
+    }
     const name = document.createElement('span');
     name.className = 'name';
     name.textContent = m.name;
-    const times = document.createElement('span');
-    times.className = 'times';
-    times.textContent = '×' + m.count;
-    row.append(dot, name, times);
+    const count = document.createElement('span');
+    count.className = 'count';
+    count.textContent = m.count + ' 颗';
+    row.append(dots, name, count);
     materialsEl.appendChild(row);
   });
 

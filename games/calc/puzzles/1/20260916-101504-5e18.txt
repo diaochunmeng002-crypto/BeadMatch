@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:04
 created_by=manual
 id=20260916-101504-5e18
-title=两紫两橙
+title=小星星 ⭐
 level=1
 task=count
 participants=P P O O
 answer=4
 
-数一数：一共有几颗珠子？
+数一数：天上一共有几颗小星星？

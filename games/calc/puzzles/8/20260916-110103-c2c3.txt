@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:03
 created_by=manual
 id=20260916-110103-c2c3
-title=两绿一黄
+title=小汽车 🚗
 level=8
 task=missing
 participants=Y G G
 answer=4
 
-不用摆珠子，直接算：3 颗再加几颗，正好是 7 颗？
+不用摆珠子，直接算：3 辆再加几辆，正好是 7 辆？

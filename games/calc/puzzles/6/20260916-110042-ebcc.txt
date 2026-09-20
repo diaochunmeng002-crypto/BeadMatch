@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:42
 created_by=manual
 id=20260916-110042-ebcc
-title=两红两蓝
+title=气球 🎈
 level=6
 task=missing
 participants=R R B B
 answer=4
 
-桌上有 4 颗，再添几颗就到 8 颗了？
+手里有 4 个气球，再添几个就到 8 个了？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:09
 created_by=manual
 id=20260916-101509-2d73
-title=五色各一颗
+title=小鸟站枝头 🐦
 level=1
 task=count
 participants=R Y G B P
 answer=5
 
-数一数：一共有几颗珠子？
+数一数：树上一共有几只小鸟？

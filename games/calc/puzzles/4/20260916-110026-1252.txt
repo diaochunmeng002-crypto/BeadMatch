@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:26
 created_by=manual
 id=20260916-110026-1252
-title=三橙两绿
+title=小星星 ⭐
 level=4
 task=add
 participants=G G O O O
 answer=5
 
-橙色 3 颗和绿色 2 颗合起来，一共几颗？
+橙色小星星 3 颗和绿色小星星 2 颗放在一起，一共几颗？

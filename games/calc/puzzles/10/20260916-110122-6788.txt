@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:22
 created_by=manual
 id=20260916-110122-6788
-title=三红三蓝
+title=气球 🎈
 level=10
 task=group
 participants=R R R B B B
 answer=3
 
-把 6 颗分成两堆，每堆至少 1 颗，不管哪堆在前，一共有几种分法？
+把 6 个气球分成两堆，每堆至少 1 个，不管哪堆在前，一共有几种分法？

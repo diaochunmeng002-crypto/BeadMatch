@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:41
 created_by=manual
 id=20260916-110041-52b3
-title=两绿两红
+title=小蘑菇 🍄
 level=6
 task=missing
 participants=G G R R
 answer=3
 
-桌上有 4 颗，再添几颗就到 7 颗了？
+篮子里有 4 个小蘑菇，再添几个就到 7 个了？

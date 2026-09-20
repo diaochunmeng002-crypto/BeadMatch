@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:40
 created_by=manual
 id=20260916-110040-b99a
-title=两黄两红
+title=小饼干 🍪
 level=6
 task=missing
 participants=Y Y R R
 answer=2
 
-桌上有 4 颗，再添几颗就到 6 颗了？
+盘子里有 4 块小饼干，再添几块就到 6 块了？

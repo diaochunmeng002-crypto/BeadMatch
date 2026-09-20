@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:39
 created_by=manual
 id=20260916-110039-fc8c
-title=四黄一紫
+title=小鸭子 🦆
 level=5
 task=subtract
 participants=Y Y Y Y P
 answer=1
 
-一共有 5 颗，把黄色的 4 颗拿走，还剩几颗？
+池塘里一共有 5 只小鸭子，黄色的 4 只游走了，还剩几只？

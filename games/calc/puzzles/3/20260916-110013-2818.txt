@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:13
 created_by=manual
 id=20260916-110013-2818
-title=三绿两黄
+title=小蘑菇 🍄
 level=3
 task=compare
 participants=Y Y G G G
 answer=G
 
-绿色有 3 颗，黄色有 2 颗。哪种颜色的多？
+绿色小蘑菇有 3 个，黄色小蘑菇有 2 个。哪种颜色的小蘑菇多？

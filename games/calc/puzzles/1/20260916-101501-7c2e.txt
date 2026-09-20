@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:01
 created_by=manual
 id=20260916-101501-7c2e
-title=两蓝两黄
+title=气球飞呀飞 🎈
 level=1
 task=count
 participants=B B Y Y
 answer=2
 
-蓝色的珠子有几颗？
+数一数：蓝色气球有几个？

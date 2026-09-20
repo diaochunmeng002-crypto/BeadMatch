@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:07
 created_by=manual
 id=20260916-110007-6d8d
-title=四橙一蓝
+title=小章鱼 🐙
 level=2
 task=equal
 participants=B O O O O
 answer=3
 
-把橙色和蓝色一颗对一颗地配。配完之后，多出来的有几颗？
+把橙色小章鱼和蓝色小章鱼一只一只地配。配完之后，多出来的有几只？

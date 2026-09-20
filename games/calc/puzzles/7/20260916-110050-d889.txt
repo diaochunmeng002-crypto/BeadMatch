@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:50
 created_by=manual
 id=20260916-110050-d889
-title=三黄三红
+title=小饼干 🍪
 level=7
 task=group
 participants=Y Y Y R R R
 answer=4
 
-把 6 颗分成两堆：一堆 2 颗，另一堆几颗？
+把 6 块小饼干分成两盘：一盘 2 块，另一盘几块？

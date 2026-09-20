@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:27
 created_by=manual
 id=20260916-110027-ab6b
-title=四橙一蓝
+title=小积木 🧱
 level=4
 task=add
 participants=B O O O O
 answer=5
 
-橙色 4 颗和蓝色 1 颗合起来，一共几颗？
+橙色小积木 4 块和蓝色小积木 1 块搭在一起，一共几块？

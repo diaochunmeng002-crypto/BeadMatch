@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:23
 created_by=manual
 id=20260916-110023-4707
-title=三绿两黄
+title=小饼干 🍪
 level=4
 task=add
 participants=Y Y G G G
 answer=5
 
-绿色 3 颗和黄色 2 颗合起来，一共几颗？
+绿色小饼干 3 块和黄色小饼干 2 块放在一起，一共几块？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:52
 created_by=manual
 id=20260916-110052-0abb
-title=四红两蓝
+title=小汽车 🚗
 level=7
 task=group
 participants=R R R R B B
 answer=4
 
-把 6 颗分成两堆：一堆 2 颗，另一堆几颗？
+把 6 辆小汽车分成两排：一排 2 辆，另一排几辆？

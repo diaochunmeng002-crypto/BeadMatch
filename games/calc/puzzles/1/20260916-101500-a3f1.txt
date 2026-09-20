@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:00
 created_by=manual
 id=20260916-101500-a3f1
-title=两红两蓝
+title=停车场 🚗
 level=1
 task=count
 participants=R R B B
 answer=4
 
-数一数：一共有几颗珠子？
+数一数：停车场上停了几辆小汽车？

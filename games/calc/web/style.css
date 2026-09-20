@@ -125,16 +125,18 @@ main { width: 100%; max-width: 46rem; }
 
 .material { display: flex; align-items: center; gap: 10px; }
 
+.material .dots { display: flex; gap: 6px; }
+
 .material .dot {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   flex: 0 0 auto;
   box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
 }
 
 .material .name { font-size: 1.05rem; }
-.material .times { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.material .count { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* ---- 题目 ---- */
 

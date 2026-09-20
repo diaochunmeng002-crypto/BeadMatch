@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:29
 created_by=manual
 id=20260916-110029-dd9d
-title=四紫一黄
+title=小皮球 ⚽
 level=4
 task=add
 participants=Y P P P P
 answer=5
 
-紫色 4 颗和黄色 1 颗合起来，一共几颗？
+紫色小皮球 4 个和黄色小皮球 1 个放在一起，一共几个？

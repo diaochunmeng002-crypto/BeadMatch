@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:05
 created_by=manual
 id=20260916-110005-3b5b
-title=四紫一绿
+title=小海豚 🐬
 level=2
 task=equal
 participants=G P P P P
 answer=3
 
-把紫色和绿色一颗对一颗地配。配完之后，多出来的有几颗？
+把紫色小海豚和绿色小海豚一条一条地配。配完之后，多出来的有几条？

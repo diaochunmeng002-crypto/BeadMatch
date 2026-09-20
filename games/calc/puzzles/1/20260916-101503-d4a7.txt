@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:03
 created_by=manual
 id=20260916-101503-d4a7
-title=两绿两紫
+title=书包排排队 🎒
 level=1
 task=count
 participants=G G P P
 answer=2
 
-紫色的珠子有几颗？
+数一数：紫色书包有几个？

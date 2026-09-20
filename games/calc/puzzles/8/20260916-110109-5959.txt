@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:09
 created_by=manual
 id=20260916-110109-5959
-title=三黄两紫
+title=小鸭子 🦆
 level=8
 task=missing
 participants=Y Y Y P P
 answer=4
 
-不用摆珠子，直接算：5 颗再加几颗，正好是 9 颗？
+不用摆珠子，直接算：5 只再加几只，正好是 9 只？

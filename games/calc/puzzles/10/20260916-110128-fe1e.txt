@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:28
 created_by=manual
 id=20260916-110128-fe1e
-title=五紫四橙
+title=小星星 ⭐
 level=10
 task=group
 participants=P P P P P O O O O
 answer=4
 
-把 9 颗分成两堆，每堆至少 1 颗，不管哪堆在前，一共有几种分法？
+把 9 颗小星星分成两堆，每堆至少 1 颗，不管哪堆在前，一共有几种分法？

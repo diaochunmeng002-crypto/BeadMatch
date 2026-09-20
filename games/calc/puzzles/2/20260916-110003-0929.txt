@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:03
 created_by=manual
 id=20260916-110003-0929
-title=三黄两绿
+title=小乌龟 🐢
 level=2
 task=equal
 participants=Y Y Y G G
 answer=1
 
-把黄色和绿色一颗对一颗地配。配完之后，多出来的有几颗？
+把黄色小乌龟和绿色小乌龟一只一只地配。配完之后，多出来的有几只？

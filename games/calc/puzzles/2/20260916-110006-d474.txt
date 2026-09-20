@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:06
 created_by=manual
 id=20260916-110006-d474
-title=四橙一绿
+title=小蜜蜂 🐝
 level=2
 task=equal
 participants=G O O O O
 answer=3
 
-把橙色和绿色一颗对一颗地配。配完之后，多出来的有几颗？
+把橙色小蜜蜂和绿色小蜜蜂一只一只地配。配完之后，多出来的有几只？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:43
 created_by=manual
 id=20260916-110043-84e5
-title=三绿两黄
+title=小汽车 🚗
 level=6
 task=missing
 participants=Y Y G G G
 answer=2
 
-桌上有 5 颗，再添几颗就到 7 颗了？
+停车场有 5 辆小汽车，再开几辆来就到 7 辆了？

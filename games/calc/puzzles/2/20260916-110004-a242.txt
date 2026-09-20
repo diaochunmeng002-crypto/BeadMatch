@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:04
 created_by=manual
 id=20260916-110004-a242
-title=三蓝两黄
+title=小螃蟹 🦀
 level=2
 task=equal
 participants=Y Y B B B
 answer=1
 
-把蓝色和黄色一颗对一颗地配。配完之后，多出来的有几颗？
+把蓝色小螃蟹和黄色小螃蟹一只一只地配。配完之后，多出来的有几只？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:17
 created_by=manual
 id=20260916-110017-8c7c
-title=四蓝一橙
+title=小积木 🧱
 level=3
 task=compare
 participants=B B B B O
 answer=B
 
-蓝色有 4 颗，橙色有 1 颗。哪种颜色的多？
+蓝色小积木有 4 块，橙色小积木有 1 块。哪种颜色的小积木多？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:37
 created_by=manual
 id=20260916-110137-83f4
-title=五蓝三橙
+title=小积木 🧱
 level=11
 task=make
 participants=B B B B B O O O
 answer=3
 
-用蓝色和橙色凑出 6 颗，一共有几种凑法？
+用蓝色小积木和橙色小积木凑出 6 块，一共有几种凑法？

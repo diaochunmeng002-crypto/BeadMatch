@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:04
 created_by=manual
 id=20260916-110104-5bdc
-title=两蓝一黄
+title=小鱼 🐟
 level=8
 task=missing
 participants=Y B B
 answer=5
 
-不用摆珠子，直接算：3 颗再加几颗，正好是 8 颗？
+不用摆珠子，直接算：3 条再加几条，正好是 8 条？

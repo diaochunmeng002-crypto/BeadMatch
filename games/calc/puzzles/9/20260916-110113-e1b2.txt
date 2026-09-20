@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:13
 created_by=manual
 id=20260916-110113-e1b2
-title=三黄两绿
+title=小鸭子 🦆
 level=9
 task=chain
 participants=Y Y Y G G
 answer=7
 
-原来有 5 颗，先添 3 颗，再拿走 1 颗，现在还剩几颗？
+池塘里原来有 5 只小鸭子，先游来 3 只，再游走 1 只，现在还剩几只？

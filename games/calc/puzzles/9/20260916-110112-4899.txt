@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:12
 created_by=manual
 id=20260916-110112-4899
-title=三蓝两红
+title=气球 🎈
 level=9
 task=chain
 participants=R R B B B
 answer=4
 
-原来有 5 颗，先添 1 颗，再拿走 2 颗，现在还剩几颗？
+手里原来有 5 个气球，先添 1 个，再送走 2 个，现在还剩几个？

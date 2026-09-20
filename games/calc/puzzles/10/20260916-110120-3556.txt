@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:20
 created_by=manual
 id=20260916-110120-3556
-title=三红两黄
+title=小饼干 🍪
 level=10
 task=group
 participants=Y Y R R R
 answer=2
 
-把 5 颗分成两堆，每堆至少 1 颗，不管哪堆在前，一共有几种分法？
+把 5 块小饼干分成两堆，每堆至少 1 块，不管哪堆在前，一共有几种分法？

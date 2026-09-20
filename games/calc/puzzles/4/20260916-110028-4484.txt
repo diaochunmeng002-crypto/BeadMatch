@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:28
 created_by=manual
 id=20260916-110028-4484
-title=四橙一紫
+title=小草莓 🍓
 level=4
 task=add
 participants=P O O O O
 answer=5
 
-橙色 4 颗和紫色 1 颗合起来，一共几颗？
+橙色小草莓 4 颗和紫色小草莓 1 颗放在一起，一共几颗？

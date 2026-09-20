@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:40
 created_by=manual
 id=20260916-110140-7334
-title=三黄三红三蓝
+title=小饼干 🍪
 level=12
 task=make
 participants=Y Y Y R R R B B B
 answer=6
 
-用黄色、红色、蓝色 三种颜色凑出 5 颗，每种颜色至少 1 颗，一共有几种凑法？
+用黄色、红色、蓝色 三种小饼干凑出 5 块，每种颜色至少 1 块，一共有几种凑法？

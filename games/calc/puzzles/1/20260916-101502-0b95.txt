@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:02
 created_by=manual
 id=20260916-101502-0b95
-title=两黄两绿
+title=小鸭子游泳 🦆
 level=1
 task=count
 participants=Y Y G G
 answer=4
 
-数一数：一共有几颗珠子？
+数一数：池塘里一共有几只小鸭子？

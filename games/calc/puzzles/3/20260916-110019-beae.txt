@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:19
 created_by=manual
 id=20260916-110019-beae
-title=四紫一黄
+title=小铃铛 🔔
 level=3
 task=compare
 participants=Y P P P P
 answer=P
 
-紫色有 4 颗，黄色有 1 颗。哪种颜色的多？
+紫色小铃铛有 4 个，黄色小铃铛有 1 个。哪种颜色的小铃铛多？

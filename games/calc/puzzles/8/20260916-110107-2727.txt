@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:07
 created_by=manual
 id=20260916-110107-2727
-title=两蓝两橙
+title=小积木 🧱
 level=8
 task=missing
 participants=B B O O
 answer=5
 
-不用摆珠子，直接算：4 颗再加几颗，正好是 9 颗？
+不用摆珠子，直接算：4 块再加几块，正好是 9 块？

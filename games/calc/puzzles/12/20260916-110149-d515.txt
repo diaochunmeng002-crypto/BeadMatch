@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:49
 created_by=manual
 id=20260916-110149-d515
-title=三黄三绿三蓝
+title=小鸭子 🦆
 level=12
 task=make
 participants=Y Y Y G G G B B B
 answer=7
 
-用黄色、绿色、蓝色 三种颜色凑出 6 颗，每种颜色至少 1 颗，一共有几种凑法？
+用黄色、绿色、蓝色 三种小鸭子凑出 6 只，每种颜色至少 1 只，一共有几种凑法？

@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:02
 created_by=manual
 id=20260916-110002-7010
-title=三蓝两红
+title=小鱼 🐟
 level=2
 task=equal
 participants=R R B B B
 answer=1
 
-把蓝色和红色一颗对一颗地配。配完之后，多出来的有几颗？
+把蓝色小鱼和红色小鱼一条一条地配。配完之后，多出来的有几条？

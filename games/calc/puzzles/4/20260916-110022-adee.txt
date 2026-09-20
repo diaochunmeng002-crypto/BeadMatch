@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:22
 created_by=manual
 id=20260916-110022-adee
-title=三红两蓝
+title=气球 🎈
 level=4
 task=add
 participants=R R R B B
 answer=5
 
-红色 3 颗和蓝色 2 颗合起来，一共几颗？
+红色气球 3 个和蓝色气球 2 个飘到一起，一共几个？

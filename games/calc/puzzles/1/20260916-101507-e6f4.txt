@@ -3,10 +3,10 @@
 created_at=2026-09-16 10:15:07
 created_by=manual
 id=20260916-101507-e6f4
-title=绿一蓝二橙二
+title=小鱼游呀游 🐟
 level=1
 task=count
 participants=G B B O O
 answer=5
 
-数一数：一共有几颗珠子？
+数一数：鱼缸里一共有几条小鱼？

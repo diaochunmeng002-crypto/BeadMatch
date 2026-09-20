@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:30
 created_by=manual
 id=20260916-110030-9aab
-title=三红两黄
+title=小草莓 🍓
 level=5
 task=subtract
 participants=Y Y R R R
 answer=2
 
-一共有 5 颗，把红色的 3 颗拿走，还剩几颗？
+盒子里一共有 5 颗小草莓，把红色的 3 颗拿走，还剩几颗？

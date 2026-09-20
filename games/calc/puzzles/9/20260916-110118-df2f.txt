@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:18
 created_by=manual
 id=20260916-110118-df2f
-title=四橙三绿两黄
+title=小草莓 🍓
 level=9
 task=add
 participants=Y Y G G G O O O O
 answer=9
 
-橙色 4 颗、绿色 3 颗、黄色 2 颗，合起来一共几颗？
+橙色小草莓 4 颗、绿色小草莓 3 颗、黄色小草莓 2 颗，合起来一共几颗？

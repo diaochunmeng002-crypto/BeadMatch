@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:00
 created_by=manual
 id=20260916-110000-3dde
-title=三黄两红
+title=小鸭子 🦆
 level=2
 task=equal
 participants=Y Y Y R R
 answer=1
 
-把黄色和红色一颗对一颗地配。配完之后，多出来的有几颗？
+把黄色小鸭子和红色小鸭子一只一只地配。配完之后，多出来的有几只？

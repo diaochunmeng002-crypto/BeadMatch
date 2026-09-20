@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:33
 created_by=manual
 id=20260916-110133-1f90
-title=四绿三黄
+title=小汽车 🚗
 level=11
 task=make
 participants=Y Y Y G G G G
 answer=3
 
-用绿色和黄色凑出 5 颗，一共有几种凑法？
+用绿色小汽车和黄色小汽车凑出 5 辆，一共有几种凑法？

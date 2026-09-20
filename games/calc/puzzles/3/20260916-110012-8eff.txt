@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:12
 created_by=manual
 id=20260916-110012-8eff
-title=三蓝两红
+title=小饼干 🍪
 level=3
 task=compare
 participants=R R B B B
 answer=B
 
-蓝色有 3 颗，红色有 2 颗。哪种颜色的多？
+蓝色小饼干有 3 块，红色小饼干有 2 块。哪种颜色的小饼干多？

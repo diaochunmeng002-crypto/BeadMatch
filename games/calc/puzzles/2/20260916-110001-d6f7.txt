@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:01
 created_by=manual
 id=20260916-110001-d6f7
-title=三绿两红
+title=小企鹅 🐧
 level=2
 task=equal
 participants=G G G R R
 answer=1
 
-把绿色和红色一颗对一颗地配。配完之后，多出来的有几颗？
+把绿色小企鹅和红色小企鹅一只一只地配。配完之后，多出来的有几只？

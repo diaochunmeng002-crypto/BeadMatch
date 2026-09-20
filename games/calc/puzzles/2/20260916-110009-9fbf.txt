@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:00:09
 created_by=manual
 id=20260916-110009-9fbf
-title=四黄一紫
+title=小熊猫 🐼
 level=2
 task=equal
 participants=Y Y Y Y P
 answer=3
 
-把黄色和紫色一颗对一颗地配。配完之后，多出来的有几颗？
+把黄色小熊猫和紫色小熊猫一只一只地配。配完之后，多出来的有几只？

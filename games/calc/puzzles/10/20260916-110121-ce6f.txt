@@ -3,10 +3,10 @@
 created_at=2026-09-16 11:01:21
 created_by=manual
 id=20260916-110121-ce6f
-title=三绿两红
+title=小蘑菇 🍄
 level=10
 task=group
 participants=G G G R R
 answer=2
 
-把 5 颗分成两堆，每堆至少 1 颗，不管哪堆在前，一共有几种分法？
+把 5 个小蘑菇分成两堆，每堆至少 1 个，不管哪堆在前，一共有几种分法？
