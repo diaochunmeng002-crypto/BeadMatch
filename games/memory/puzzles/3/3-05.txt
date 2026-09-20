@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=3-05
-title=两黄两绿两蓝
+title=小风筝高飞 🪁
+noun=小风筝
+unit=只
 level=3
 materials=Y Y G G B B
 shape=row

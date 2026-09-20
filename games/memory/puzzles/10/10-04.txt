@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=10-04
-title=三红两黄两蓝两橙一紫
+title=小章鱼排一排 🐙
+noun=小章鱼
+unit=只
 level=10
 materials=Y Y R R R P B B O O
 shape=triangle

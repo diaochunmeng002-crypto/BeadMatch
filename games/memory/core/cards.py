@@ -63,8 +63,8 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from . import colors as C
 
 # 元信息区的输出顺序（时间 / 谁定的 固定在前两行）
-META_ORDER = ("created_at", "created_by", "id", "title", "level", "materials",
-              "shape", "observe", "restore", "delay", "reverse", "demo")
+META_ORDER = ("created_at", "created_by", "id", "title", "noun", "unit", "level",
+              "materials", "shape", "observe", "restore", "delay", "reverse", "demo")
 REQUIRED_KEYS = ("id", "level", "materials")
 _INT_KEYS = ("level", "observe", "delay")
 _BOOL_KEYS = ("reverse",)
@@ -104,6 +104,8 @@ class Card:
     """一张规则卡：**只有规则，没有答案**。元信息（id / level / …）单独放在 ``meta`` 里。"""
 
     materials: Tuple[str, ...]      # 用哪些颜色、各几颗，一串字母，如 ("R","R","R","Y")
+    noun: str                       # 这些珠子在这道题里扮演谁（"小螃蟹"），空 = 就写"珠子"
+    unit: str                       # 数它的时候用什么量词（"只"），空 = 用"颗"
     shape: str                      # 摆成什么形式
     observe: int                    # 观察几秒
     restore: str                    # 还原什么
@@ -118,6 +120,16 @@ class Card:
     def beads(self) -> int:
         """一共几颗珠子。"""
         return len(self.materials)
+
+    @property
+    def noun_cn(self) -> str:
+        """叫它的名字：卡里写了 ``noun`` 就用它，不然就叫"珠子"。"""
+        return self.noun or "珠子"
+
+    @property
+    def unit_cn(self) -> str:
+        """数它的量词：卡里写了 ``unit`` 就用它，不然就是"颗"。"""
+        return self.unit or "颗"
 
     @property
     def color_kinds(self) -> int:
@@ -257,8 +269,21 @@ def parse_card(text: str) -> Tuple[Card, Dict[str, object]]:
         raise ValueError("created_at 的格式不对：%r（要写成 2026-09-16 10:00:00）"
                          % meta["created_at"])
 
-    card = Card(materials=materials, shape=shape, observe=observe, restore=restore,
-                delay=delay, reverse=reverse, demo=demo, note="\n".join(note_lines))
+    # ---- 这道题里珠子扮演谁（可写可不写：不写就是"珠子"、"颗"）----
+    noun = str(meta.get("noun") or "").strip()
+    unit = str(meta.get("unit") or "").strip()
+    for key, value in (("noun", noun), ("unit", unit)):
+        if "\n" in value or "=" in value:
+            raise ValueError("%s 不能带换行或等号：%r" % (key, value))
+    if len(noun) > 12:
+        raise ValueError("noun 太长（最多 12 个字）：%r" % noun)
+    if len(unit) > 2:
+        raise ValueError("unit 太长（最多 2 个字，比如 只 / 条 / 辆 / 块）：%r" % unit)
+    meta["noun"], meta["unit"] = noun, unit
+
+    card = Card(materials=materials, noun=noun, unit=unit, shape=shape, observe=observe,
+                restore=restore, delay=delay, reverse=reverse, demo=demo,
+                note="\n".join(note_lines))
     return card, meta
 
 

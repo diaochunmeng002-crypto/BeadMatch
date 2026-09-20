@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=4-03
-title=三红两黄两紫
+title=小香蕉弯弯 🍌
+noun=小香蕉
+unit=根
 level=4
 materials=Y Y R R R P P
 shape=row

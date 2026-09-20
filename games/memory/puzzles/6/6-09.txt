@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=6-09
-title=四蓝两绿一红一橙
+title=小铃铛叮当 🔔
+noun=小铃铛
+unit=个
 level=6
 materials=G G R B B B B O
 shape=row

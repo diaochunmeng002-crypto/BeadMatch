@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=10-03
-title=三橙两黄两绿两蓝一紫
+title=小海豚排队游 🐬
+noun=小海豚
+unit=条
 level=10
 materials=Y Y G G P B B O O O
 shape=triangle

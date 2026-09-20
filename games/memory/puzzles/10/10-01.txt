@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=10-01
-title=五色各两颗
+title=小螃蟹排队走 🦀
+noun=小螃蟹
+unit=只
 level=10
 materials=Y Y G G R R P P O O
 shape=triangle

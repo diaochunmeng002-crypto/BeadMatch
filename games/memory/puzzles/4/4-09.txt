@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=4-09
-title=四绿两红一紫
+title=气球挂起来 🎈
+noun=气球
+unit=个
 level=4
 materials=G G G G R R P
 shape=row

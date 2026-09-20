@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=8-04
-title=三紫两绿两红两蓝
+title=小飞机飞过 ✈️
+noun=小飞机
+unit=架
 level=8
 materials=G G R R P P P B B
 shape=rows2

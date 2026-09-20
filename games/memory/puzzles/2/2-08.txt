@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=2-08
-title=三橙两蓝
+title=小蜜蜂采蜜 🐝
+noun=小蜜蜂
+unit=只
 level=2
 materials=B B O O O
 shape=row

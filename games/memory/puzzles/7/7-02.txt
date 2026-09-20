@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=7-02
-title=三橙两红两紫一绿
+title=小风筝飞飞 🪁
+noun=小风筝
+unit=只
 level=7
 materials=G R R P P O O O
 shape=rows2

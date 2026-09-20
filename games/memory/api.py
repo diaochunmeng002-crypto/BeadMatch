@@ -61,6 +61,8 @@ def _card_payload(card: c.Card, meta: Dict[str, object]) -> Dict[str, object]:
     return {
         "id": meta.get("id", ""),
         "title": meta.get("title", ""),
+        "noun": card.noun_cn,                      # 这些珠子扮演谁（没写就是"珠子"）
+        "unit": card.unit_cn,                      # 数它的量词（没写就是"颗"）
         "level": int(meta.get("level", 0)),
         "materials": C.counts_of(card.materials),   # [{color, name, cn, en, emoji, count}]
         "beads": card.beads,                        # 一共几颗

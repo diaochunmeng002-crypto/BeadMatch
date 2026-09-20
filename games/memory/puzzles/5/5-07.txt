@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=5-07
-title=四蓝两黄两紫
+title=小积木搭高 🧱
+noun=小积木
+unit=块
 level=5
 materials=Y Y P P B B B B
 shape=row

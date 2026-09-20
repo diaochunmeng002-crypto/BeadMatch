@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=9-02
-title=五色各两颗
+title=小星星挂天上 ⭐
+noun=小星星
+unit=颗
 level=9
 materials=Y Y G G R R P P O O
 shape=rows2

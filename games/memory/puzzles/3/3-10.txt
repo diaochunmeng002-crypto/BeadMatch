@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=3-10
-title=三红两绿一紫
+title=小蛋糕香香 🎂
+noun=小蛋糕
+unit=块
 level=3
 materials=G G R R R P
 shape=row

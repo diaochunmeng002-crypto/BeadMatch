@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=8-07
-title=四橙两黄两红一紫
+title=小鸭子排成行 🦆
+noun=小鸭子
+unit=只
 level=8
 materials=Y Y R R P O O O O
 shape=rows2

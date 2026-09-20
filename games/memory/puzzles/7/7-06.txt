@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=7-06
-title=四绿两红一黄一蓝
+title=小花朵排成队 🌸
+noun=小花朵
+unit=朵
 level=7
 materials=Y G G G G R R B
 shape=rows2

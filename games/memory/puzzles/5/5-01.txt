@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=5-01
-title=三黄三蓝两红
+title=小汽车排队 🚗
+noun=小汽车
+unit=辆
 level=5
 materials=Y Y Y R R B B B
 shape=row

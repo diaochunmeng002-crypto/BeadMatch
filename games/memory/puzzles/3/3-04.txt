@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=3-04
-title=两绿两蓝两橙
+title=小玩偶坐好 🧸
+noun=小玩偶
+unit=个
 level=3
 materials=G G B B O O
 shape=row

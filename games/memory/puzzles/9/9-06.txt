@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=9-06
-title=三绿两红两紫两橙一蓝
+title=小兔子排排站 🐰
+noun=小兔子
+unit=只
 level=9
 materials=G G G R R P P B O O
 shape=rows2

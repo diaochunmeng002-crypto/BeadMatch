@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=1-06
-title=两紫两橙
+title=小鱼游游 🐟
+noun=小鱼
+unit=条
 level=1
 materials=P P O O
 shape=row

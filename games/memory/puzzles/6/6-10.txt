@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=6-10
-title=四绿两紫一蓝一橙
+title=小书包装好 🎒
+noun=小书包
+unit=个
 level=6
 materials=G G G G P P B O
 shape=row

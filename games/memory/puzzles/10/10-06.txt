@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=10-06
-title=三黄两红两蓝两橙一绿
+title=小铃铛挂一排 🔔
+noun=小铃铛
+unit=个
 level=10
 materials=Y Y Y G R R B B O O
 shape=triangle

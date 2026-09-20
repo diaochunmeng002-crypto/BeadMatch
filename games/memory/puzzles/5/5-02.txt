@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=5-02
-title=三红三橙两黄
+title=小饼干摆好 🍪
+noun=小饼干
+unit=块
 level=5
 materials=Y Y R R R O O O
 shape=row

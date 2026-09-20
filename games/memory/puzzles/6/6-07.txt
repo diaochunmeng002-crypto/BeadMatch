@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=6-07
-title=三红两黄两蓝一紫
+title=小章鱼游泳 🐙
+noun=小章鱼
+unit=只
 level=6
 materials=Y Y R R R P B B
 shape=row

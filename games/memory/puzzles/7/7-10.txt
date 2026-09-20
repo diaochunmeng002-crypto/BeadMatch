@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=7-10
-title=四黄两紫一蓝一橙
+title=小香蕉摆一摆 🍌
+noun=小香蕉
+unit=根
 level=7
 materials=Y Y Y Y P P B O
 shape=rows2

@@ -136,7 +136,7 @@ main { width: 100%; max-width: 46rem; }
 }
 
 .material .name { font-size: 1.05rem; }
-.material .count { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.material .qty { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* ---- 题目 ---- */
 

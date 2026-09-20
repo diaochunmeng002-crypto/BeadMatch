@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=9-04
-title=五色各两颗
+title=小积木搭城堡 🧱
+noun=小积木
+unit=块
 level=9
 materials=Y Y G G P P B B O O
 shape=rows2

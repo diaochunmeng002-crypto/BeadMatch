@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=1-05
-title=三红一绿
+title=小饼干一盘 🍪
+noun=小饼干
+unit=块
 level=1
 materials=R R R G
 shape=row

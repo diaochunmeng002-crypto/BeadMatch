@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=2-02
-title=三绿两红
+title=小兔子跳跳 🐰
+noun=小兔子
+unit=只
 level=2
 materials=G G G R R
 shape=row

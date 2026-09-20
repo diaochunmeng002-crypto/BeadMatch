@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=4-06
-title=四紫两橙一绿
+title=小帆船航行 ⛵
+noun=小帆船
+unit=艘
 level=4
 materials=G P P P P O O
 shape=row

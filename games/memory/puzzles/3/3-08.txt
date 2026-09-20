@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=3-08
-title=三橙两紫一蓝
+title=小月亮弯弯 🌙
+noun=小月亮
+unit=个
 level=3
 materials=P P B O O O
 shape=row

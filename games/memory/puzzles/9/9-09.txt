@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=9-09
-title=三蓝两黄两紫两橙一绿
+title=小猴子排成队 🐒
+noun=小猴子
+unit=只
 level=9
 materials=Y Y G P P B B B O O
 shape=rows2

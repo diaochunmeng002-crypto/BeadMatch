@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=8-06
-title=四蓝两黄两紫一绿
+title=气球飘起来 🎈
+noun=气球
+unit=个
 level=8
 materials=Y Y G P P B B B B
 shape=rows2

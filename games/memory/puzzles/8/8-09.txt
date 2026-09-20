@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=8-09
-title=四红两紫两橙一蓝
+title=小饼干摆一盘 🍪
+noun=小饼干
+unit=块
 level=8
 materials=R R R R P P B O O
 shape=rows2

@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=3-03
-title=两黄两红两紫
+title=小书包上学 🎒
+noun=小书包
+unit=个
 level=3
 materials=Y Y R R P P
 shape=row

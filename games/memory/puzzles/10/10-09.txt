@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=10-09
-title=四橙两红两紫一黄一蓝
+title=小风筝排一排 🪁
+noun=小风筝
+unit=只
 level=10
 materials=Y R R P P B O O O O
 shape=triangle

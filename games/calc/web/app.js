@@ -188,11 +188,15 @@ function answerText(card) {
 function renderCard(p) {
   // 材料：把珠子**画出来**（几颗就画几个圆点，孩子能直接点数）+ 颜色名 + 几颗
   materialsEl.innerHTML = '';
-  (p.participants || []).forEach((m) => {
+  const rows = p.participants || [];
+  // 圆点列统一宽度：一行画 5 颗也放得下，这样"颜色名 / 几颗"能上下对齐
+  const dotCol = Math.max(1, ...rows.map((m) => m.count)) * 28;
+  rows.forEach((m) => {
     const row = document.createElement('div');
     row.className = 'material';
     const dots = document.createElement('span');
     dots.className = 'dots';
+    dots.style.minWidth = dotCol + 'px';
     for (let i = 0; i < m.count; i += 1) {
       const dot = document.createElement('span');
       dot.className = 'dot';
@@ -202,10 +206,10 @@ function renderCard(p) {
     const name = document.createElement('span');
     name.className = 'name';
     name.textContent = m.name;
-    const count = document.createElement('span');
-    count.className = 'count';
-    count.textContent = m.count + ' 颗';
-    row.append(dots, name, count);
+    const qty = document.createElement('span');
+    qty.className = 'qty';                 // 别叫 .count —— 以后加倒计时会跟它撞
+    qty.textContent = m.count + ' 颗';
+    row.append(dots, name, qty);
     materialsEl.appendChild(row);
   });
 

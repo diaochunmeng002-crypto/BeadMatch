@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=10-10
-title=四绿两红两紫一蓝一橙
+title=小雪花一起飘 ❄️
+noun=小雪花
+unit=片
 level=10
 materials=G G G G R R P P B O
 shape=triangle

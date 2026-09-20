@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=1-07
-title=三蓝一黄
+title=小蘑菇长出 🍄
+noun=小蘑菇
+unit=个
 level=1
 materials=B B B Y
 shape=row

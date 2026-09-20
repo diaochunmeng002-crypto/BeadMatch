@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=4-05
-title=三橙两红两紫
+title=小火箭发射 🚀
+noun=小火箭
+unit=个
 level=4
 materials=R R P P O O O
 shape=row

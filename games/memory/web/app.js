@@ -218,11 +218,13 @@ function pulse(el) {
  * 卡片正文（`note`）只放「这一档额外的嘱咐」（比如 L5 的"别摆成规律"），有就补在三步后面。
  */
 function taskLines(p) {
+  const noun = (p.noun || '').trim() || '珠子';      // 这道题里珠子扮演谁（卡里的 noun=）
+  const unit = (p.unit || '').trim() || '颗';        // 数它的量词（卡里的 unit=）
   const shape = p.shape === 'row' ? '排成一排' : `摆成${p.shape_cn || p.shape}`;
-  const lines = [`把 ${p.beads} 颗珠子${shape}（顺序随意）`];
+  const lines = [`把 ${p.beads} ${unit}${noun}${shape}（顺序随意）`];
   lines.push(`给孩子看 ${p.observe} 秒后盖住${p.delay ? `，再等 ${p.delay} 秒` : ''}`);
   if (p.reverse) lines.push('再让孩子从右往左凭记忆摆回来');
-  else if (p.restore === 'layout') lines.push('再让孩子凭记忆摆回每一颗的位置');
+  else if (p.restore === 'layout') lines.push(`再让孩子凭记忆摆回每一${unit}的位置`);
   else lines.push('再让孩子凭记忆摆回原来的顺序');
   const note = (p.note || '').trim();
   if (note) lines.push(...note.split('\n').map((s) => s.trim()).filter(Boolean));
@@ -230,18 +232,25 @@ function taskLines(p) {
 }
 
 function renderCard(p) {
-  // 材料：珠子 + 颜色名 + ×几颗
+  // 材料：把珠子**画出来**（几颗就画几个圆点，孩子能直接点数）+ 颜色名 + 几颗
   materialsEl.innerHTML = '';
-  (p.materials || []).forEach((m) => {
+  const rows = p.materials || [];
+  // 圆点列统一宽度：一行画 5 颗也放得下，这样"颜色名 / 几颗"能上下对齐
+  const dotCol = Math.max(1, ...rows.map((m) => m.count)) * 28;
+  rows.forEach((m) => {
     const row = document.createElement('div');
     row.className = 'material';
+    const dots = document.createElement('span');
+    dots.className = 'dots';
+    dots.style.minWidth = dotCol + 'px';
+    for (let i = 0; i < m.count; i += 1) dots.append(dotEl(m.color, 'dot'));
     const name = document.createElement('span');
     name.className = 'name';
-    name.textContent = m.name;
-    const times = document.createElement('span');
-    times.className = 'times';
-    times.textContent = '×' + m.count;
-    row.append(dotEl(m.color, 'dot'), name, times);
+    name.textContent = m.name + ((p.noun || '').trim());     // "黄色" + "小螃蟹"
+    const qty = document.createElement('span');
+    qty.className = 'qty';                 // 别叫 .count —— 那是倒计时大字的类名
+    qty.textContent = m.count + ' ' + ((p.unit || '').trim() || '颗');
+    row.append(dots, name, qty);
     materialsEl.appendChild(row);
   });
 

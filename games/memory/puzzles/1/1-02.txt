@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=1-02
-title=两绿两蓝
+title=气球飞呀飞 🎈
+noun=气球
+unit=个
 level=1
 materials=G G B B
 shape=row

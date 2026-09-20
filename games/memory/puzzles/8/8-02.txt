@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=8-02
-title=三橙两黄两绿两红
+title=小火箭冲上天 🚀
+noun=小火箭
+unit=个
 level=8
 materials=Y Y G G R R O O O
 shape=rows2

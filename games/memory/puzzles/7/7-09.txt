@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=7-09
-title=四橙两蓝一绿一红
+title=小苹果摆一排 🍎
+noun=小苹果
+unit=个
 level=7
 materials=G R B B O O O O
 shape=rows2

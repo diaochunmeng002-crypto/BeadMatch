@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=2-01
-title=三黄两红
+title=小皮球滚滚 ⚽
+noun=小皮球
+unit=个
 level=2
 materials=Y Y Y R R
 shape=row

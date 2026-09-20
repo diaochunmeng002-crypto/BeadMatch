@@ -3,7 +3,9 @@
 created_at=2026-09-16 10:00:00
 created_by=manual
 id=9-10
-title=三红两绿两紫两蓝一橙
+title=小乌龟排一排 🐢
+noun=小乌龟
+unit=只
 level=9
 materials=G G R R R P P B B O
 shape=rows2
