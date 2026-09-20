@@ -32,6 +32,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from plaza import history
+
 from .core import puzzles as p
 from .core.chinese import to_letter, to_letters
 from .core.clues import holds, notation
@@ -150,7 +152,9 @@ def puzzles(level: Optional[int] = Query(None, ge=0, description="只看某个�
 def puzzle(puzzle_id: str) -> Dict[str, object]:
     """取一道题：参与者 + 题目（线索原文）+ 答案。"""
     puzzle_obj, meta = _load(puzzle_id)
-    return _puzzle_payload(puzzle_obj, meta)
+    payload = _puzzle_payload(puzzle_obj, meta)
+    history.record_served(game="logic", payload=payload, source="by_id")
+    return payload
 
 
 @router.get("/random")
@@ -166,6 +170,7 @@ def api_random(
     puzzle_obj, meta = _load(str(pick["id"]))
     payload = _puzzle_payload(puzzle_obj, meta)
     payload["pool_size"] = len(pool)
+    history.record_served(game="logic", payload=payload, source="random")
     return payload
 
 

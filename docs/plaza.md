@@ -204,7 +204,12 @@ summary = "把珠子按颜色归位"
 | 那个游戏的接口 | `/api/games/<游戏>/...` |
 | 广场自己的接口 | `/api/games`、`/api/health` |
 
-两条小约定：**广场只占 `/`、`/static/`、`/api/games`、`/api/health`**，其余空间全归各游戏；
+两条小约定：**广场只占 `/`、`/static/`、`/api/games`、`/api/health`、`/history`、`/api/history`**
+（`/history` 是页脚的访问清单：最近 200 条"时间 / 游戏 / id"，数据见 `plaza/history.py`），其余空间全归各游戏；
+
+访问清单的数据由各游戏自己写：`/random` 和 `/puzzles/{id}` 各调一次
+`history.record_served(...)`，只记 `game / puzzle_id / level / 时间`，不碰题目内容。
+跑测试时设 `BEADMATCH_HISTORY=off`，就不会往真实库里写。
 游戏页面里的静态资源写成**相对路径**、接口基址读 `window.API_BASE`（广场注入），
 所以同一份前端代码在"单独跑"和"广场里跑"两种情况下都对。
 

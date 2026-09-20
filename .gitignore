@@ -9,5 +9,10 @@ dist/
 # 启动器写出来的日志（开发时落在仓库根目录，打包后落在 exe 旁边）
 BeadMatch.log
 
+# 开发时的访问日志（本地数据，不入库）
+/history.db
+/history.db-wal
+/history.db-shm
+
 # 本地临时脚本（调试用，不入库）
 .tmp_*

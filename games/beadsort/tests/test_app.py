@@ -1,8 +1,11 @@
 """后端接口测试（用 FastAPI 自带的 TestClient，不用真起服务）。"""
 
+import os
 import shutil
 import unittest
 from pathlib import Path
+
+os.environ.setdefault("BEADMATCH_HISTORY", "off")   # 跑测试别往真实访问库里写
 
 from fastapi.testclient import TestClient
 

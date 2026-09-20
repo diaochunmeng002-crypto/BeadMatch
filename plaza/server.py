@@ -19,9 +19,13 @@
     POST /api/games/<id>/check             判定（有这条游戏的才有）
     GET  /api/games/<id>/health            那个游戏活着没
     GET  /api/health                       广场活着没
+    GET  /api/history?limit=200            最近访问记录（新的在前）
 
 **广场自己不知道任何游戏规则**，它只是把每个游戏 `api.py` 里的 `router` 换个前缀挂上，
 再把它的 `web/` 托管出去（见 registry.py）。
+
+页面 `/history` 是那条访问清单：默认拉最近 200 条，只看"时间 / 游戏 / id"。
+首页页脚有一个不显眼的入口 —— 这是给自己人看的，不往游戏页面上放。
 """
 
 from __future__ import annotations
@@ -32,11 +36,11 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import registry
+from . import history, registry
 from .registry import Game
 
 WEB_DIR = Path(__file__).resolve().parent / "web"
@@ -169,6 +173,18 @@ def api_games() -> Dict[str, object]:
     return {"count": len(rows), "games": rows}
 
 
+@app.get("/api/history")
+def api_history(
+    limit: int = Query(200, ge=1, le=1000, description="要几条，默认 200"),
+) -> Dict[str, object]:
+    """最近访问记录，新的在前。数据来源见 plaza/history.py。"""
+    try:
+        rows = history.query(limit=limit)
+    except Exception as exc:
+        raise HTTPException(500, "访问日志读不了：%s" % exc)
+    return {"count": len(rows), "events": rows}
+
+
 # --------------------------------------------------------------------------
 # 首页
 # --------------------------------------------------------------------------
@@ -191,8 +207,113 @@ _PAGE = """<!doctype html>
 </main>
 <footer>
   <p>共 %d 个游戏 · 接口清单在 <a href="/api/games">/api/games</a> ·
-     每个游戏的接口文档在 <a href="/docs">/docs</a></p>
+     每个游戏的接口文档在 <a href="/docs">/docs</a>
+     <a class="access" href="/history" title="最近 200 条访问记录">访问清单</a></p>
 </footer>
+</body>
+</html>
+"""
+
+
+_HISTORY_PAGE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>访问清单 · BeadMatch</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+.bar{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem}
+.bar button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--border);
+  border-radius:999px;padding:3px 12px;cursor:pointer}
+.bar button:hover{border-color:var(--ink);color:var(--ink)}
+.wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-size:.78rem;color:var(--muted);font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.time{color:var(--muted);font-variant-numeric:tabular-nums}
+td.game{font-weight:600}
+td .muted{color:var(--muted);font-weight:400}
+td.id{font-family:ui-monospace,Consolas,monospace;font-size:.85rem}
+.none{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>访问清单</h1>
+  <p class="lead">最近 200 条，新的在最上面 · <a href="/">← 回广场</a></p>
+</header>
+<main>
+  <div class="bar"><span id="status">读取中…</span><button id="reload">刷新</button></div>
+  <div class="wrap" id="wrap" hidden>
+    <table>
+      <thead><tr><th>时间</th><th>游戏</th><th>id</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="none" id="empty" hidden>还没有记录。</p>
+</main>
+<script>
+const rowsEl = document.getElementById('rows');
+const wrapEl = document.getElementById('wrap');
+const emptyEl = document.getElementById('empty');
+const statusEl = document.getElementById('status');
+
+function stamp(text) {
+  const d = new Date(text);
+  if (isNaN(d.getTime())) return text || '';
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} `
+       + `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+function line(ev) {
+  const tr = document.createElement('tr');
+
+  const time = document.createElement('td');
+  time.className = 'time';
+  time.textContent = stamp(ev.ts);
+
+  const game = document.createElement('td');
+  game.className = 'game';
+  game.textContent = ev.game || '';
+  if (ev.level !== null && ev.level !== undefined) {
+    const lv = document.createElement('span');
+    lv.className = 'muted';
+    lv.textContent = ` · ${ev.level} 级`;
+    game.appendChild(lv);
+  }
+
+  const id = document.createElement('td');
+  id.className = 'id';
+  id.textContent = ev.puzzle_id || '';
+
+  tr.append(time, game, id);
+  return tr;
+}
+
+async function load() {
+  statusEl.textContent = '读取中…';
+  try {
+    const r = await fetch('/api/history?limit=200');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const events = data.events || [];
+    rowsEl.replaceChildren(...events.map(line));
+    wrapEl.hidden = events.length === 0;
+    emptyEl.hidden = events.length !== 0;
+    statusEl.textContent = `共 ${events.length} 条`;
+  } catch (e) {
+    wrapEl.hidden = true;
+    emptyEl.hidden = true;
+    statusEl.textContent = '读取失败：' + e.message;
+  }
+}
+
+document.getElementById('reload').addEventListener('click', load);
+load();
+</script>
 </body>
 </html>
 """
@@ -228,6 +349,12 @@ def _home_html() -> str:
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     return _home_html()
+
+
+@app.get("/history", response_class=HTMLResponse)
+def history_page() -> str:
+    """访问清单 —— 首页页脚那个不显眼的入口。"""
+    return _HISTORY_PAGE
 
 
 # 静态目录先建出来再挂载 —— 免得"启动时 web/ 还不存在 → 没挂上"这种坑

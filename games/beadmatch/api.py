@@ -25,6 +25,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from plaza import history
+
 from .core import generator as g
 from .core.free_solver import format_moves, is_finished, solve_any
 
@@ -146,7 +148,9 @@ def puzzle(puzzle_id: str) -> Dict[str, object]:
     if path is None:
         raise HTTPException(404, "没有这道题：%s" % puzzle_id)
     matrix, meta = g.load_board(path)
-    return _puzzle_payload(matrix, meta)
+    payload = _puzzle_payload(matrix, meta)
+    history.record_served(game="beadmatch", payload=payload, source="by_id")
+    return payload
 
 
 @router.get("/random")
@@ -165,6 +169,7 @@ def api_random(
     matrix, meta = g.load_board(path)
     payload = _puzzle_payload(matrix, meta)
     payload["pool_size"] = len(pool)
+    history.record_served(game="beadmatch", payload=payload, source="random")
     return payload
 
 
