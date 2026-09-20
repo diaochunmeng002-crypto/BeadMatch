@@ -4,13 +4,13 @@ created_at=2026-09-15 21:40:40
 created_by=manual
 solution_by=manual
 id=20260915-214040-46ee
-title=彩色珠子去看电影 🎬
+title=小松鼠去看电影 🎬
 level=2
 participants=R B G Y P O
 answer=R B G Y P O
 
-蓝色坐在第二个位置。
-红色坐在蓝色前面。
-绿色和黄色挨在一起。
-紫色坐在黄色后面。
-橙色坐在最后。
+🔵 蓝色小松鼠坐在第二个位置。
+🔴 红色小松鼠坐在蓝色前面。
+🟢 绿色和黄色小松鼠挨在一起。
+🟣 紫色小松鼠坐在黄色后面。
+🟠 橙色小松鼠坐在最后。

@@ -4,13 +4,13 @@ created_at=2026-09-15 22:10:23
 created_by=manual
 solution_by=manual
 id=20260915-221023-3f5b
-title=小伙伴去公园 🌳
+title=小恐龙去公园 🌳
 level=6
 participants=R B G Y P O Y
 answer=B Y O G R Y P
 
-🟡 黄色在第二个。
-🟣 紫色在第七个。
-🔴 红色和紫色中间隔一个。
-🔵 蓝色在橙色前面。
-🟢 绿色在橙色和红色中间。
+🟡 黄色小恐龙排在第二个。
+🟣 紫色小恐龙排在第七个。
+🔴 红色和紫色小恐龙中间隔一个。
+🔵 蓝色小恐龙在橙色前面。
+🟢 绿色小恐龙在橙色和红色中间。

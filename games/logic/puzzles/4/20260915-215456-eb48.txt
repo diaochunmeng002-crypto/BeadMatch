@@ -4,12 +4,12 @@ created_at=2026-09-15 21:54:56
 created_by=manual
 solution_by=manual
 id=20260915-215456-eb48
-title=彩色气球排队 🎈
+title=气球飘呀飘 🎈
 level=4
 participants=R B G Y P O
 answer=Y R O B P G
 
-红色站在第二个位置。
-蓝色紧挨着橙色，站在橙色后面。
-紫色在蓝色和绿色中间。
-橙色在第三个。
+🔴 红色气球飘在第二个位置。
+🔵 蓝色气球紧挨着橙色气球，飘在橙色后面。
+🟣 紫色气球在蓝色和绿色中间。
+🟠 橙色气球飘在第三个。

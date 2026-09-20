@@ -4,13 +4,13 @@ created_at=2026-09-15 21:40:34
 created_by=manual
 solution_by=manual
 id=20260915-214034-64a0
-title=去动物园 🦁
+title=小鸭子排队 🦆
 level=2
 participants=R B G Y P O
 answer=B R G Y P O
 
-蓝色排在第一个。
-红色在蓝色后面。
-绿色和黄色挨在一起。
-紫色在绿色后面。
-橙色排在最后。
+🔵 蓝色小鸭子排在第一个。
+🔴 红色小鸭子跟在蓝色后面。
+🟢 绿色和黄色小鸭子挨在一起。
+🟣 紫色小鸭子排在绿色后面。
+🟠 橙色小鸭子排在最后。

@@ -4,13 +4,13 @@ created_at=2026-09-15 22:10:27
 created_by=manual
 solution_by=manual
 id=20260915-221027-e48c
-title=去看电影 🎬
+title=小章鱼去看电影 🎬
 level=6
 participants=R B G Y P O B
 answer=Y B B O P R G
 
-🔵 蓝色在第三个。
-🟠 橙色在第四个。
-🔵 两颗蓝色挨着。
-🟠 橙色和紫色挨着。
-🔴 红色在紫色和绿色中间。
+🔵 蓝色小章鱼排在第三个。
+🟠 橙色小章鱼排在第四个。
+🔵 两颗蓝色小章鱼挨着。
+🟠 橙色小章鱼挨着紫色小章鱼。
+🔴 红色小章鱼在紫色和绿色中间。

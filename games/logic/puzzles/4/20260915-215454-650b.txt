@@ -4,12 +4,12 @@ created_at=2026-09-15 21:54:54
 created_by=manual
 solution_by=manual
 id=20260915-215454-650b
-title=小伙伴排队吃饭 🍚
+title=小熊猫排队吃饭 🐼
 level=4
 participants=R B G Y P O
 answer=P O G B R Y
 
-红色排在第五个。
-绿色紧挨着蓝色，站在蓝色前面。
-橙色在紫色和蓝色中间。
-紫色在第一个。
+🔴 红色小熊猫排在第五个。
+🟢 绿色小熊猫紧挨着蓝色小熊猫，站在蓝色前面。
+🟠 橙色小熊猫在紫色和蓝色中间。
+🟣 紫色小熊猫排在第一个。

@@ -4,13 +4,13 @@ created_at=2026-09-15 21:43:46
 created_by=manual
 solution_by=manual
 id=20260915-214346-b98b
-title=去动物园 🦁
+title=小鸭子排排队 🦆
 level=3
 participants=R B G Y P O
 answer=R O G P Y B
 
-紫色在第四个。
-绿色在紫色和红色中间。
-蓝色在最后一个。
-绿色和橙色挨着。
-绿色在橙色和蓝色中间。
+🟣 紫色小鸭子排在第四个。
+🟢 绿色小鸭子站在紫色和红色中间。
+🔵 蓝色小鸭子排在最后一个。
+🟢 绿色和橙色小鸭子挨着。
+🟢 绿色小鸭子站在橙色和蓝色中间。

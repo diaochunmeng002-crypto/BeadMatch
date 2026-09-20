@@ -4,13 +4,13 @@ created_at=2026-09-15 22:10:20
 created_by=manual
 solution_by=manual
 id=20260915-221020-0dad
-title=彩色小火车 🚂
+title=消防车排排队 🚒
 level=6
 participants=R B G Y P O R
 answer=G R P B Y O R
 
-🟡 黄色在第五个。
-🟡 黄色和橙色挨着。
-🟢 绿色和紫色中间隔一个。
-🟢 绿色在紫色前面。
-🔵 蓝色在紫色和黄色中间。
+🟡 黄色消防车排在第五个。
+🟡 黄色消防车挨着橙色消防车。
+🟢 绿色和紫色消防车中间隔一个。
+🟢 绿色消防车排在紫色前面。
+🔵 蓝色消防车在紫色和黄色中间。

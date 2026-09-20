@@ -4,13 +4,13 @@ created_at=2026-09-15 21:54:55
 created_by=manual
 solution_by=manual
 id=20260915-215455-cca0
-title=坐船去玩 ⛵
+title=小鸭子坐船 ⛵
 level=4
 participants=R B G Y P O
 answer=R O Y G P B
 
-红色坐在第一个位置。
-紫色在绿色和蓝色中间。
-黄色在橙色和绿色中间。
-橙色在第二个。
-绿色在第四个。
+🔴 红色小鸭子坐在第一个位置。
+🟣 紫色小鸭子坐在绿色和蓝色中间。
+🟡 黄色小鸭子坐在橙色和绿色中间。
+🟠 橙色小鸭子坐在第二个。
+🟢 绿色小鸭子坐在第四个。

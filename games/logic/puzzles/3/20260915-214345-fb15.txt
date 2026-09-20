@@ -4,13 +4,13 @@ created_at=2026-09-15 21:43:45
 created_by=manual
 solution_by=manual
 id=20260915-214345-fb15
-title=彩色小火车 🚂
+title=小火车排排队 🚂
 level=3
 participants=R B G Y P O
 answer=G O Y P R B
 
-紫色在第四个。
-红色在第五个。
-红色和蓝色挨着。
-橙色在红色和绿色中间。
-黄色在第三个。
+🟣 紫色小火车排在第四个。
+🔴 红色小火车排在第五个。
+🔴 红色和蓝色小火车挨着。
+🟠 橙色小火车在红色和绿色中间。
+🟡 黄色小火车排在第三个。

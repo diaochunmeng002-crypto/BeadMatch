@@ -4,13 +4,13 @@ created_at=2026-09-15 21:54:51
 created_by=manual
 solution_by=manual
 id=20260915-215451-c07c
-title=去动物园 🦁
+title=小狮子去动物园 🦁
 level=4
 participants=R B G Y P O
 answer=R G B Y P O
 
-红色第一个到动物园。
-黄色在蓝色和紫色中间。
-蓝色在绿色和橙色中间。
-紫色第五个到。
-绿色在第二个。
+🔴 红色小狮子第一个到动物园。
+🟡 黄色小狮子在蓝色和紫色中间。
+🔵 蓝色小狮子在绿色和橙色中间。
+🟣 紫色小狮子第五个到。
+🟢 绿色小狮子排在第二个。

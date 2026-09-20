@@ -4,13 +4,13 @@ created_at=2026-09-15 22:10:25
 created_by=manual
 solution_by=manual
 id=20260915-221025-65ce
-title=坐小船去玩 ⛵
+title=小帆船比赛 ⛵
 level=6
 participants=R B G Y P O O
 answer=P Y G O B R O
 
-🔴 红色在第六个。
-🟠 橙色在第七个。
-🔵 蓝色和红色挨着。
-🟢 绿色和蓝色中间隔一个。
-🟡 黄色在紫色和绿色中间。
+🔴 红色小帆船排在第六个。
+🟠 橙色小帆船排在第七个。
+🔵 蓝色小帆船挨着红色小帆船。
+🟢 绿色小帆船和蓝色小帆船中间隔一个。
+🟡 黄色小帆船在紫色和绿色中间。

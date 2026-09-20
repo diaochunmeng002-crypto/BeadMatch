@@ -4,12 +4,12 @@ created_at=2026-09-15 22:10:26
 created_by=manual
 solution_by=manual
 id=20260915-221026-eda0
-title=彩色小伙伴排队 🎈
+title=风筝飞呀飞 🪁
 level=6
 participants=R B G Y P O R
 answer=P B Y G R O R
 
-🟠 橙色在第六个。
-🟢 绿色和橙色中间隔一个。
-🔵 蓝色在紫色和黄色中间。
-🟡 黄色在蓝色和绿色中间。
+🟠 橙色风筝飘在第六个。
+🟢 绿色和橙色风筝中间隔一个。
+🔵 蓝色风筝在紫色和黄色中间。
+🟡 黄色风筝在蓝色和绿色中间。

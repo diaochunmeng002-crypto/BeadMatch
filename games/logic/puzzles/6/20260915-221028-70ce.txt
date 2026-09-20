@@ -4,12 +4,12 @@ created_at=2026-09-15 22:10:28
 created_by=manual
 solution_by=manual
 id=20260915-221028-70ce
-title=生日蛋糕来啦 🎂
+title=谁先吃生日蛋糕？🎂
 level=6
 participants=R B G Y P O G
 answer=G G B P R Y O
 
-🔵 蓝色在第三个。
-🟣 紫色在第四个。
-🔴 红色和橙色中间隔一个。
-🔴 红色在紫色和黄色中间。
+🔵 穿蓝色的小朋友排在第三个。
+🟣 穿紫色的小朋友排在第四个。
+🔴 穿红色的小朋友和穿橙色的小朋友中间隔一个。
+🔴 穿红色的小朋友在紫色和黄色中间。

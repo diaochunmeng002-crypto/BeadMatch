@@ -4,13 +4,13 @@ created_at=2026-09-15 21:43:51
 created_by=manual
 solution_by=manual
 id=20260915-214351-73fa
-title=一起坐小船 ⛵
+title=小鸭子去划船 ⛵
 level=3
 participants=R B G Y P O
 answer=Y R G O B P
 
-橙色坐第四个。
-蓝色坐第五个。
-黄色在红色前面。
-蓝色在橙色和紫色中间。
-红色和橙色中间隔一个。
+🟠 橙色小鸭子坐在第四个。
+🔵 蓝色小鸭子坐在第五个。
+🟡 黄色小鸭子坐在红色前面。
+🔵 蓝色小鸭子坐在橙色和紫色中间。
+🔴 红色和橙色小鸭子中间隔一个。
