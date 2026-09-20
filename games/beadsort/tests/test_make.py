@@ -222,7 +222,7 @@ class TestLayerShuffleMethod(unittest.TestCase):
         self.assertIsNotNone(cand, "小棋盘 9 次尝试一道都没出")
         self.assertTrue(verify(cand.board, cand.solution))
         self.assertEqual(cand.generator, "layershuffle@1")
-        self.assertEqual(cand.solution_by, "kociemba")
+        self.assertEqual(cand.solution_by, "layershuffle")
         self.assertIn("misplaced", cand.extra)
 
     def test_shuffle_keeps_the_row_rule(self):
@@ -265,7 +265,7 @@ class TestLayerShuffleMethod(unittest.TestCase):
             for f in files:
                 _matrix, meta = g.load_board(f)      # 读入即逐步验合法性
                 self.assertEqual(meta["generator"], "layershuffle@1")
-                self.assertEqual(meta["solution_by"], "kociemba")
+                self.assertEqual(meta["solution_by"], "layershuffle")
                 self.assertEqual(meta["level"], g.level_of(meta["moves"]))
                 per_level[f.parent.name] = per_level.get(f.parent.name, 0) + 1
             self.assertTrue(all(n <= 2 for n in per_level.values()), per_level)

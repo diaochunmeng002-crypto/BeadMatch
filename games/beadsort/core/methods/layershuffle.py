@@ -8,8 +8,8 @@
   10 排互不相干。柱子竖着看完全自由，怎么乱都行。
 
 其余照抄 kociemba：摆好 → 丢给求解器 → **解出来才留** → `verify` 兜一道 → 交 `Candidate`。
-两个标签各记一事：`generator=layershuffle@1`（局面是谁造的）、
-`solution_by=kociemba`（解是谁给的）。
+两个标签都记本方法：`generator=layershuffle@1`、`solution_by=layershuffle`
+（2026-09-20 起题目文件里统一标方法名，方便按方法筛题库；内部调用的求解器仍是 Kociemba）。
 
 ``--shuffle N``：**打乱几下**。给了就从"已解局面"出发，随机挑一排、把那一排的两颗
 球对调，做 N 次（换位只在排内进行，所以"每排 6 色各一"照样成立）。N 越大越乱：
@@ -43,7 +43,7 @@ class LayerShuffleMethod(KociembaMethod):
 
     name = "layershuffle"
     generator = "layershuffle@1"
-    solution_by = "kociemba"
+    solution_by = "layershuffle"
     per_level_default = 20              # 产出率接近 1（像 walk），所以必须刹车
 
     def add_args(self, parser) -> None:

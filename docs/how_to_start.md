@@ -89,6 +89,14 @@ python -m games.beadsort.tools.make --method layershuffle --n 20 --out games/bea
 **进度**：默认每 1000 次尝试打一行战绩（出题数 / 命中率 / 已留 / 用时 / 预计还要），
 想每次尝试都打加 `--progress every`，想换频率写 `--progress 2000`，想安静加 `--quiet`。
 
+**临时把几个库拼成一个**（2026-09-20 加）：目标库先清空，再把源库按原来的档拼进去
+（源的 `1/` → 目标的 `1/`），源库只读、同档同名的题只留先到的那一道，跑完只报每档多少道、合计多少道。
+
+```bash
+python -m games.beadsort.tools.merge games/beadsort/puzzles games/beadsort/puzzles_*
+python -m games.beadsort.tools.merge games/beadsort/puzzles      # 源不写 = 目标旁边的 puzzles_*
+```
+
 老脚本还在：`tools.make_puzzles --series 30 --count 10` 是"走 30 步出 10 道（3 级）"，
 `core.generator --steps 40 --seed 7` 是单出一道。
 

@@ -70,6 +70,9 @@ python -m games.beadsort.tools.make --method layershuffle --n 20 --out games/bea
 python -m games.beadsort.tools.make_puzzles --series 10 --count 20   # 出 20 道 1 级（走 10 步）
 python -m games.beadsort.core.generator --steps 40 --seed 7          # 单出一道（40 步）
 python -m games.beadsort.core.generator --show <题目文件>             # 读一道并校验
+
+# 把几个库临时拼成一个（目标先清空 / 源只读 / 按原来的档拼）
+python -m games.beadsort.tools.merge games/beadsort/puzzles games/beadsort/puzzles_*
 ```
 
 ### 3.1 出题的三条路（唯一入口 `tools/make.py`）
@@ -221,3 +224,5 @@ python -m games.beadsort.tools.sampler build --n 10000 --per-level 20 --clear  #
 | 2026-09-18 | 修**棋盘不居中**：下面的"规则"那行字把 `main` 撑到 616px，而 `.board` 是填满 `main` 的，珠子按默认 `justify-content: normal` 从左边排 → 右边空 166px。给 `.board` 加 `justify-content: center`，珠子中心回到页面中线（实测 451~829，中心 640）。`style.css` 的 `?v=` 顺手升到 `20260918a`，普通刷新就能生效 |
 | 2026-09-18 | **出题方式改成"方法制"**：新增唯一入口 `tools/make.py`（`--method` / `--n` 永远是尝试次数 / `--out` 默认 `puzzles` / `--per-level` 默认按方法给），`core/methods/` 里一个方法一个模块 —— 加第三种方法只要加一个文件。**方法二 = 随机摆 + Kociemba 筛**：把当年删掉的 Kociemba 移植从 git 历史里捞回来（字节没变、连它那份暴力对拍测试一起），随机摆一个局面让它解，**解出来才留**（失败是秒判，0.01 秒）。实测真配置 1 万次尝试 50 秒、出 5 道（0.05%），5 道都用我们的规则引擎验过是真解、解长 122~146 步 |
 | 2026-09-19 | **方法三 = 按层构造 + Kociemba 筛**（`layershuffle@1`，`solution_by=kociemba`）：横着看每一排（同一层的 6 根彩柱）必须 **6 色各一颗、不多不少**，排与排之间真随机；其余照抄方法二。实测真配置 **`--n 20` 出 20 道、命中率 100%**（重复局面 0，用时 2 秒），解长 **152~197 步 → 16~20 级**，比方法二还长一截 —— 单独放 `puzzles_layershuffle/`，没进 1~5 级题库 |
+| 2026-09-20 | 方法三加 **`--shuffle N`**（从已解局面做 N 次换位，每排仍是 6 色各一颗）：N=1 出 1~3 级、N=2 出 2~5 级、N=3 出 2~8 级，不给则保持每排完全随机（11~19 级）。`layershuffle` 的题目文件里 **`solution_by` 改成 `layershuffle`**（原来是 `kociemba`，那是内部调用的求解器；`generator` / `solution_by` 现在统一标方法名）。顺带修了出题的最后一步：几千道挤在同一秒写盘会撞题目 id，现在 id 用「写盘时刻 + seed」，撞了也换一个接着写，不再整批白跑 |
+| 2026-09-20 | 新增 **`tools/merge.py`**：把几个题库**临时拼成一个** —— `python -m games.beadsort.tools.merge games/beadsort/puzzles games/beadsort/puzzles_*`。目标库先**清空**（全删，它是产物不是原始数据），源库**只读**（copy2，不搬），**按原来的档拼**（源的 `1/` → 目标的 `1/`，文件名/ id 照抄不重算），同档同名的只留先到的那一道。源参数自己展开通配（PowerShell 不会替你展）、自动跳过目标自己；跑完只报每个源几道 / 每档几道 / 合计几道，不写台账。另外拦了三种危险目标：盘根、仓库根/游戏目录/用户主目录、以及"能把自己某个源一起删掉"的上级目录 |

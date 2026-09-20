@@ -1,0 +1,29 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-09-20 20:01:24
+created_by=beadsort
+solution_by=layershuffle
+id=20260920-200124-aca5
+tubes=7
+colors=YGRPBO
+capacity=10
+balls_per_color=10
+level=15
+moves=148
+seed=805153957
+generator=layershuffle@1
+seconds=0.065
+misplaced=40
+segments=47
+solution=4-7 3-4 2-3 5-2 1-5 6-1 6-7 6-7 4-6 4-6 4-6 2-4 2-4 3-2 3-2 5-3 5-3 5-4 2-5 2-5 2-5 3-2 3-2 3-2 1-3 1-3 1-3 1-7 3-1 3-1 3-1 3-1 5-3 5-3 5-3 5-3 6-5 6-5 6-5 6-5 6-7 6-7 1-6 1-6 1-6 1-6 1-6 2-1 2-1 2-1 2-1 2-1 2-6 2-7 3-2 3-2 3-2 3-2 3-2 4-3 4-3 4-3 4-3 4-3 4-2 3-4 3-4 3-4 3-4 3-4 3-4 5-3 5-3 5-3 5-3 5-3 5-3 5-2 5-7 5-7 4-5 4-5 4-5 4-5 4-5 4-5 4-5 1-4 1-4 1-4 1-4 1-4 1-4 1-4 6-1 6-1 6-1 6-1 6-1 6-1 6-1 6-5 4-6 4-6 4-6 4-6 4-6 4-6 4-6 4-6 1-4 1-4 1-4 1-4 1-4 1-4 1-4 1-4 1-5 3-1 3-1 3-1 3-1 3-1 3-1 3-1 3-1 3-1 3-7 2-3 2-3 2-3 2-3 2-3 2-3 2-3 2-3 2-3 6-2 6-2 6-2 6-2 6-2 6-2 6-2 6-2 6-2 6-3
+
+R Y P O G B X
+B G Y P R O X
+B Y R P G O X
+O R B G Y P X
+B R Y G P O X
+R B G Y P O X
+R O P G Y B X
+B Y P R O G X
+G Y P B O R X
+P R O B G Y X
