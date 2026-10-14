@@ -228,9 +228,16 @@ function render(animateIn = true) {
 function groupTube(tube) {
   const names = tube.filter((v) => v !== 0).reverse()      // 内部是"顶在前"，反过来就是由下到上
                     .map((v) => COLORS[v].name);
-  const groups = [];
+    const groups = [];
   for (let i = 0; i < names.length; i += 5) groups.push(names.slice(i, i + 5));
   return groups.length ? groups : [[]];
+}
+
+/** 一根柱子**最上面 n 颗**（默认 5）的颜色名，按「由下到上」排。
+ *  内部是"顶在前"，所以取前 n 个再反过来；够不到 n 颗就有几颗给几颗。 */
+function topBalls(tube, n = 5) {
+  return tube.filter((v) => v !== 0).slice(0, n).reverse()
+             .map((v) => COLORS[v].name);
 }
 
 /** 选中一根柱子并朗读（点击、方向键、空格都走这里） */
@@ -256,6 +263,33 @@ function selectTube(t, read = true) {
     el.classList.add('reading');
     setTimeout(() => el.classList.remove('reading'), 320);
   }
+}
+
+/** 只读当前选中柱子**最上面 5 颗**（没选中就先选第一根）。
+ *  够不到 5 颗就读几颗；空柱就报「空柱子」。 */
+function readTop5() {
+  if (state.selected === null) {
+    selectTube(0);
+    return;
+  }
+  const t = state.selected;
+  const names = topBalls(state.matrix[t]);
+  const shown = names.join('、');
+
+  const el = board.querySelector(`.tube[data-tube="${t}"]`);
+  if (el) {
+    el.classList.add('reading');
+    setTimeout(() => el.classList.remove('reading'), 320);
+  }
+
+  if (!shown) {
+    toast(`第 ${t + 1} 根 最上面 5 颗：空柱子`);
+    speak(`第${t + 1}根，空柱子`);
+  } else {
+    toast(`第 ${t + 1} 根 最上面 5 颗（由下到上）：${shown}`);
+    speak(`第${t + 1}根，最上面5颗，${shown}`);
+  }
+  playTick(1.2);
 }
 
 let toastTimer = null;
@@ -534,6 +568,7 @@ $('level').addEventListener('change', (e) => { newPuzzle(); e.target.blur(); });
 
 // 键盘：
 //   ← →        换柱子（到头"咚"一声）—— 给读屏用的，别占
+//   ↑          只读当前选中柱子最上面 5 颗
 //   空格       重读选中的柱子
 //   Home       回到题目
 //   PageUp     上一步
@@ -549,9 +584,14 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'PageDown') { e.preventDefault(); doStep(1); return; }
   if (e.key === 'End') { e.preventDefault(); playSolution(); return; }
 
-  if (e.key === ' ' || e.code === 'Space') {
+    if (e.key === ' ' || e.code === 'Space') {
     e.preventDefault();
     if (state.selected !== null) selectTube(state.selected);
+    return;
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    readTop5();               // 只读选中柱子最上面 5 颗
     return;
   }
   if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
