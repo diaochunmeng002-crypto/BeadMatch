@@ -73,11 +73,13 @@ a.game .warn { color: var(--bad); font-size: .85rem; margin: 8px 0 0; }
 footer { margin-top: 30px; color: var(--muted); font-size: .85rem; line-height: 1.9; }
 footer a { color: inherit; }
 
-/* 访问清单：藏在页脚，淡到不抢眼；鼠标移上去才亮起来 */
-footer a.access {
-  margin-left: 6px;
-  opacity: .35;
-  text-decoration: none;
-  font-size: .8em;
+/* 副标题后面的「查看历史」链接：就在那句话尾巴上，不抢眼 */
+.lead a.history {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(128, 128, 128, .45);
+  white-space: nowrap;
 }
-footer a.access:hover { opacity: 1; text-decoration: underline; }
+.lead a.history:hover { text-decoration-color: currentColor; color: var(--ink); }

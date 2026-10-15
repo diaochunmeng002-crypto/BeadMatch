@@ -73,6 +73,11 @@ _NAV_CSS = """<style>
 </style>"""
 
 
+def _game_names() -> Dict[str, str]:
+    """id → 中文名。历史页把 ``calc`` 这种 id 显示成「计算」用。"""
+    return {game.id: game.name for game in GAMES}
+
+
 def _nav_html(current: Game) -> str:
     parts = ['<a class="home" href="/">游戏广场</a>']
     for game in GAMES:
@@ -176,13 +181,14 @@ def api_games() -> Dict[str, object]:
 @app.get("/api/history")
 def api_history(
     limit: int = Query(200, ge=1, le=1000, description="要几条，默认 200"),
+    offset: int = Query(0, ge=0, description="跳过几条（分页用）"),
 ) -> Dict[str, object]:
     """最近访问记录，新的在前。数据来源见 plaza/history.py。"""
     try:
-        rows = history.query(limit=limit)
+        rows = history.query(limit=limit, offset=offset)
     except Exception as exc:
         raise HTTPException(500, "访问日志读不了：%s" % exc)
-    return {"count": len(rows), "events": rows}
+    return {"count": len(rows), "offset": offset, "events": rows}
 
 
 # --------------------------------------------------------------------------
@@ -200,34 +206,41 @@ _PAGE = """<!doctype html>
 <body>
 <header>
   <h1>游戏广场</h1>
-  <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。</p>
+  <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。
+     <a class="history" href="/history">查看历史 →</a></p>
 </header>
 <main>
 %s
 </main>
 <footer>
   <p>共 %d 个游戏 · 接口清单在 <a href="/api/games">/api/games</a> ·
-     每个游戏的接口文档在 <a href="/docs">/docs</a>
-     <a class="access" href="/history" title="最近 200 条访问记录">访问清单</a></p>
+     每个游戏的接口文档在 <a href="/docs">/docs</a></p>
 </footer>
 </body>
 </html>
 """
 
 
+# 访问清单：按天分组，每行「时间 / 游戏(中文) / 等级 / 打开」。
+# 「打开」暂时跳到**游戏首页**（方案 A）；以后升级成 ?puzzle=<id> 只需改这里。
+# 每次加载 100 条，底部「加载更多」翻页（后端 /api/history 支持 limit/offset 的思路，
+# 这里先用 limit 累计）。
 _HISTORY_PAGE = """<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>访问清单 · BeadMatch</title>
+<title>玩过什么 · BeadMatch</title>
 <link rel="stylesheet" href="/static/style.css">
 <style>
-.bar{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem}
+.bar{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem;flex-wrap:wrap}
 .bar button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--border);
   border-radius:999px;padding:3px 12px;cursor:pointer}
-.bar button:hover{border-color:var(--ink);color:var(--ink)}
-.wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.bar button:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
+.bar button:disabled{opacity:.5;cursor:default}
+.day{margin:22px 0 8px;font-size:.8rem;font-weight:600;color:var(--muted);letter-spacing:.03em}
+.day:first-child{margin-top:0}
+.wrap{overflow:hidden;border:1px solid var(--border);border-radius:14px;background:var(--card)}
 table{width:100%;border-collapse:collapse;font-size:.9rem}
 th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
 th{font-size:.78rem;color:var(--muted);font-weight:600}
@@ -236,83 +249,159 @@ td.time{color:var(--muted);font-variant-numeric:tabular-nums}
 td.game{font-weight:600}
 td .muted{color:var(--muted);font-weight:400}
 td.id{font-family:ui-monospace,Consolas,monospace;font-size:.85rem}
+td.open a{color:inherit;text-decoration:underline;text-underline-offset:3px;
+  text-decoration-color:rgba(128,128,128,.45)}
+td.open a:hover{text-decoration-color:currentColor}
 .none{color:var(--muted)}
 </style>
 </head>
 <body>
 <header>
-  <h1>访问清单</h1>
-  <p class="lead">最近 200 条，新的在最上面 · <a href="/">← 回广场</a></p>
+  <h1>玩过什么</h1>
+  <p class="lead">按天分组，新的在最上面 · <a href="/">← 回广场</a></p>
 </header>
 <main>
-  <div class="bar"><span id="status">读取中…</span><button id="reload">刷新</button></div>
-  <div class="wrap" id="wrap" hidden>
-    <table>
-      <thead><tr><th>时间</th><th>游戏</th><th>id</th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table>
+  <div class="bar">
+    <span id="status">读取中…</span>
+    <button id="reload">刷新</button>
   </div>
+  <div id="list"></div>
   <p class="none" id="empty" hidden>还没有记录。</p>
+  <div class="bar" style="justify-content:center;margin-top:14px">
+    <button id="more" hidden>加载更多</button>
+  </div>
 </main>
 <script>
-const rowsEl = document.getElementById('rows');
-const wrapEl = document.getElementById('wrap');
+const GAME_NAMES = __GAME_NAMES__;          // id → 中文名（后端注入）
+const PAGE = 100;                          // 每次加载几条
+const listEl = document.getElementById('list');
 const emptyEl = document.getElementById('empty');
 const statusEl = document.getElementById('status');
+const moreBtn = document.getElementById('more');
 
-function stamp(text) {
+let loaded = 0;                            // 已经拉了几条
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function hm(text) {                        // "2026-10-15T07:43:46+08:00" → "07:43:46"
   const d = new Date(text);
   if (isNaN(d.getTime())) return text || '';
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} `
-       + `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
-function line(ev) {
+function dayKey(text) {                    // 本机日期 "2026-10-15"（分组用）
+  const d = new Date(text);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function dayLabel(day) {                   // 今天 / 昨天 / 具体日期
+  const t = new Date();
+  const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+  const y = new Date(t.getTime() - 86400000);
+  const yest = `${y.getFullYear()}-${pad(y.getMonth() + 1)}-${pad(y.getDate())}`;
+  if (day === today) return '今天 · ' + day;
+  if (day === yest) return '昨天 · ' + day;
+  return day;
+}
+
+function row(ev) {
   const tr = document.createElement('tr');
 
   const time = document.createElement('td');
   time.className = 'time';
-  time.textContent = stamp(ev.ts);
+  time.textContent = hm(ev.ts);
 
   const game = document.createElement('td');
   game.className = 'game';
-  game.textContent = ev.game || '';
-  if (ev.level !== null && ev.level !== undefined) {
-    const lv = document.createElement('span');
-    lv.className = 'muted';
-    lv.textContent = ` · ${ev.level} 级`;
-    game.appendChild(lv);
-  }
+  game.textContent = GAME_NAMES[ev.game] || ev.game || '';
+
+  const level = document.createElement('td');
+  level.className = 'muted';
+  level.textContent = (ev.level === null || ev.level === undefined) ? '' : ev.level + ' 级';
 
   const id = document.createElement('td');
   id.className = 'id';
   id.textContent = ev.puzzle_id || '';
 
-  tr.append(time, game, id);
+  const open = document.createElement('td');
+  open.className = 'open';
+  const a = document.createElement('a');
+  // 方案 A：先跳到游戏首页。以后升级成 /games/<id>/?puzzle=<puzzle_id>
+  a.href = '/games/' + encodeURIComponent(ev.game) + '/';
+  a.textContent = '打开';
+  open.appendChild(a);
+
+  tr.append(time, game, level, id, open);
   return tr;
 }
 
-async function load() {
-  statusEl.textContent = '读取中…';
+// 建一组「日期标题 + 表格」，返回可往里塞行的 tbody
+function dayBlock(day) {
+  const head = document.createElement('div');
+  head.className = 'day';
+  head.textContent = dayLabel(day);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'wrap';
+  const table = document.createElement('table');
+  table.innerHTML = '<thead><tr><th>时间</th><th>游戏</th><th>等级</th>'
+                  + '<th>题目</th><th></th></tr></thead><tbody></tbody>';
+  wrap.appendChild(table);
+
+  listEl.append(head, wrap);
+  return table.querySelector('tbody');
+}
+
+// 把新拿到的记录按天分组渲染（同一天合并到一个标题下）
+function render(events, append) {
+  if (!append) listEl.replaceChildren();
+  if (!events.length) return;
+
+  let lastDay = append ? (listEl.dataset.lastDay || '') : '';
+  let tbody = null;
+  if (append && lastDay) {                       // 续上最后一天的那个 tbody
+    const lastWrap = listEl.lastElementChild;
+    tbody = lastWrap ? lastWrap.querySelector('tbody') : null;
+  }
+
+  for (const ev of events) {
+    const day = dayKey(ev.ts);
+    if (day !== lastDay || !tbody) {
+      tbody = dayBlock(day);
+      lastDay = day;
+    }
+    tbody.appendChild(row(ev));
+  }
+  listEl.dataset.lastDay = lastDay;
+}
+
+async function load(append) {
+  const offset = append ? loaded : 0;
+  statusEl.textContent = append ? '加载中…' : '读取中…';
+  moreBtn.disabled = true;
   try {
-    const r = await fetch('/api/history?limit=200');
+    const r = await fetch(`/api/history?limit=${PAGE}&offset=${offset}`);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
     const events = data.events || [];
-    rowsEl.replaceChildren(...events.map(line));
-    wrapEl.hidden = events.length === 0;
-    emptyEl.hidden = events.length !== 0;
-    statusEl.textContent = `共 ${events.length} 条`;
+    render(events, append);
+    loaded = offset + events.length;
+    // 还没有记录
+    if (loaded === 0) { emptyEl.hidden = false; statusEl.textContent = '还没有记录'; }
+    else { emptyEl.hidden = true; statusEl.textContent = `已显示 ${loaded} 条`; }
+    // 一次没拿满 PAGE 条 → 到底了
+    moreBtn.hidden = events.length < PAGE;
   } catch (e) {
-    wrapEl.hidden = true;
-    emptyEl.hidden = true;
     statusEl.textContent = '读取失败：' + e.message;
+  } finally {
+    moreBtn.disabled = false;
   }
 }
 
-document.getElementById('reload').addEventListener('click', load);
-load();
+document.getElementById('reload').addEventListener('click', () => load(false));
+moreBtn.addEventListener('click', () => load(true));
+load(false);
 </script>
 </body>
 </html>
@@ -338,7 +427,7 @@ def _home_html() -> str:
             '<span class="name">%s</span>'
             '<span class="tag">%s</span>'
             '<span class="summary">%s</span>'
-            '<span class="count">%s</span>%s'
+                        '<span class="count">%s</span>%s'
             "</a>" % (game.url, game.name, game.category, game.summary, detail, warn)
         )
     if not cards:
@@ -353,8 +442,9 @@ def index() -> str:
 
 @app.get("/history", response_class=HTMLResponse)
 def history_page() -> str:
-    """访问清单 —— 首页页脚那个不显眼的入口。"""
-    return _HISTORY_PAGE
+    """玩过什么 —— 首页右侧导航「历史」进来的。"""
+    return _HISTORY_PAGE.replace(
+        "__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
 
 
 # 静态目录先建出来再挂载 —— 免得"启动时 web/ 还不存在 → 没挂上"这种坑
