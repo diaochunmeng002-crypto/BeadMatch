@@ -41,6 +41,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import history, registry
+from .nocache import keep_fresh
 from .registry import Game
 
 WEB_DIR = Path(__file__).resolve().parent / "web"
@@ -456,6 +457,10 @@ def history_page() -> str:
 # 静态目录先建出来再挂载 —— 免得"启动时 web/ 还不存在 → 没挂上"这种坑
 WEB_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="plaza-static")
+
+# 前端（游戏页面 + 各家 web/ 里的三件套）每次都回来问一句，别被浏览器的"启发式缓存"存住 ——
+# 不然改了 app.js、刷新还是旧页面（详见 plaza/nocache.py）
+keep_fresh(app, ("/static/", "/games/"))
 
 
 # --------------------------------------------------------------------------

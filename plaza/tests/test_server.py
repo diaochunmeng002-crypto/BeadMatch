@@ -109,6 +109,22 @@ class HistoryPageTest(unittest.TestCase):
         self.assertEqual(got.status_code, 307)
         self.assertTrue(got.headers["location"].endswith("/games/logic/?p=X"), got.headers)
 
+    def test_frontend_says_no_cache(self) -> None:
+        """前端资源要带 `Cache-Control: no-cache`。
+
+        不发这个头，浏览器就按"启发式缓存"把 app.js 存上好几天（问都不问）：
+        改了前端、刷新页面还是旧代码 —— 2026-10-16 就是这么被坑的（历史页的
+        「打开」已经带上 ?p= 了，点进去却是旧前端的行为）。
+        """
+        page = self.client.get("/games/beadsort/")
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(page.headers.get("cache-control"), "no-cache")
+
+        js = self.client.get("/games/beadsort/static/app.js")
+        self.assertEqual(js.status_code, 200)
+        self.assertEqual(js.headers.get("cache-control"), "no-cache")
+        self.assertIn("WANT_ID", js.text)      # 顺手确认发出去的确实是新版前端
+
 
 if __name__ == "__main__":
     unittest.main()

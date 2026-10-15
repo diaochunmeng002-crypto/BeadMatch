@@ -34,6 +34,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from plaza import history
+from plaza.nocache import keep_fresh
 
 from .core import colors as C
 from .core import cards as c
@@ -197,6 +198,7 @@ def index() -> str:
 # 静态目录先建出来再挂载 —— 免得"启动时 web/ 还不存在 → 没挂上"这种坑
 WEB_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+keep_fresh(app)               # 前端别被浏览器的"启发式缓存"存住（见 plaza/nocache.py）
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

@@ -26,6 +26,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from plaza import history
+from plaza.nocache import keep_fresh
 
 from .core import generator as g
 from .core.free_solver import format_moves, is_finished, solve_any
@@ -301,6 +302,7 @@ def index() -> str:
 # 静态目录先建出来再挂载 —— 免得"启动时 web/ 还不存在 → 没挂上"这种坑
 WEB_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+keep_fresh(app)               # 前端别被浏览器的"启发式缓存"存住（见 plaza/nocache.py）
 
 
 # --------------------------------------------------------------------------

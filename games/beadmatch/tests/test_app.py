@@ -35,6 +35,16 @@ class TestLibrary(unittest.TestCase):
         self.assertIn("static/app.js", r.text)
         self.assertIn("static/style.css", r.text)
 
+    def test_static_says_no_cache(self):
+        """`web/` 三件套要带 `Cache-Control: no-cache`。
+
+        不然浏览器把 `app.js` 存上好几天，改了前端、刷新还是旧页面
+        （单独跑这个游戏时也一样，见 `plaza/nocache.py`）。
+        """
+        r = client.get("/static/app.js")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.headers.get("cache-control"), "no-cache")
+
     def test_placeholder_when_no_frontend(self):
         """`web/index.html` 不存在时（比如前端还没做），退回说明页，要把接口都列出来。"""
         from games.beadmatch import api as app_module
