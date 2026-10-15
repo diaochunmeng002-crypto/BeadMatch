@@ -25,6 +25,17 @@ const $ = (id) => document.getElementById(id);
 // 接口基址：单独跑时是 /api/memory，广场里由广场往页面里注入 window.API_BASE
 const API = window.API_BASE || '/api/memory';
 
+// 历史页「打开」带过来的题目 id（/games/memory/?p=<id>，`?puzzle=` 也认）：
+// 有就开**那一张卡**，没有就照旧随机抽一张。认不出来会退回随机，不至于开个空白页。
+const WANT_ID = (() => {
+  try {
+    const q = new URLSearchParams(location.search);
+    return (q.get('p') || q.get('puzzle') || '').trim();
+  } catch (e) {
+    return '';
+  }
+})();
+
 const materialsEl = $('materials');
 const tasksEl = $('tasks');
 const demoEl = $('demo');
@@ -444,30 +455,45 @@ async function loadLevels() {
 }
 
 /** 拿一张新卡。``opts.silent`` 用在**刚打开页面**那一次 —— 点链接跳过来不该"嗒"一声，
- *  只有自己按「换一题」/空格时才响。 */
+ *  只有自己按「换一题」/空格时才响。
+ *
+ *  ``opts.id`` 给了就**按 id 取那一张卡**（历史页「打开」跳过来时用），否则按当前等级随机抽。
+ *  拿成了返回 true、没拿成返回 false —— 调用方靠它决定要不要再兜一张随机卡。 */
 async function newCard(opts = {}) {
+  const id = ((opts && opts.id) || '').trim();
   const level = $('level').value;
-  if (!level) return;
+  if (!level && !id) return false;
   clearTimers();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   $('new').disabled = true;
   try {
-    const r = await fetch(`${API}/random?level=${encodeURIComponent(level)}`);
+    const r = await fetch(id ? `${API}/puzzles/${encodeURIComponent(id)}`
+                             : `${API}/random?level=${encodeURIComponent(level)}`);
     if (!r.ok) throw new Error(await errText(r));
     const p = await r.json();
+    if (id) syncLevel(p.level);   // 下拉框跟着这张卡走，免得"卡是 20 级的、框里写着 1 级"
     state.card = p;
     state.result = null;
     renderCard(p);
     setPhase('card');
     if (!(opts && opts.silent)) playTick(0.9);
+    return true;
   } catch (e) {
-    toast('拿卡失败：' + e.message);
+    toast((id ? '那张卡打不开：' : '拿卡失败：') + e.message);
+    return false;
   } finally {
     $('new').disabled = false;
   }
 }
 
 function nextCard() { backToCard(); newCard(); }
+
+/** 把等级下拉框拨到这张卡那一档（题库里没有这一档就不动它） */
+function syncLevel(level) {
+  const sel = $('level');
+  const value = String(level);
+  if (Array.from(sel.options).some((o) => o.value === value)) sel.value = value;
+}
 
 /** 后端报错时，把它自己的说明也带出来 —— 不然只看到 "HTTP 500"，查不出原因。
  *
@@ -531,4 +557,8 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-loadLevels().then(() => newCard({ silent: true }));
+// 历史页点「打开」过来的（?p=<id>）就先开那一张卡；没带 id、或那张卡打不开，就随机抽一张
+loadLevels().then(async () => {
+  if (WANT_ID && await newCard({ id: WANT_ID, silent: true })) return;
+  newCard({ silent: true });
+});

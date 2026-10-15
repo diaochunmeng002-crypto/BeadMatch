@@ -21,6 +21,17 @@ const $ = (id) => document.getElementById(id);
 // 接口基址：单独跑时是 /api，广场里由广场往页面里注入 window.API_BASE
 const API = window.API_BASE || '/api';
 
+// 历史页「打开」带过来的题目 id（/games/beadsort/?p=<id>，`?puzzle=` 也认）：
+// 有就开**那一道题**，没有就照旧随机抽一道。认不出来会退回随机，不至于开个空白页。
+const WANT_ID = (() => {
+  try {
+    const q = new URLSearchParams(location.search);
+    return (q.get('p') || q.get('puzzle') || '').trim();
+  } catch (e) {
+    return '';
+  }
+})();
+
 const board = $('board');
 
 const state = {
@@ -528,17 +539,23 @@ async function loadLevels() {
 }
 
 /** 拿一道新题。``opts.silent`` 用在**刚打开页面**那一次 —— 点链接跳过来不该"嗒"一声，
- *  只有自己按「换一题」时才响。 */
+ *  只有自己按「换一题」时才响。
+ *
+ *  ``opts.id`` 给了就**按 id 取那一道题**（历史页「打开」跳过来时用），否则按当前等级随机抽。
+ *  拿成了返回 true、没拿成返回 false —— 调用方靠它决定要不要再兜一道随机题。 */
 async function newPuzzle(opts = {}) {
+  const id = ((opts && opts.id) || '').trim();
   const level = $('level').value;
-  if (!level) return;
+  if (!level && !id) return false;
   stopPlay();                     // 演示中也能换题：先停，不锁按钮
   await waitIdle();
   $('new').disabled = true;
   try {
-    const r = await fetch(`${API}/random?level=${encodeURIComponent(level)}`);
+    const r = await fetch(id ? `${API}/puzzles/${encodeURIComponent(id)}`
+                             : `${API}/random?level=${encodeURIComponent(level)}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const p = await r.json();
+    if (id) syncLevel(p.level);   // 下拉框跟着这道题走，免得"题是 20 级的、框里写着 1 级"
     state.meta = p;
     state.base = p.matrix.map((t) => t.slice());
     state.cursor = 0;
@@ -548,11 +565,20 @@ async function newPuzzle(opts = {}) {
     updateTransport();
     setStatus(`等级 ${p.level} · ${p.moves} 步 · id ${p.id}`);
     if (!(opts && opts.silent)) playTick(0.8);
+    return true;
   } catch (e) {
-    toast('拿题失败：' + e.message);
+    toast((id ? '那道题打不开：' : '拿题失败：') + e.message);
+    return false;
   } finally {
     $('new').disabled = false;
   }
+}
+
+/** 把等级下拉框拨到这道题那一档（题库里没有这一档就不动它） */
+function syncLevel(level) {
+  const sel = $('level');
+  const value = String(level);
+  if (Array.from(sel.options).some((o) => o.value === value)) sel.value = value;
 }
 
 // ---------------------------------------------------------------------------
@@ -611,4 +637,8 @@ window.addEventListener('keydown', (e) => {
 });
 
 updateTransport();          // 还没拿到题：先让回放条是灰的
-loadLevels().then(() => newPuzzle({ silent: true }));
+// 历史页点「打开」过来的（?p=<id>）就先开那一道题；没带 id、或那道题打不开，就随机抽一道
+loadLevels().then(async () => {
+  if (WANT_ID && await newPuzzle({ id: WANT_ID, silent: true })) return;
+  newPuzzle({ silent: true });
+});

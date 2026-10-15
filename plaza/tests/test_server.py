@@ -74,11 +74,40 @@ class HistoryPageTest(unittest.TestCase):
     def test_history_page_and_home_link(self) -> None:
         page = self.client.get("/history")
         self.assertEqual(page.status_code, 200)
-        self.assertIn("访问清单", page.text)
+        self.assertIn("玩过什么", page.text)        # 页面上那行标题（原来写的是"访问清单"）
 
         home = self.client.get("/")
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/history"', home.text)
+
+    def test_history_page_link_points_at_the_puzzle(self) -> None:
+        """「打开」得带上题目 id（/games/<游戏>/?p=<id>）—— 光回游戏首页就开成随机一道了。"""
+        page = self.client.get("/history").text
+        self.assertIn("'/games/' + encodeURIComponent(ev.game) + '/'", page)
+        self.assertIn("'?p=' + encodeURIComponent(ev.puzzle_id)", page)
+
+    def test_every_game_can_serve_a_puzzle_by_id(self) -> None:
+        """深链接靠的是各游戏的 `/puzzles/{id}` —— 五个游戏都得能按 id 取题。"""
+        games = self.client.get("/api/games").json()["games"]
+        self.assertTrue(games)
+        for game in games:
+            levels = [row["level"] for row in (game.get("levels") or [])]
+            if not levels:
+                continue                                  # 题库是空的：没得取，跳过
+            got = self.client.get("/api/games/%s/random" % game["id"],
+                                  params={"level": levels[0]})
+            self.assertEqual(got.status_code, 200, game["id"])
+            picked = got.json()
+            again = self.client.get("/api/games/%s/puzzles/%s" % (game["id"], picked["id"]))
+            self.assertEqual(again.status_code, 200, game["id"])
+            self.assertEqual(again.json()["id"], picked["id"], game["id"])
+            self.assertEqual(again.json()["level"], picked["level"], game["id"])
+
+    def test_game_url_without_slash_keeps_the_query(self) -> None:
+        """/games/<游戏>?p=<id>（少个斜杠）跳过去时，题目 id 不能丢。"""
+        got = self.client.get("/games/logic", params={"p": "X"}, follow_redirects=False)
+        self.assertEqual(got.status_code, 307)
+        self.assertTrue(got.headers["location"].endswith("/games/logic/?p=X"), got.headers)
 
 
 if __name__ == "__main__":

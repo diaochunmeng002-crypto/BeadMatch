@@ -36,7 +36,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -123,8 +123,10 @@ def _page_route(game: Game):
 
 
 def _slash_route(game: Game):
-    def go() -> RedirectResponse:
-        return RedirectResponse(game.url, status_code=307)
+    def go(request: Request) -> RedirectResponse:
+        # 查询串要带上：`/games/beadsort?p=<id>` 少个斜杠也得还是那一道题
+        tail = "?" + request.url.query if request.url.query else ""
+        return RedirectResponse(game.url + tail, status_code=307)
     go.__name__ = "slash_%s" % game.id.replace("-", "_")
     return go
 
@@ -221,8 +223,10 @@ _PAGE = """<!doctype html>
 """
 
 
-# 访问清单：按天分组，每行「时间 / 游戏(中文) / 等级 / 打开」。
-# 「打开」暂时跳到**游戏首页**（方案 A）；以后升级成 ?puzzle=<id> 只需改这里。
+# 访问清单：按天分组，每行「时间 / 游戏(中文) / 等级 / 题目 id / 打开」。
+# 「打开」直接开**那一道题**：/games/<游戏>/?p=<题目 id>（题目 id 由游戏页面自己认，
+# 见各游戏 web/app.js 里的 WANT_ID）。认不出这个参数 / 那道题不在题库里，
+# 游戏页面会退回"随机抽一道"，所以老页面照旧能打开，只是回到从前那种行为。
 # 每次加载 100 条，底部「加载更多」翻页（后端 /api/history 支持 limit/offset 的思路，
 # 这里先用 limit 累计）。
 _HISTORY_PAGE = """<!doctype html>
@@ -327,8 +331,10 @@ function row(ev) {
   const open = document.createElement('td');
   open.className = 'open';
   const a = document.createElement('a');
-  // 方案 A：先跳到游戏首页。以后升级成 /games/<id>/?puzzle=<puzzle_id>
-  a.href = '/games/' + encodeURIComponent(ev.game) + '/';
+  // 直接开**这**一道题：/games/<游戏>/?p=<题目 id>；万一条目里没有 id，就退回游戏首页
+  a.href = '/games/' + encodeURIComponent(ev.game) + '/'
+         + (ev.puzzle_id ? '?p=' + encodeURIComponent(ev.puzzle_id) : '');
+  a.title = ev.puzzle_id ? '打开 ' + ev.puzzle_id : '打开这个游戏';
   a.textContent = '打开';
   open.appendChild(a);
 
