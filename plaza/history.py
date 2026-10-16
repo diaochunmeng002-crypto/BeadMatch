@@ -42,6 +42,14 @@ APP_NAME = "BeadMatch"
 DB_NAME = "history.db"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# 题目的「出身」—— 抄进 detail 给历史页看的两栏（都只活在题目文件里，进不了固定列）：
+#   created_by —— 谁出的：`manual`（人写的）/ `beadmatch` / `beadsort`（工具名）
+#   generator  —— 用哪套算法出的：`layershuffle@1` / `walk_guided@4` / `sampler@1` …
+# **两栏都要。** 只看 created_by 会以为"出题方式只有一种"：竞技串珠库里 1900+ 道题
+# created_by 全是 `beadsort`，而它们其实由四种方法（walk / sampler / kociemba /
+# layershuffle）分头出的，低级和高级还不是同一批 —— 这一层信息只在 generator 里。
+ORIGIN_FIELDS = ("created_by", "generator")
+
 # 一条访问记录一张表。字段只存"信封"信息（谁、哪道题、什么时候），
 # 不碰题目内容；detail 里以后可以放 {"ok": true} 这种附加信息。
 _SCHEMA = """
@@ -246,12 +254,25 @@ def record_safe(**kwargs: Any) -> Optional[int]:
 
 def record_served(*, game: str, payload: Mapping[str, Any],
                   source: str = "") -> Optional[int]:
-    """游戏接口把一道题发给前端时调这个 —— 从 payload 里取 id / level。"""
+    """游戏接口把一道题发给前端时调这个 —— 从 payload 里取 id / level。
+
+    顺手把题目的**「出身」**抄进 ``detail``（见 ``ORIGIN_FIELDS``）：
+    ``created_by``（谁出的）+ ``generator``（用哪套算法出的）。历史页的
+    「出题者」那栏靠这两栏拼出来 —— **只抄 created_by 是不够的**，竞技串珠那
+    1900+ 道题 created_by 全是 ``beadsort``，光看它分不出这道是低级那批
+    （``sampler@1``）还是后来按层摆的（``layershuffle@1``）。
+    payload 里没有哪栏就哪栏不写（老记录 / 没这栏的游戏，页面上空着就是）。
+    """
     puzzle_id = str(payload.get("id") or "").strip()
     if not puzzle_id:
         return None
+    detail: Dict[str, Any] = {}
+    for field in ORIGIN_FIELDS:
+        value = str(payload.get(field) or "").strip()
+        if value:
+            detail[field] = value
     return record_safe(game=game, puzzle_id=puzzle_id, level=payload.get("level"),
-                       event="served", source=source)
+                       event="served", source=source, detail=detail or None)
 
 
 # --------------------------------------------------------------------------

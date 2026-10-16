@@ -86,6 +86,49 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("'/games/' + encodeURIComponent(ev.game) + '/'", page)
         self.assertIn("'?p=' + encodeURIComponent(ev.puzzle_id)", page)
 
+    def test_history_page_shows_the_author_and_the_method(self) -> None:
+        """「出题者」那栏要 **created_by + generator** 两个都显示。
+
+        只看 created_by 会以为出题方式只有一种 —— 竞技串珠库里每一道都是
+        ``beadsort``，可它们混着 sampler / layershuffle / kociemba / walk 四种
+        方法出的，低级和高级还不是同一批；那层信息只在 generator 里。
+        """
+        history.record_served(game="beadsort",
+                              payload={"id": "p1", "level": 1, "created_by": "beadsort",
+                                       "generator": "sampler@1"})
+        history.record_served(game="beadsort",
+                              payload={"id": "p2", "level": 22, "created_by": "beadsort",
+                                       "generator": "layershuffle@1"})
+
+        events = self.client.get("/api/history").json()["events"]   # 新的在最前面
+        self.assertEqual(events[0]["detail"]["generator"], "layershuffle@1")
+        self.assertEqual(events[1]["detail"]["generator"], "sampler@1")
+
+        page = self.client.get("/history").text
+        self.assertIn("出题者", page)                  # 表头那一栏
+        self.assertIn("ev.detail.created_by", page)    # 前端照着它渲染「谁出的」
+        self.assertIn("ev.detail.generator", page)     # 还有「用哪套算法」
+        # 算法名尾上的版本号**不显示**（sampler@1 → sampler）：@1 是给自己排错用的，
+        # 摆在页面上只是噪音，要看就鼠标停一下（提示里给完整的）
+        self.assertIn("full.split('@')[0]", page)
+
+    def test_history_page_literal_keeps_its_backslashes(self) -> None:
+        """页面那段 HTML 是**普通**三引号字符串：反斜杠必须成对写。
+
+        2026-10-16 踩过 —— 给 tooltip 写「反斜杠 + n」（想让 JS 见到转义）时，Python
+        先把它吃成一个**真换行**，于是那个 JS 字符串从中间被劈开、整段内联脚本报废：
+        `load(false)` 根本不会跑，页面永远停在「读取中…」。所以这条盯着页面字面量里
+        反斜杠的总数必须是偶数（成对的）。
+        """
+        path = Path(__file__).resolve().parent.parent / "server.py"
+        src = path.read_text(encoding="utf-8")
+        start = src.index('_HISTORY_PAGE = """') + len('_HISTORY_PAGE = """')
+        body = src[start:src.index('"""', start)]
+        self.assertIn("</html>", body)            # 切出来的确实是那一整段页面
+        self.assertEqual(body.count("\\") % 2, 0,
+                         "页面字面量里有落单的反斜杠 —— Python 会把它吃掉，"
+                         "JS 那边就是一段断掉的字符串。要写换行请用「反斜杠 + n」两个字符")
+
     def test_every_game_can_serve_a_puzzle_by_id(self) -> None:
         """深链接靠的是各游戏的 `/puzzles/{id}` —— 五个游戏都得能按 id 取题。"""
         games = self.client.get("/api/games").json()["games"]

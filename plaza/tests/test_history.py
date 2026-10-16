@@ -76,6 +76,27 @@ class HistoryTest(unittest.TestCase):
         with self.assertLogs(history.log, level="ERROR"):
             self.assertIsNone(history.record_safe(game="calc", puzzle_id="card-1"))
 
+    def test_record_served_keeps_the_origin_fields(self) -> None:
+        """题目的「出身」两栏都要抄进 detail：created_by（谁出的）+ generator（哪套算法）。
+
+        只抄 created_by 会漏掉真正分得开「出题方式」的那栏 —— 竞技串珠库里
+        1900+ 道题的 created_by 全是 ``beadsort``，是 generator 才记着这批低级题
+        用的 ``sampler@1``、那批按层摆的用的是 ``layershuffle@1``。
+        """
+        history.record_served(game="beadsort",
+                              payload={"id": "p1", "level": 1, "created_by": "beadsort",
+                                       "generator": "sampler@1"})
+        history.record_served(game="logic",
+                              payload={"id": "p2", "level": 2, "created_by": "manual"})
+        history.record_served(game="logic", payload={"id": "p3", "level": 2})
+
+        detail = {r["puzzle_id"]: r["detail"] for r in history.query(game="beadsort")}
+        detail.update({r["puzzle_id"]: r["detail"] for r in history.query(game="logic")})
+        self.assertEqual(detail["p1"],
+                         {"created_by": "beadsort", "generator": "sampler@1"})
+        self.assertEqual(detail["p2"], {"created_by": "manual"})   # 没 generator 就不写
+        self.assertEqual(detail["p3"], {})                        # 都没有就空着（别塞空串）
+
 
 if __name__ == "__main__":
     unittest.main()

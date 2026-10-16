@@ -24,7 +24,7 @@
 **广场自己不知道任何游戏规则**，它只是把每个游戏 `api.py` 里的 `router` 换个前缀挂上，
 再把它的 `web/` 托管出去（见 registry.py）。
 
-页面 `/history` 是那条访问清单：默认拉最近 200 条，只看"时间 / 游戏 / id"。
+页面 `/history` 是那条访问清单：默认拉最近 200 条，看"时间 / 游戏 / 等级 / 题目 / 出题者"。
 首页页脚有一个不显眼的入口 —— 这是给自己人看的，不往游戏页面上放。
 """
 
@@ -224,7 +224,16 @@ _PAGE = """<!doctype html>
 """
 
 
-# 访问清单：按天分组，每行「时间 / 游戏(中文) / 等级 / 题目 id / 打开」。
+# 访问清单：按天分组，每行「时间 / 游戏(中文) / 等级 / 题目 id / 出题者 / 打开」。
+# 「出题者」读的是记录 detail 里的两栏（写进去的见 history.record_served）：
+# **created_by**（谁出的：`manual` / `beadmatch` / `beadsort`）+ **generator**
+# （用哪套算法出的：`layershuffle@1` / `sampler@1` / `walk_guided@4` …），
+# 拼成「beadsort · sampler」这样。**两栏都得显示**：竞技串珠那 1900+ 道题
+# created_by 全是 `beadsort`，只看它这栏是死的（低级和高级看着一模一样），
+# 而库里其实混着四种出题方法。
+# 算法名尾上的**版本号不显示**（`sampler@1` → `sampler`）：它是给自己排错用的，
+# 摆在页面上只是噪音，要的时候鼠标停一下（title 里有完整的）。
+# 老记录 / 没这两栏的游戏空着就是。
 # 「打开」直接开**那一道题**：/games/<游戏>/?p=<题目 id>（题目 id 由游戏页面自己认，
 # 见各游戏 web/app.js 里的 WANT_ID）。认不出这个参数 / 那道题不在题库里，
 # 游戏页面会退回"随机抽一道"，所以老页面照旧能打开，只是回到从前那种行为。
@@ -329,6 +338,19 @@ function row(ev) {
   id.className = 'id';
   id.textContent = ev.puzzle_id || '';
 
+  // 出题者：从记录 detail 里取 —— created_by（谁出的）+ generator（用哪套算法出的）。
+  // 两栏都显示，中间用「·」连：「beadsort · sampler」。只显示 created_by 的话
+  // 竞技串珠每一行都是同一个 `beadsort`，低级和高级看着一模一样（点不出区别）。
+  // 算法名尾上的版本号不显示（`sampler@1` → `sampler`）—— 那是给自己排错看的，
+  // 摆在页面上只是噪音；鼠标停在上面时，提示里给完整的。
+  const by = document.createElement('td');
+  by.className = 'muted';
+  const author = (ev.detail && ev.detail.created_by) || '';
+  const full = (ev.detail && ev.detail.generator) || '';     // 完整：sampler@1
+  const method = full.split('@')[0].trim();                  // 显示用：sampler
+  by.textContent = (author && method) ? author + ' · ' + method : (author || method);
+  by.title = (author || full) ? '谁出的：' + (author || '—') + '\\n用哪套算法：' + (full || '—') : '';
+
   const open = document.createElement('td');
   open.className = 'open';
   const a = document.createElement('a');
@@ -339,7 +361,7 @@ function row(ev) {
   a.textContent = '打开';
   open.appendChild(a);
 
-  tr.append(time, game, level, id, open);
+  tr.append(time, game, level, id, by, open);
   return tr;
 }
 
@@ -353,7 +375,7 @@ function dayBlock(day) {
   wrap.className = 'wrap';
   const table = document.createElement('table');
   table.innerHTML = '<thead><tr><th>时间</th><th>游戏</th><th>等级</th>'
-                  + '<th>题目</th><th></th></tr></thead><tbody></tbody>';
+                  + '<th>题目</th><th>出题者</th><th></th></tr></thead><tbody></tbody>';
   wrap.appendChild(table);
 
   listEl.append(head, wrap);
