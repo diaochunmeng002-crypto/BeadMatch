@@ -97,6 +97,19 @@ class HistoryTest(unittest.TestCase):
         self.assertEqual(detail["p2"], {"created_by": "manual"})   # 没 generator 就不写
         self.assertEqual(detail["p3"], {})                        # 都没有就空着（别塞空串）
 
+    def test_clear_wipes_everything(self) -> None:
+        """清空：一条不剩，而且**自增号也拨回 1** —— 清完再记的第一条就该是 [1]。
+
+        （历史页那个「清空」按钮和 `python -m plaza.history clear` 都走它。）
+        """
+        history.record(game="calc", puzzle_id="card-1")
+        history.record(game="logic", puzzle_id="p-2", level=3)
+
+        self.assertEqual(history.clear(), 2)
+        self.assertEqual(history.query(), [])
+        self.assertEqual(history.clear(), 0)          # 再清一次：没得删，也不报错
+        self.assertEqual(history.record(game="calc", puzzle_id="card-3"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

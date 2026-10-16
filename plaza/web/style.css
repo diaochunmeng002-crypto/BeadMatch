@@ -73,8 +73,8 @@ a.game .warn { color: var(--bad); font-size: .85rem; margin: 8px 0 0; }
 footer { margin-top: 30px; color: var(--muted); font-size: .85rem; line-height: 1.9; }
 footer a { color: inherit; }
 
-/* 副标题后面的「查看历史」链接：就在那句话尾巴上，不抢眼 */
-.lead a.history {
+/* 副标题后面那些小链接（「查看历史」「GitHub」）：就在那句话尾巴上，不抢眼 */
+.lead a.sidelink {
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -82,4 +82,6 @@ footer a { color: inherit; }
   text-decoration-color: rgba(128, 128, 128, .45);
   white-space: nowrap;
 }
-.lead a.history:hover { text-decoration-color: currentColor; color: var(--ink); }
+.lead a.sidelink:hover { text-decoration-color: currentColor; color: var(--ink); }
+/* 并排的两个小链接之间留一口气（别让它们的下划线挨在一起） */
+.lead a.sidelink + a.sidelink { margin-left: 12px; }

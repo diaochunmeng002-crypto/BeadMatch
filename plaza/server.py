@@ -25,8 +25,9 @@
 **广场自己不知道任何游戏规则**，它只是把每个游戏 `api.py` 里的 `router` 换个前缀挂上，
 再把它的 `web/` 托管出去（见 registry.py）。
 
-页面 `/history` 是那条访问清单：默认拉最近 200 条，看"时间 / 游戏 / 等级 / 题目 / 出题者"。
-首页页脚有一个不显眼的入口 —— 这是给自己人看的，不往游戏页面上放。
+页面 `/history` 是那条访问清单：默认拉最近 200 条，看"时间 / 游戏 / 等级 / 题目 / 出题者"，
+上头有「刷新」和「清空」。入口在首页副标题后面（「查看历史 →」），旁边还挂着「GitHub →」
+（给自己人看提交记录用的）—— 这俩都是给自己人看的，不往游戏页面上放。
 """
 
 from __future__ import annotations
@@ -226,7 +227,8 @@ _PAGE = """<!doctype html>
 <header>
   <h1>游戏广场</h1>
   <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。
-     <a class="history" href="/history">查看历史 →</a></p>
+     <a class="sidelink" href="https://github.com/diaochunmeng002-crypto/BeadMatch/commits/master"
+        target="_blank" rel="noreferrer">GitHub →</a><a class="sidelink" href="/history">查看历史 →</a></p>
 </header>
 <main>
 %s

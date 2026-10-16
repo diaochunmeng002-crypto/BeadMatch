@@ -79,6 +79,8 @@ class HistoryPageTest(unittest.TestCase):
         home = self.client.get("/")
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/history"', home.text)
+        # 首页副标题后面并排两个小链接：查看历史 + GitHub（都给自己人看）
+        self.assertIn("github.com/diaochunmeng002-crypto/BeadMatch", home.text)
 
     def test_history_page_link_points_at_the_puzzle(self) -> None:
         """「打开」得带上题目 id（/games/<游戏>/?p=<id>）—— 光回游戏首页就开成随机一道了。"""
@@ -128,6 +130,23 @@ class HistoryPageTest(unittest.TestCase):
         self.assertEqual(body.count("\\") % 2, 0,
                          "页面字面量里有落单的反斜杠 —— Python 会把它吃掉，"
                          "JS 那边就是一段断掉的字符串。要写换行请用「反斜杠 + n」两个字符")
+
+    def test_clear_endpoint_wipes_the_history(self) -> None:
+        """「清空」按钮走的就是这条接口：清完一条不剩，还报一句清掉了几条。"""
+        history.record_served(game="beadsort", payload={"id": "p1", "level": 1})
+        history.record_served(game="beadsort", payload={"id": "p2", "level": 2})
+        self.assertEqual(self.client.get("/api/history").json()["count"], 2)
+
+        got = self.client.post("/api/history/clear")
+        self.assertEqual(got.status_code, 200)
+        self.assertEqual(got.json(), {"ok": True, "deleted": 2})
+        self.assertEqual(self.client.get("/api/history").json()["count"], 0)
+        self.assertEqual(history.query(game="beadsort"), [])
+
+        page = self.client.get("/history").text
+        self.assertIn('id="clear"', page)              # 按钮在
+        self.assertIn("/api/history/clear", page)      # 前端打的是这条接口
+        self.assertIn("已清空", page)                   # 清完在状态行报一句
 
     def test_every_game_can_serve_a_puzzle_by_id(self) -> None:
         """深链接靠的是各游戏的 `/puzzles/{id}` —— 五个游戏都得能按 id 取题。"""
