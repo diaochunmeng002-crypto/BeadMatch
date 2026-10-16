@@ -18,6 +18,7 @@
 
     python -m plaza.history path
     python -m plaza.history init
+    python -m plaza.history clear          # 全清（表留着，id 从 1 重新开始）
     python -m plaza.history add calc 20260916-110119-7848 --level 9 --source random
     python -m plaza.history list --game calc --limit 20
     python -m plaza.history summary --game calc --level 9
@@ -275,6 +276,26 @@ def record_served(*, game: str, payload: Mapping[str, Any],
                        event="served", source=source, detail=detail or None)
 
 
+def clear() -> int:
+    """把访问记录**全删掉**，返回删了多少条。表留着，id 也从 1 重新开始。
+
+    这是给人用的"重来一次"：历史页那个「清空」按钮、还有
+    ``python -m plaza.history clear`` 都走它。删的是**记录**，不碰任何游戏数据；
+    真删——不给备份，想留底先自己把库文件拷一份（``path`` 子命令告诉你它在哪）。
+    """
+    con = _connect()
+    try:
+        deleted = con.execute("DELETE FROM access_event").rowcount
+        # 自增号也拨回 1：清空之后再记，第一条就是 [1]
+        con.execute("DELETE FROM sqlite_sequence WHERE name = 'access_event'")
+        con.commit()
+        con.execute("VACUUM")        # 把删掉的空间还给文件（几十 KB 也是白占）
+        con.commit()
+        return int(deleted or 0)
+    finally:
+        con.close()
+
+
 # --------------------------------------------------------------------------
 # 查
 # --------------------------------------------------------------------------
@@ -422,6 +443,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     sub.add_parser("path", help="数据库文件在哪")
     sub.add_parser("init", help="建库 / 建表")
+    sub.add_parser("clear", help="清空访问记录（表留着，id 从 1 重新开始）")
 
     add = sub.add_parser("add", help="插一条记录")
     add.add_argument("game")
@@ -459,6 +481,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if args.cmd == "init":
         print("建好了：%s" % init_db())
+        return 0
+
+    if args.cmd == "clear":
+        print("清掉了 %d 条" % clear())
         return 0
 
     if args.cmd == "add":

@@ -20,6 +20,7 @@
     GET  /api/games/<id>/health            那个游戏活着没
     GET  /api/health                       广场活着没
     GET  /api/history?limit=200            最近访问记录（新的在前）
+    POST /api/history/clear                把访问记录全清掉（历史页那个「清空」按钮）
 
 **广场自己不知道任何游戏规则**，它只是把每个游戏 `api.py` 里的 `router` 换个前缀挂上，
 再把它的 `web/` 托管出去（见 registry.py）。
@@ -194,6 +195,21 @@ def api_history(
     return {"count": len(rows), "offset": offset, "events": rows}
 
 
+@app.post("/api/history/clear")
+def api_history_clear() -> Dict[str, object]:
+    """把访问记录**全清掉** —— 历史页右上角那个「清空」按钮走的就是这条。
+
+    为什么是 POST 而不是 DELETE：这是"动一下就没了"的动作，写成 POST 就不必担心
+    被浏览器的预取 / 某个 GET 顺手带走。清的就是记录本身，不碰任何游戏数据；
+    删多少返回多少，方便页面上报一句"已清空 N 条"。
+    """
+    try:
+        deleted = history.clear()
+    except Exception as exc:
+        raise HTTPException(500, "清不掉：%s" % exc)
+    return {"ok": True, "deleted": deleted}
+
+
 # --------------------------------------------------------------------------
 # 首页
 # --------------------------------------------------------------------------
@@ -278,6 +294,7 @@ td.open a:hover{text-decoration-color:currentColor}
   <div class="bar">
     <span id="status">读取中…</span>
     <button id="reload">刷新</button>
+    <button id="clear">清空</button>
   </div>
   <div id="list"></div>
   <p class="none" id="empty" hidden>还没有记录。</p>
@@ -428,8 +445,28 @@ async function load(append) {
   }
 }
 
+// 清空全部记录：先问一句（删了不给撤回），成了就把列表和分页一起归零
+async function clearAll() {
+  if (!confirm('把「玩过什么」里的记录全清掉？删了就没了，不能撤回。')) return;
+  statusEl.textContent = '清空中…';
+  try {
+    const r = await fetch('/api/history/clear', { method: 'POST' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    listEl.replaceChildren();
+    listEl.dataset.lastDay = '';
+    loaded = 0;
+    emptyEl.hidden = false;
+    moreBtn.hidden = true;
+    statusEl.textContent = `已清空 ${data.deleted} 条`;
+  } catch (e) {
+    statusEl.textContent = '清空失败：' + e.message;
+  }
+}
+
 document.getElementById('reload').addEventListener('click', () => load(false));
 moreBtn.addEventListener('click', () => load(true));
+document.getElementById('clear').addEventListener('click', clearAll);
 load(false);
 </script>
 </body>
