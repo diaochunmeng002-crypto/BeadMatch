@@ -133,15 +133,32 @@ main { width: 100%; max-width: 46rem; }
   height: var(--ball);
   border-radius: 50%;
   border: none;
-  cursor: pointer;
+  cursor: grab;
   padding: 0;
   box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
   transition: transform .12s ease, opacity .12s ease;
   position: relative;
+  touch-action: none;            /* 拖它的时候别让页面跟着滚（平板上要） */
+  user-select: none;             /* 拖的时候别把颜色名选中 */
 }
 
 .bead:hover { transform: translateY(-3px); }
+.bead:active { cursor: grabbing; }
 .bead.used { opacity: .28; cursor: default; transform: none; }
+
+/* 拖拽中：原件淡着，跟手的那颗是 .ghost，落点（槽 / 参与者）描一圈 */
+.bead.dragging { opacity: .25; }
+.bead.ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: .92;
+  transform: scale(1.06);
+}
+.slotbox.drop-target { border-color: var(--ink); border-style: solid; box-shadow: 0 0 0 3px var(--ink); }
+#pool.drop-target { outline: 2px dashed var(--ink); outline-offset: 8px; border-radius: 16px; }
 
 /* 珠子上的小字：颜色名（放不下就藏起来） */
 .bead .tag {

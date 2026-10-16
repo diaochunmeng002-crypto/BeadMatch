@@ -196,7 +196,8 @@ function renderPool() {
     tag.textContent = info.name;
     el.appendChild(tag);
     if (leftInPool(letter) <= 0) el.classList.add('used');
-    el.addEventListener('click', () => place(letter));
+    el.addEventListener('click', () => { if (!swallowDragClick()) place(letter); });
+    makeDraggable(el, { kind: 'pool', letter });
     poolEl.appendChild(el);
   });
 }
@@ -226,9 +227,11 @@ function renderSlots(animate = true) {
   state.pick.forEach((letter, i) => {
     const box = document.createElement('div');
     box.className = 'slotbox' + (letter ? ' filled' : '');
+    box.dataset.index = String(i);
     if (letter) {
       const el = beadEl(letter, { drop: animate });
-      el.addEventListener('click', () => takeBack(i));
+      el.addEventListener('click', () => { if (!swallowDragClick()) takeBack(i); });
+      makeDraggable(el, { kind: 'slot', index: i });
       box.appendChild(el);
     }
     const num = document.createElement('span');
@@ -287,6 +290,166 @@ function clearMarks() {
   state.checked = 0;
   cluesEl.querySelectorAll('li').forEach((li) => li.classList.remove('broken', 'done'));
   slotsEl.classList.remove('ok', 'bad');
+}
+
+// ---------------------------------------------------------------------------
+// 拖拽：按住一颗珠子就能拖 —— 从参与者拖进任意一个槽 / 槽与槽互拖换位 / 拖回参与者就拿回来
+//
+// 用 Pointer Events（不是 HTML5 的 dragstart）：手指、鼠标、笔走同一条路，平板上也能拖。
+// **点击那套照旧**：手指没挪过 `DRAG_SLOP` 就当"点了一下"，后面那个 click 照常走
+// place() / takeBack()；真拖过之后紧跟着的那一下 click 要吞掉，不然会多放一颗。
+// ---------------------------------------------------------------------------
+
+const DRAG_SLOP = 6;          // 挪过这么多像素才算"拖"（手指抖一下不算）
+
+const drag = {
+  from: null,                 // 从哪儿拎起来的：null / {kind:'pool', letter} / {kind:'slot', index}
+  ghost: null,                // 跟着手走的那颗（克隆一份，原件留在原地淡着）
+  source: null,               // 原件（松手后把淡化去掉）
+  target: null,               // 当前高亮的落点
+  moved: false,               // 这一把是"拖"还是"点"
+  swallowClick: false,        // 拖完那一下 click 要吞掉
+  startX: 0,
+  startY: 0,
+  grabX: 0,                   // 抓在珠子上的哪个位置（免得影子跳一下）
+  grabY: 0,
+};
+
+/** 拖完跟着来的那次 click 要吞掉吗（吞一次就复位，免得多吃一次真点击） */
+function swallowDragClick() {
+  if (!drag.swallowClick) return false;
+  drag.swallowClick = false;
+  return true;
+}
+
+/** 给一颗珠子装上"能拖"的手：`from` 说明它是从哪儿拎起来的 */
+function makeDraggable(el, from) {
+  el.addEventListener('pointerdown', (e) => {
+    if (!state.puzzle || e.button !== 0) return;        // 只认左键 / 单指
+    drag.from = from;
+    drag.moved = false;
+    drag.swallowClick = false;                          // 新手势开始，清掉上一把的残留
+    drag.startX = e.clientX;
+    drag.startY = e.clientY;
+    try { el.setPointerCapture(e.pointerId); } catch (err) { /* 合成事件没有真手指：忽略 */ }
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!drag.from) return;
+    if (!drag.moved) {
+      if (Math.abs(e.clientX - drag.startX) + Math.abs(e.clientY - drag.startY) < DRAG_SLOP) return;
+      drag.moved = true;
+      startGhost(el, e);
+    }
+    moveGhost(e.clientX, e.clientY);
+    showDropSpot(e.clientX, e.clientY);
+  });
+
+  const finish = (e) => {
+    if (!drag.from) return;
+    const wasDrag = drag.moved;
+    if (wasDrag) dropAt(e.clientX, e.clientY);
+    endGhost();
+    showDropSpot(null, null);
+    drag.from = null;
+    drag.moved = false;
+    drag.swallowClick = wasDrag;                        // 拖过的那一下别再当点击
+  };
+  el.addEventListener('pointerup', finish);
+  el.addEventListener('pointercancel', finish);
+}
+
+/** 起一个跟手的"影子"，原件留在原地淡掉 */
+function startGhost(el, e) {
+  const rect = el.getBoundingClientRect();
+  const ghost = el.cloneNode(true);
+  ghost.classList.add('ghost');
+  ghost.style.width = `${rect.width}px`;
+  ghost.style.height = `${rect.height}px`;
+  document.body.appendChild(ghost);
+  drag.ghost = ghost;
+  drag.source = el;
+  drag.grabX = e.clientX - rect.left;
+  drag.grabY = e.clientY - rect.top;
+  el.classList.add('dragging');
+  moveGhost(e.clientX, e.clientY);
+}
+
+function moveGhost(x, y) {
+  if (!drag.ghost) return;
+  drag.ghost.style.left = `${x - drag.grabX}px`;
+  drag.ghost.style.top = `${y - drag.grabY}px`;
+}
+
+function endGhost() {
+  if (drag.ghost) drag.ghost.remove();
+  if (drag.source) drag.source.classList.remove('dragging');
+  drag.ghost = null;
+  drag.source = null;
+}
+
+/** 手指底下是什么落点：第几个槽 / 参与者 / 别的地方（返回 null） */
+function dropSpot(x, y) {
+  if (x === null || y === null) return null;
+  const el = document.elementFromPoint(x, y);
+  if (!el || !el.closest) return null;
+  const box = el.closest('.slotbox');
+  if (box) return { kind: 'slot', el: box, index: Number(box.dataset.index) };
+  const pool = el.closest('#pool');
+  if (pool) return { kind: 'pool', el: pool };
+  return null;
+}
+
+/** 拖的时候把落点点亮（换了落点就换高亮） */
+function showDropSpot(x, y) {
+  const spot = dropSpot(x, y);
+  if (drag.target && (!spot || drag.target.el !== spot.el)) {
+    drag.target.el.classList.remove('drop-target');
+    drag.target = null;
+  }
+  if (spot && !drag.target) {
+    spot.el.classList.add('drop-target');
+    drag.target = spot;
+  }
+}
+
+/** 松手：落到槽里就放 / 换位，落到参与者就拿回来，落到别处（线索、页头……）当没拖 */
+function dropAt(x, y) {
+  const spot = dropSpot(x, y);
+  const from = drag.from;
+  if (!spot || !from) return;
+  if (spot.kind === 'pool') {
+    if (from.kind === 'slot') takeBack(from.index);
+    return;
+  }
+  if (from.kind === 'pool') placeAt(from.letter, spot.index);
+  else moveSlot(from.index, spot.index);
+}
+
+/** 把一颗（从参与者拖来的）珠子放到第 index 个槽：那格原来有珠子的话，它退回参与者 */
+function placeAt(letter, index) {
+  if (!state.puzzle || index < 0 || index >= state.pick.length) return;
+  if (state.pick[index] === letter) return;             // 拖回原位：什么都不做
+  if (leftInPool(letter) <= 0) return;                  // 这种颜色已经摆满了
+  state.pick[index] = letter;
+  clearMarks();
+  renderAll(true);
+  playTick();
+  speak(COLORS[letter] ? COLORS[letter].name + '色' : letter);
+  maybeCheck();
+}
+
+/** 槽与槽：把 from 那颗挪到 to；to 里有珠子就换位（空位就是单纯搬过去） */
+function moveSlot(from, to) {
+  if (from === to) return;
+  if (from < 0 || to < 0 || from >= state.pick.length || to >= state.pick.length) return;
+  const tmp = state.pick[to];
+  state.pick[to] = state.pick[from];
+  state.pick[from] = tmp;
+  clearMarks();
+  renderAll(true);
+  playTick();
+  maybeCheck();
 }
 
 /** 摆满了就自动检查 */
