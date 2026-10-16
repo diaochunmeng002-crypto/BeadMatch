@@ -44,11 +44,8 @@ const state = {
   timer: null,
   run: 0,                // 自动播放的批次号：停下来就作废，防止旧的一轮还在跑
   selected: null,        // 当前选中的柱子（键盘操作靠它）
+  half: null,            // 最近读到的那一段：'low'（下五）/ 'high'（上五）—— 空格重读用
 };
-
-// 朗读参数：组内连读，组与组之间静音这么久（毫秒）
-const SPEECH_GROUP_GAP = 300;
-const SPEECH_RATE = 1.2;      // 语速：组内读得快一点（1.0 = 系统默认，越大越快）
 
 // ---------------------------------------------------------------------------
 // 小工具：跟后端 free_solver 里那套规则一一对应
@@ -162,47 +159,6 @@ function speak(text) {
   } catch (e) { /* 不支持就算了 */ }
 }
 
-/** 挑一个中文语音（挑不到就用系统默认，别因此不出声） */
-function pickVoice() {
-  try {
-    const voices = window.speechSynthesis.getVoices() || [];
-    return voices.find((v) => /^zh/i.test(v.lang)) || null;
-  } catch (e) {
-    return null;
-  }
-}
-
-/** 分组朗读：传进来的是**已经拼好的字符串数组**（如 ["绿、黄", "红、蓝"]），
- *  组内连读，组与组之间留一段静音（Web Speech 不支持 SSML，只能这样控停顿）。 */
-function speakGroups(lines) {
-  if (!('speechSynthesis' in window)) {
-    console.warn('[beadsort] 这个浏览器不支持 speechSynthesis，没法朗读');
-    return;
-  }
-  try {
-    window.speechSynthesis.cancel();
-    const voice = pickVoice();
-    if (!voice) console.warn('[beadsort] 没找到中文语音，用系统默认语音读');
-    let i = 0;
-    const next = () => {
-      if (i >= lines.length) return;
-      const text = lines[i];
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'zh-CN';
-      u.rate = SPEECH_RATE;
-      if (voice) u.voice = voice;
-      i += 1;
-      u.onend = () => { if (i < lines.length) setTimeout(next, SPEECH_GROUP_GAP); };
-      u.onerror = (e) => console.warn('[beadsort] 朗读出错：', e.error || e);
-      console.log('[beadsort] 朗读：', text);
-      window.speechSynthesis.speak(u);
-    };
-    next();
-  } catch (e) {
-    console.warn('[beadsort] 朗读失败：', e);
-  }
-}
-
 // ---------------------------------------------------------------------------
 // 渲染
 // ---------------------------------------------------------------------------
@@ -216,7 +172,7 @@ function render(animateIn = true) {
     el.className = 'tube';
     el.dataset.tube = String(t);
     if (t === state.selected) el.classList.add('selected');
-    el.addEventListener('click', () => selectTube(t));
+    el.addEventListener('click', () => readTube(t, 'low'));   // 点柱子 = 听「下五」
     for (let p = 0; p < capacity; p++) {
       const slot = document.createElement('div');
       slot.className = 'slot';
@@ -235,58 +191,45 @@ function render(animateIn = true) {
   });
 }
 
-/** 把一根柱子按「由下到上」拆成朗读分组：**每 5 颗一组**（8 颗 = 5 + 3，10 颗 = 5 + 5） */
-function groupTube(tube) {
-  const names = tube.filter((v) => v !== 0).reverse()      // 内部是"顶在前"，反过来就是由下到上
-                    .map((v) => COLORS[v].name);
-    const groups = [];
-  for (let i = 0; i < names.length; i += 5) groups.push(names.slice(i, i + 5));
-  return groups.length ? groups : [[]];
+/** 一根柱子的珠子，按「由下到上」排成颜色名（内部是"顶在前"，所以先反过来）。 */
+function namesBottomUp(tube) {
+  return tube.filter((v) => v !== 0).reverse().map((v) => COLORS[v].name);
 }
 
-/** 一根柱子**最上面 n 颗**（默认 5）的颜色名，按「由下到上」排。
- *  内部是"顶在前"，所以取前 n 个再反过来；够不到 n 颗就有几颗给几颗。 */
-function topBalls(tube, n = 5) {
-  return tube.filter((v) => v !== 0).slice(0, n).reverse()
-             .map((v) => COLORS[v].name);
+/** 中文数字（1~10 够用了 —— 柱容量就是 10；再大就退回阿拉伯数字） */
+const CN_NUM = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+const cn = (n) => CN_NUM[n] || String(n);
+
+/** 一根柱子按「由下到上」分成两段：**下五**（最下面 5 颗）+ **上面剩下的那些**。
+ *
+ *  上面那段的颗数是**动态的**：10 颗 = 下五 + 上五、9 颗 = 下五 + 上四、7 颗 = 下五 + 上二
+ *  —— 一开始写死"最上面 5 颗"，9 颗时第 5 颗会被念两遍（2026-10-16 反馈修掉）。
+ *  不够 5 颗就只有"下"这一段（有几颗就叫下几）；空柱两段都是空的。
+ *  返回 `{ label, names }`：label 里的数字是**这一段实际有几颗**。
+ */
+function halfOf(tube, half) {
+  const names = namesBottomUp(tube);
+  const low = names.slice(0, 5);
+  const high = names.slice(5);
+  if (!low.length) return { label: '空柱子', names: [] };
+  if (half === 'high' && high.length) return { label: '上' + cn(high.length), names: high };
+  return { label: '下' + cn(low.length), names: low };
 }
 
-/** 选中一根柱子并朗读（点击、方向键、空格都走这里） */
-function selectTube(t, read = true) {
+/** 选中一根柱子（只高亮 + 记下它是谁）—— 说话交给 readHalf，别在这儿出声。 */
+function selectTube(t) {
   state.selected = t;
   board.querySelectorAll('.tube').forEach((el) => {
     el.classList.toggle('selected', Number(el.dataset.tube) === t);
   });
-
-  const groups = groupTube(state.matrix[t]);
-  const shown = groups.map((g) => g.join('、')).filter(Boolean);
-  const text = shown.length ? shown.join('　／　') : '空柱子';
-  toast(`第 ${t + 1} 根（由下到上）：${text}`);
-  if (read) {
-    // 先报「第 X 根」，跟第一组连在一起读（不额外加停顿）
-    const head = `第${t + 1}根，`;
-    speakGroups(shown.length ? [head + shown[0], ...shown.slice(1)] : [head + '空柱子']);
-  }
-  playTick(1.2);
-
-  const el = board.querySelector(`.tube[data-tube="${t}"]`);
-  if (el) {
-    el.classList.add('reading');
-    setTimeout(() => el.classList.remove('reading'), 320);
-  }
 }
 
-/** 只读当前选中柱子**最上面 5 颗**（没选中就先选第一根）。
- *  够不到 5 颗就读几颗；空柱就报「空柱子」。 */
-function readTop5() {
-  if (state.selected === null) {
-    selectTube(0);
-    return;
-  }
-  const t = state.selected;
-  const names = topBalls(state.matrix[t]);
+/** 读第 t 根柱子的一段：报「第 X 根 + 下五/上四 + 颜色（由下到上）」，把它点亮。
+ *  语音里**不报「第几根」**（2026-10-16 反馈：听着啰嗦），屏幕上那行还写着。 */
+function readHalf(t, half) {
+  const { label, names } = halfOf(state.matrix[t], half);
   const shown = names.join('、');
-
+  state.half = half;
   const el = board.querySelector(`.tube[data-tube="${t}"]`);
   if (el) {
     el.classList.add('reading');
@@ -294,13 +237,23 @@ function readTop5() {
   }
 
   if (!shown) {
-    toast(`第 ${t + 1} 根 最上面 5 颗：空柱子`);
-    speak(`第${t + 1}根，空柱子`);
+    toast(`第 ${t + 1} 根：空柱子`);
+    speak('空柱子');
   } else {
-    toast(`第 ${t + 1} 根 最上面 5 颗（由下到上）：${shown}`);
-    speak(`第${t + 1}根，最上面5颗，${shown}`);
+    // 话就两节：下五/上四 / 颜色 —— 不报"第几根"，也不念"最上面 5 颗"这种长句子
+    toast(`第 ${t + 1} 根 ${label}（由下到上）：${shown}`);
+    speak(`${label}，${shown}`);
   }
   playTick(1.2);
+}
+
+/** 读第 t 根柱子的某一段：`half` = 'low'（下五）/ 'high'（上面那段）。
+ *  没指定哪根就用当前选中的，一根都没选过就从第一根开始。 */
+function readTube(t, half) {
+  if (t === null || t === undefined) t = state.selected;
+  if (t === null || t === undefined) t = 0;
+  selectTube(t);
+  readHalf(t, half);
 }
 
 let toastTimer = null;
@@ -560,6 +513,7 @@ async function newPuzzle(opts = {}) {
     state.base = p.matrix.map((t) => t.slice());
     state.cursor = 0;
     state.selected = null;
+    state.half = null;
     state.matrix = matrixAt(0);
     render(true);
     updateTransport();
@@ -594,8 +548,9 @@ $('level').addEventListener('change', (e) => { newPuzzle(); e.target.blur(); });
 
 // 键盘：
 //   ← →        换柱子（到头"咚"一声）—— 给读屏用的，别占
-//   ↑          只读当前选中柱子最上面 5 颗
-//   空格       重读选中的柱子
+//   ↑          读「上五」（最上面 5 颗）—— 一次只读五个，整根 10 颗一口气读太快
+//   ↓          读「下五」（最下面 5 颗），跟点柱子、← → 一样
+//   空格       重读刚才读到的那一段
 //   Home       回到题目
 //   PageUp     上一步
 //   PageDown   下一步
@@ -612,19 +567,24 @@ window.addEventListener('keydown', (e) => {
 
     if (e.key === ' ' || e.code === 'Space') {
     e.preventDefault();
-    if (state.selected !== null) selectTube(state.selected);
+    if (state.selected !== null) readHalf(state.selected, state.half || 'low');
     return;
   }
   if (e.key === 'ArrowUp') {
     e.preventDefault();
-    readTop5();               // 只读选中柱子最上面 5 颗
+    readTube(null, 'high');   // 读「上五」
+    return;
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    readTube(null, 'low');    // 读「下五」—— 跟点柱子、← → 一个动作
     return;
   }
   if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
     e.preventDefault();
     const step = e.key === 'ArrowLeft' ? -1 : 1;
     if (state.selected === null) {
-      selectTube(0);
+      readTube(0, 'low');     // 还没选过柱子：从第一根开始，读它的「下五」
       return;
     }
     const next = state.selected + step;
@@ -632,7 +592,7 @@ window.addEventListener('keydown', (e) => {
       playThud();          // 左边/右边没有了
       return;
     }
-    selectTube(next);
+    readTube(next, 'low');    // 换根柱子就读它的「下五」
   }
 });
 
