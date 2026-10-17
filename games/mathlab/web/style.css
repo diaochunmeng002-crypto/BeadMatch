@@ -1,0 +1,163 @@
+/* 数学实验室：跟另外几个游戏同一套配色和手感（珠子是实物，屏幕只出题、给答案） */
+
+:root {
+  --bg: #17181a;
+  --ink: #ececec;
+  --muted: #9aa0a6;
+  --card: #1e2023;
+  --panel: #24262a;
+  --border: #3a3d42;
+  --slot: #2b2e33;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #faf9f7;
+    --ink: #33312e;
+    --muted: #8a857f;
+    --card: #fff;
+    --panel: #fff;
+    --border: #d9d5d0;
+    --slot: #f0eeea;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 40px 20px 60px;
+  font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+header, main { width: 100%; max-width: 46rem; }
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+h1 { font-size: 1.25rem; margin: 0; letter-spacing: .02em; }
+
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.field { font-size: .9rem; display: flex; align-items: center; gap: 6px; }
+
+select, button {
+  font: inherit;
+  font-size: .9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 7px 12px;
+  color: inherit;
+  cursor: pointer;
+}
+
+select {
+  padding-right: 26px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+                    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) center, calc(100% - 10px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+select option { background-color: var(--panel); color: var(--ink); }
+
+button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+button:disabled { opacity: .45; cursor: default; }
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 20px 2px 0;
+  letter-spacing: .02em;
+}
+.title[hidden] { display: none; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 18px;
+}
+
+.label { font-size: .8rem; color: var(--muted); font-weight: 600; margin: 0 0 12px; }
+
+/* ---- 参与者：拿几颗、什么颜色（跟 logic 那版式一样） ---- */
+
+.materials { display: flex; flex-direction: column; gap: 12px; }
+
+.material { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.material .beads { display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap; }
+
+.material .bead {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
+}
+
+.material .cap { color: var(--muted); font-size: .9rem; }
+
+/* ---- 题目：编号步骤 ---- */
+
+.steps { margin: 0; padding-left: 1.4rem; }
+.steps li { padding: 7px 4px; line-height: 1.85; }
+
+.answer { margin: 0 0 10px; font-size: 1.05rem; font-weight: 600; line-height: 1.8; }
+.why { margin: 0 0 14px; color: var(--muted); line-height: 1.9; }
+
+/* ---- 示例摆法：一行一组，珠子是同一套颜色 ---- */
+
+.example { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 14px; }
+
+.example .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.example .row-label { min-width: 5.4em; color: var(--muted); font-size: .85rem; }
+
+.example .groups { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.example .group { display: flex; gap: 8px; padding: 7px 9px; border-radius: 12px; background: var(--slot); }
+.example .group.plain { background: none; padding: 0; }
+.example .group.wide { gap: 18px; }
+
+.example .bead {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
+}
+
+.example .count { color: var(--muted); font-size: .85rem; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translate(-50%, 20px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: .9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }

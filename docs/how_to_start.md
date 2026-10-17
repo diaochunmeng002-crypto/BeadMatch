@@ -48,7 +48,7 @@ python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba
 
 ## 只想调某一个游戏
 
-六个游戏都能单独跑，端口互不打扰（平时用不到，改某个游戏时方便）：
+七个模块都能单独跑，端口互不打扰（平时用不到，改哪个时方便）：
 
 | 游戏 | 命令 | 端口 |
 | --- | --- | --- |
@@ -58,6 +58,7 @@ python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba
 | 记忆 | `python -m games.memory.api` | 8020 |
 | 计算 | `python -m games.calc.api` | 8030 |
 | 找规律 | `python -m games.pattern.api` | 8040 |
+| 数学实验室 | `python -m games.mathlab.api` | 8050 |
 
 单独跑时页面在 `/`、接口在 `/api/<游戏>/...`（跟以前一模一样）——
 游戏里的前端代码两种跑法共用，广场会往页面里注入接口基址，不用改。
@@ -229,6 +230,18 @@ python -m games.pattern.api             # 单跑（页面 8040）
 这个游戏**屏幕只出题、给答案和规律解释，珠子是实物摆** —— 所以没有 `/check`，也没有拖动；
 点「完成」亮答案，再由孩子/家长点「摆对了 / 没对」。详细说明见
 [games/pattern/README.md](../games/pattern/README.md)。
+
+## 数学实验室（第七个模块，2026-10-17 起）
+
+```bash
+python -m games.mathlab.core.demos    # 列出演示 + 检查字段
+python -m games.mathlab.api           # 单跑（页面 8050）
+```
+
+它走"出题 → 孩子在实物珠子上操作 → 看答案 → 自评"这一路，但答案是一条**性质**
+（"排成什么形状、拉开多远，总数都还是 7 颗"），不是唯一结果；页面上还有一句
+**怎么玩**（拿几颗、怎么摆、看什么）和示例摆法。现在只有 Demo 01（数量守恒），
+12 个演示的覆盖范围还在讨论。详细说明见 [games/mathlab/README.md](../games/mathlab/README.md)。
 
 ## 打包成 exe（Windows 桌面版）
 

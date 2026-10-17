@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17
+created_by=manual
+id=l4-carry
+level=4
+title=凑十进位
+thing=糖球
+unit=颗
+materials=R:8 B:4
+example=8 颗 + 4 颗|RRRRRRRR BBBB|8 + 4|
+example=先凑十：8 + 2 = 10|RRRRRRRRRR|1 个十|
+example=再剩 2 颗：10 + 2 = 12|RRRRRRRRRR BB|1 个十 + 2 个一 = 12|
+answer=8 + 4：先拿 2 颗凑成 10（1 个十），还剩 2 颗一 —— 所以是 12，也就是 1 个十加 2 个一。
+why=加法里个位满 10 就捆成一个十 —— 这就是「进位」。
+
+摆 8 颗红糖球和 4 颗蓝糖球。
+从蓝的里拿 2 颗，补到红的那堆：红的那堆变成 10 颗。
+把这 10 颗捆成一串（一个十）。
+现在几个十、几个一？合起来是几颗？

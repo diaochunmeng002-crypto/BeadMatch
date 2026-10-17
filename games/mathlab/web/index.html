@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeadMatch · 数学实验室</title>
+<link rel="stylesheet" href="static/style.css?v=20261017a">
+</head>
+<body>
+<header class="top">
+  <h1>数学实验室</h1>
+  <div class="controls">
+    <label class="field">难度
+      <select id="level"></select>
+    </label>
+    <button id="read">读一遍</button>
+    <button id="show">看答案</button>
+    <button id="next" class="primary">换一题</button>
+  </div>
+</header>
+
+<main>
+  <p class="title" id="demo-title"></p>
+
+  <section class="card">
+    <h2 class="label">参与者</h2>
+    <div id="materials" class="materials"></div>
+  </section>
+
+  <section class="card">
+    <h2 class="label">题目</h2>
+    <ol id="steps" class="steps"></ol>
+  </section>
+
+  <section class="card" id="result" hidden>
+    <h2 class="label">答案</h2>
+    <p class="answer" id="answer"></p>
+    <div class="example" id="example"></div>
+    <p class="why" id="why"></p>
+  </section>
+</main>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script src="static/app.js?v=20261017a"></script>
+</body>
+</html>

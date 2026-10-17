@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17
+created_by=manual
+id=l2-take
+level=2
+title=拿走几个
+thing=珠子
+unit=颗
+materials=B:8
+example=原来：8 颗|BBBBBBBB|8 颗|
+example=拿走 3 颗|BBBBB BBB|剩下 5 + 拿走 3|
+example=放回去：8 颗|BBBBBBBB|5 + 3 = 8|
+answer=8 拿走 3 剩 5 —— 拿走的 3 颗加上剩下的 5 颗，正好还是原来的 8 颗。
+why=拿走就是从一堆里去掉几颗；去掉的和剩下的合起来，永远等于原来那一堆。
+
+摆 8 颗蓝珠子。
+拿走 3 颗，放到另一边。
+数一数：还剩几颗？
+把拿走的放回去：拿走 + 剩下，还是 8 颗吗？

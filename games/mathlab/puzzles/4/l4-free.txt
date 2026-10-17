@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17
+created_by=manual
+id=l4-free
+level=4
+title=自由实验
+thing=珠子
+unit=颗
+materials=R:10 G:10 B:10 Y:10 P:10 O:10
+example=自由摆：怎么摆都行|RRRR GGGG BBB|随便几颗|
+example=随便拿一些|YYYY PPPP|随便几颗|
+answer=没有标准答案 —— 只要数得对、说得清，就是一次好实验。可以试试：怎么摆总数都不变；两堆合起来等于原来的数；平均分会有余数。
+why=数学不只有标准答案：先猜、再摆、再数，能把「为什么」说清楚最要紧。
+
+从 6 色里随便挑一些珠子。
+想一个想问的问题（比如：拉长会不会变多？拆两堆还是原来的数吗？）。
+摆一摆、数一数。
+你发现了什么？说给爸爸妈妈听。

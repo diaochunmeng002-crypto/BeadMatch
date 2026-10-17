@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17
+created_by=manual
+id=l1-match
+level=1
+title=一样多吗？
+thing=小皮球
+unit=个
+materials=R:6 B:6
+example=红串：6 个|RRRRRR|6 个|
+example=蓝串拉开：还是 6 个|BBBBBB|6 个（看着更长）|wide
+example=一颗对一颗：一样多|RRRRRR BBBBBB|红 6 / 蓝 6|
+answer=看起来更长的那串不一定更多 —— 一颗对一颗地对齐，两串都是 6 个，一样多。
+why=长度会被间距骗人。比多少要看个数：一颗配一颗，配得上的就一样多。
+
+摆两串小皮球：一串 6 个红、一串 6 个蓝。
+把蓝的那串拉开一点，让它看起来更长。
+先猜一猜：看起来长的那串更多吗？
+一颗对一颗地对齐，数一数：两串各有几个？

@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "mathlab"
+name = "数学实验室"
+category = "lab"
+summary = "用珠子做实验：数量守恒、拆分、均分、位值……"
