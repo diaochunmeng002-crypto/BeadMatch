@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110706-0766
+level=7
+title=积木站错队
+story=假装这些是积木：红、蓝、蓝、红、蓝、绿、红、蓝、蓝。队伍里有一块站错了颜色，第几块错了？该改成什么颜色？
+kind=repeat
+unit=RBB
+shown=RBBRBGRBB
+fix=6:G>B
+rule=三颗一循环：红、蓝、蓝…… 有一颗站错了队，把它改回来就顺了。

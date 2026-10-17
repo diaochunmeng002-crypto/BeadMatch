@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110205-0254
+level=2
+title=跳跳球三个一组
+story=假装这些是跳跳球：绿、黄、黄、绿、黄、黄、绿、黄、黄、绿…… 每三个一组。接下来三个该是什么颜色？
+kind=repeat
+unit=GYY
+shown=GYYGYYGYYG???
+answer=YYG
+rule=三颗一循环：绿、黄、黄。

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeadMatch · 找规律</title>
+<link rel="stylesheet" href="static/style.css?v=20261017b">
+</head>
+<body>
+<header class="top">
+  <h1>找规律</h1>
+  <div class="controls">
+    <label class="field">难度
+      <select id="level"></select>
+    </label>
+    <button id="read">读一遍</button>
+    <button id="show">看答案</button>
+    <button id="next" class="primary">换一题</button>
+  </div>
+</header>
+
+<main>
+  <p class="title" id="puzzle-title"></p>
+  <p class="story" id="story" hidden></p>
+
+  <section class="card">
+    <h2 class="label">题目</h2>
+    <div id="board" class="board"></div>
+    <p class="task" id="task"></p>
+  </section>
+
+  <section class="card" id="result" hidden>
+    <h2 class="label">答案</h2>
+    <p class="answer" id="answer"></p>
+    <p class="rule" id="rule"></p>
+    <div class="judge">
+      <span class="ask">孩子摆对了吗？</span>
+      <button id="yes" class="primary">摆对了</button>
+      <button id="no">没对，再来一次</button>
+    </div>
+  </section>
+
+  <p id="status" class="status"></p>
+
+  <p class="hint">
+    珠子是<b>实物</b> —— 屏幕上只出题、给答案和解释，不用在屏幕上摆。<br>
+    点珠子读颜色名；<kbd>空格</kbd> 读整题，<kbd>回车</kbd> = 看答案，<kbd>←</kbd> <kbd>→</kbd> 换难度。
+  </p>
+</main>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script src="static/app.js?v=20261017b"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110118-01fc
+level=1
+title=小蘑菇排队
+story=假装这些是小蘑菇：橙、黄、橙、黄、橙，一朵接一朵冒出来。下一朵该是什么颜色？
+kind=repeat
+unit=OY
+shown=OYOYO?
+answer=Y
+rule=两颗一循环：橙、黄、橙、黄……

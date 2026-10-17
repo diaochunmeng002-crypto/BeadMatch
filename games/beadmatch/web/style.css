@@ -115,6 +115,9 @@ button:disabled { opacity: .45; cursor: default; }
   margin: 40px 0 8px;
   display: flex;
   align-items: flex-end;
+  /* 珠子永远水平居中：main 的宽度会被底下那行长提示撑宽，
+     不写这句珠子就贴着左边排（跟竞技串珠 2026-09-18 那次同一个毛病，宝宝串珠漏了 —— 2026-10-17 补） */
+  justify-content: center;
   gap: 14px;
 }
 

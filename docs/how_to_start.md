@@ -48,7 +48,7 @@ python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba
 
 ## 只想调某一个游戏
 
-四个游戏都能单独跑，端口互不打扰（平时用不到，改某个游戏时方便）：
+六个游戏都能单独跑，端口互不打扰（平时用不到，改某个游戏时方便）：
 
 | 游戏 | 命令 | 端口 |
 | --- | --- | --- |
@@ -57,6 +57,7 @@ python run.py --puzzles beadsort=games/beadsort/puzzles_kociemba
 | 推理 | `python -m games.logic.api` | 8010 |
 | 记忆 | `python -m games.memory.api` | 8020 |
 | 计算 | `python -m games.calc.api` | 8030 |
+| 找规律 | `python -m games.pattern.api` | 8040 |
 
 单独跑时页面在 `/`、接口在 `/api/<游戏>/...`（跟以前一模一样）——
 游戏里的前端代码两种跑法共用，广场会往页面里注入接口基址，不用改。
@@ -215,6 +216,19 @@ http://127.0.0.1:8030/docs     ← 接口文档
 
 （换端口：`--port 8040`。跟别的游戏不一样的是**有 `POST /api/calc/check`** ——
 交一个答案（`5` / `"五"` / `"蓝"` / `"equal"` 都行）就能判对错。）
+
+## 检查 pattern 题库 / 起它的后端（第六个游戏）
+
+```bash
+python -m games.pattern.core.cards      # 检查题库（唯一解、颜色上限、题面/答案对不对）
+python -m games.pattern.tools.make_puzzles   # 批量出题（每档补到 20 道，写完自动逐题校验）
+python -m games.pattern.api             # 单跑（页面 8040）
+```
+
+`--list` 顺手列每档几道，`--show <题目文件>` 打印一道题（含规律算出来的完整序列）。
+这个游戏**屏幕只出题、给答案和规律解释，珠子是实物摆** —— 所以没有 `/check`，也没有拖动；
+点「完成」亮答案，再由孩子/家长点「摆对了 / 没对」。详细说明见
+[games/pattern/README.md](../games/pattern/README.md)。
 
 ## 打包成 exe（Windows 桌面版）
 

@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-111010-0a9d
+level=10
+title=小汽车少了一个
+story=假装这些是小汽车：1颗红色，2颗橙色，2颗红色…… 有一群少摆了一辆。先找出少的那一辆，再摆出下一群。
+kind=groups
+unit=RO
+counts=1,2,3,4
+shown=R/OO/RR/?
+answer=OOOO
+fix=5:+R
+rule=每组比上一组多一颗，颜色红、橙交替 —— 有一组少摆了一颗。

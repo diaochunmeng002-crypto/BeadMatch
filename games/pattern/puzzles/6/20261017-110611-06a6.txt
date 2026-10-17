@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110611-06a6
+level=6
+title=小蘑菇学新颜色
+story=假装这些是小蘑菇：1颗橙色，2颗橙色，3颗橙色，4颗橙色…… 每群比前一群多一朵，颜色也一次多用一种。下一群是什么？
+kind=prefix
+unit=OBPGY
+counts=1,2,3,4,5
+shown=O/OB/OBP/OBPG/?
+answer=OBPGY
+rule=每组比上一组多一颗，颜色按橙、蓝、紫、绿、黄的顺序往后取。

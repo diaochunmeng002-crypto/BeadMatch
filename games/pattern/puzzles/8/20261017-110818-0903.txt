@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110818-0903
+level=8
+title=小火车翻一倍
+story=假装这些是小火车：1颗黄色，2颗绿色，4颗黄色。每一群都是上一群的两倍，下一群几节、什么颜色？
+kind=groups
+unit=YG
+counts=1,2,4,8
+shown=Y/GG/YYYY/?
+answer=GGGGGGGG
+rule=每一组都是上一组的两倍：1、2、4、8，颜色黄、绿交替。

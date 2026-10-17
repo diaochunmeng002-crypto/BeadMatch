@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110213-02bc
+level=2
+title=积木三个一组
+story=假装这些是积木：绿、橙、橙、绿、橙、橙、绿…… 每三块一组。接下来三块该是什么颜色？
+kind=repeat
+unit=GOO
+shown=GOOGOOG???
+answer=OOG
+rule=三颗一循环：绿、橙、橙。

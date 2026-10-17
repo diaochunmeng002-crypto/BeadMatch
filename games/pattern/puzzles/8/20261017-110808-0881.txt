@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110808-0881
+level=8
+title=小雨滴翻一倍
+story=假装这些是小雨滴：1颗蓝色，2颗紫色，4颗蓝色。每一群都是上一群的两倍，下一群几滴、什么颜色？
+kind=groups
+unit=BP
+counts=1,2,4,8
+shown=B/PP/BBBB/?
+answer=PPPPPPPP
+rule=每一组都是上一组的两倍：1、2、4、8，颜色蓝、紫交替。

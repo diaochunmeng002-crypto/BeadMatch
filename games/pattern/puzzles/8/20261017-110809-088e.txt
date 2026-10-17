@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110809-088e
+level=8
+title=积木翻一倍
+story=假装这些是积木：1颗红色，2颗橙色，4颗红色。每一群都是上一群的两倍，下一群几块、什么颜色？
+kind=groups
+unit=RO
+counts=1,2,4,8
+shown=R/OO/RRRR/?
+answer=OOOOOOOO
+rule=每一组都是上一组的两倍：1、2、4、8，颜色红、橙交替。

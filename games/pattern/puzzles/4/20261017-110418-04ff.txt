@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110418-04ff
+level=4
+title=小鸭子越来越多
+story=假装这些是小鸭子：1颗蓝色，2颗紫色，3颗蓝色。下一群该有几只、什么颜色？
+kind=groups
+unit=BP
+counts=1,2,3,4
+shown=B/PP/BBB/?
+answer=PPPP
+rule=每组比上一组多一颗，颜色蓝、紫交替（1、2、3、4）。

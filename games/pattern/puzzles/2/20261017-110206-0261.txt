@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110206-0261
+level=2
+title=小蘑菇三个一组
+story=假装这些是小蘑菇：橙、红、红、橙、红、红、橙、红、红、橙…… 每三朵一组。接下来三朵该是什么颜色？
+kind=repeat
+unit=ORR
+shown=ORRORRORRO???
+answer=RRO
+rule=三颗一循环：橙、红、红。

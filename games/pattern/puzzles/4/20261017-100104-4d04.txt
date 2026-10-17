@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 10:01:04
+created_by=manual
+id=20261017-100104-4d04
+level=4
+title=一组长一颗
+story=假装这些是气球：1个红色、2个蓝色、3个红色。下一群该有几个、什么颜色？
+kind=groups
+unit=RB
+counts=1,2,3,4
+shown=R/BB/RRR/?
+answer=BBBB
+rule=一组比一组多一颗，颜色红、蓝交替（1、2、3、4）。

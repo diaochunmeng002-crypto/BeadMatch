@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110810-089b
+level=8
+title=小鸭子翻一倍
+story=假装这些是小鸭子：1颗黄色，2颗红色，4颗黄色。每一群都是上一群的两倍，下一群几只、什么颜色？
+kind=groups
+unit=YR
+counts=1,2,4,8
+shown=Y/RR/YYYY/?
+answer=RRRRRRRR
+rule=每一组都是上一组的两倍：1、2、4、8，颜色黄、红交替。

@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-111017-0af8
+level=10
+title=糖球少了一个
+story=假装这些是糖球：1颗绿色，2颗红色，2颗绿色…… 有一群少摆了一颗。先找出少的那一颗，再摆出下一群。
+kind=groups
+unit=GR
+counts=1,2,3,4
+shown=G/RR/GG/?
+answer=RRRR
+fix=5:+G
+rule=每组比上一组多一颗，颜色绿、红交替 —— 有一组少摆了一颗。

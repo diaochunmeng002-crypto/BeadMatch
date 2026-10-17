@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110715-07db
+level=7
+title=小汽车站错队
+story=假装这些是小汽车：蓝、黄、紫、蓝、黄、紫、蓝、黄、橙。队伍里有一辆站错了颜色，第几辆错了？该改成什么颜色？
+kind=repeat
+unit=BYP
+shown=BYPBYPBYO
+fix=9:O>P
+rule=三颗一循环：蓝、黄、紫…… 有一颗站错了队，把它改回来就顺了。

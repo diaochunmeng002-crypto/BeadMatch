@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 10:01:10
+created_by=manual
+id=20261017-100110-a10a
+level=10
+title=补一颗再往下
+story=假装这些是小蘑菇：1朵红色、2朵蓝色、2朵红色…… 有一群少摆了一朵。先找出少的那一朵，再摆出下一群。
+kind=groups
+unit=RB
+counts=1,2,3,4
+shown=R/BB/RR/?
+fix=5:+R
+answer=BBBB
+rule=一组比一组多一颗，颜色红、蓝交替 —— 第三组少摆了一颗。

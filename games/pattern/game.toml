@@ -1,0 +1,5 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "pattern"
+name = "找规律"
+category = "pattern"
+summary = "看出一串珠子在按什么变，接着往下摆"

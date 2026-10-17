@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110917-09f7
+level=9
+title=气球照镜子
+story=假装这些是气球：紫、橙、红、红、橙、紫、紫、橙…… 排到最中间就往回走，像照镜子。下一个是什么颜色？
+kind=repeat
+unit=PORROP
+shown=PORROPPO?
+answer=R
+rule=六颗一组，走到头就反过来走：紫、橙、红、红、橙、紫……

@@ -1,0 +1,202 @@
+/* 找规律：跟另外四个游戏同一套配色和手感（珠子是真珠子，屏幕只出题） */
+
+:root {
+  --bg: #17181a;
+  --ink: #ececec;
+  --muted: #9aa0a6;
+  --card: #1e2023;
+  --panel: #24262a;
+  --border: #3a3d42;
+  --slot: #2b2e33;
+  --ok: #4caf50;
+  --bad: #e5484d;
+  --ball: 42px;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #faf9f7;
+    --ink: #33312e;
+    --muted: #8a857f;
+    --card: #fff;
+    --panel: #fff;
+    --border: #d9d5d0;
+    --slot: #f0eeea;
+    --ok: #2e7d32;
+    --bad: #c0392b;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 40px 20px 60px;
+  font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+header, main { width: 100%; max-width: 46rem; }
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+h1 { font-size: 1.25rem; margin: 0; letter-spacing: .02em; }
+
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.field { font-size: .9rem; display: flex; align-items: center; gap: 6px; }
+
+select, button {
+  font: inherit;
+  font-size: .9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 7px 12px;
+  color: inherit;
+  cursor: pointer;
+}
+
+select {
+  padding-right: 26px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+                    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) center, calc(100% - 10px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+select option { background-color: var(--panel); color: var(--ink); }
+
+button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+button:disabled { opacity: .45; cursor: default; }
+
+main { width: 100%; max-width: 46rem; }
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 20px 2px 0;
+  letter-spacing: .02em;
+}
+.title[hidden] { display: none; }
+
+.story { margin: 8px 2px 0; color: var(--muted); font-size: .92rem; line-height: 1.9; }
+.story[hidden] { display: none; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 18px;
+}
+
+.label { font-size: .8rem; color: var(--muted); font-weight: 600; margin: 0 0 12px; }
+
+/* ---- 题面：一行一组，组里的珠子横着排 ---- */
+
+.board { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+
+.row { display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap; }
+
+.group {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px 8px;
+  border-radius: 14px;
+  background: var(--slot);
+}
+
+.group.line { background: none; padding: 0; }
+
+.cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+.bead {
+  width: var(--ball);
+  height: var(--ball);
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
+  transition: transform .12s ease;
+}
+.bead:hover { transform: translateY(-3px); }
+
+/* 空位：虚线一圈 —— 孩子一眼看出"这儿要摆几颗" */
+.blank {
+  width: var(--ball);
+  height: var(--ball);
+  border-radius: 50%;
+  border: 2px dashed var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+.blank.group-blank {
+  width: auto;
+  min-width: 96px;
+  height: var(--ball);
+  border-radius: 999px;
+  padding: 0 14px;
+  font-size: .9rem;
+}
+
+.num { font-size: .72rem; color: var(--muted); }
+.group-name { font-size: .72rem; color: var(--muted); }
+
+.bead.wrong { box-shadow: 0 0 0 3px var(--bad); }
+.bead.right { box-shadow: 0 0 0 3px var(--ok); }
+.bead.added { outline: 2px dashed var(--muted); outline-offset: 3px; }
+
+.task { margin: 14px 0 0; font-size: .95rem; line-height: 1.8; }
+.task b { color: var(--ink); }
+
+.answer { margin: 0 0 8px; font-size: 1.05rem; font-weight: 600; }
+.rule { margin: 0 0 14px; color: var(--muted); line-height: 1.8; }
+
+.judge { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.judge .ask { font-size: .9rem; color: var(--muted); }
+
+.status { min-height: 1.4em; color: var(--muted); font-size: .9rem; margin: 14px 0 0; }
+
+.hint { color: var(--muted); font-size: .82rem; line-height: 1.9; margin: 10px 0 0; }
+kbd {
+  font: inherit; font-size: .78rem;
+  border: 1px solid var(--border); border-bottom-width: 2px;
+  border-radius: 6px; padding: 1px 5px; background: var(--panel);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translate(-50%, 20px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: .9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }

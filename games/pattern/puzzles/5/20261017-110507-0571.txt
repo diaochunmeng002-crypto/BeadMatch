@@ -1,0 +1,15 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 09:46:10
+created_by=pattern
+generator=make_puzzles@1
+id=20261017-110507-0571
+level=5
+title=小火车越来越少
+story=假装这些是小火车：5颗橙色，4颗黄色，3颗橙色。这次一群比一群少一节，后面两群怎么摆？
+kind=groups
+unit=OY
+counts=5,4,3,2,1
+shown=OOOOO/YYYY/OOO/?/?
+answer=YYO
+rule=这回一组比一组少一颗：5、4、3、2、1，颜色橙、黄交替。

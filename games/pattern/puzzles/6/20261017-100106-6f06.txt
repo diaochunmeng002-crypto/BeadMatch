@@ -1,0 +1,14 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17 10:01:06
+created_by=manual
+id=20261017-100106-6f06
+level=6
+title=每组多一种颜色
+story=假装这些是积木：红、红蓝、红蓝绿、红蓝绿紫。每群比前一群多一块，颜色也一次多用一种。下一群是什么？
+kind=prefix
+unit=RBGPO
+counts=1,2,3,4,5
+shown=R/RB/RBG/RBGP/?
+answer=RBGPO
+rule=每组比上一组多一颗，颜色按红、蓝、绿、紫、橙的顺序往后取。
