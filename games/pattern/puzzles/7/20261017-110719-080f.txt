@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110719-080f
 level=7
-title=糖球站错队
-story=假装这些是糖球：橙、红、红、橙、黄、红、橙、红、红。队伍里有一颗站错了颜色，第几颗错了？该改成什么颜色？
+title=积木站错队
+story=假装这些是积木：红、红、黄、红、红、黄、紫、红。队伍里有一块站错了颜色，第几块错了？该改成什么颜色？
 kind=repeat
-unit=ORR
-shown=ORROYRORR
-fix=5:Y>R
-rule=三颗一循环：橙、红、红…… 有一颗站错了队，把它改回来就顺了。
+unit=RRY
+shown=RRYRRYPR
+fix=7:P>R
+rule=3颗一循环：红、红、黄。有一颗站错了队，把它改回来就顺了。

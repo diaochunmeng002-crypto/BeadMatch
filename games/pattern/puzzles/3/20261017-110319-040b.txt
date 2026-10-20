@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110319-040b
 level=3
-title=跳跳球谁的位置空了
-story=假装这些是跳跳球：蓝、紫、黄、蓝、紫、黄、蓝、紫、黄。队伍中间空了一个位置，空着的那个该是什么颜色？
+title=小鸭子谁的位置空了
+story=假装这些是小鸭子：蓝、红、蓝、红、蓝、红、蓝、红、蓝、红。中间空了一个位置，空着的那个该是什么颜色？
 kind=repeat
-unit=BPY
-shown=BP?BPYBPY
-answer=Y
-rule=三颗一循环：蓝、紫、黄。空着的那一格正好轮到黄。
+unit=BR
+shown=BR?RBRBRBR
+answer=B
+rule=2颗一循环：蓝、红。空着的那一格正好轮到蓝。

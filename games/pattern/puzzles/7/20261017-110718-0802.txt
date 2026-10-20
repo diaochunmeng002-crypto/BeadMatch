@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110718-0802
 level=7
-title=小皮球站错队
-story=假装这些是小皮球：绿、红、黄、绿、红、黄、绿、黄、黄。队伍里有一个站错了颜色，第几个错了？该改成什么颜色？
+title=小铃铛站错队
+story=假装这些是小铃铛：紫、黄、紫、红、黄、紫、红、黄、紫、红。队伍里有一个站错了颜色，第几个错了？该改成什么颜色？
 kind=repeat
-unit=GRY
-shown=GRYGRYGYY
-fix=8:Y>R
-rule=三颗一循环：绿、红、黄…… 有一颗站错了队，把它改回来就顺了。
+unit=RYP
+shown=PYPRYPRYPR
+fix=1:P>R
+rule=3颗一循环：红、黄、紫。有一颗站错了队，把它改回来就顺了。

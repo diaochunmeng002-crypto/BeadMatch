@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110114-01c8
 level=1
-title=小火车排队
-story=假装这些是小火车：黄、绿、黄、绿、黄、绿，一节接一节挂上来。下一节该是什么颜色？
+title=小火车四个一伙
+story=假装这些是小火车：绿、蓝、红、黄、绿、蓝、红、黄、绿…… 四颗一组、颜色都不一样。下一节该是什么颜色？
 kind=repeat
-unit=YG
-shown=YGYGYG?
-answer=Y
-rule=两颗一循环：黄、绿、黄、绿……
+unit=GBRY
+shown=GBRYGBRYG?
+answer=B
+rule=4颗一循环：绿、蓝、红、黄。

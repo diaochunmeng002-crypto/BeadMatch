@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110306-0362
 level=3
-title=糖球谁的位置空了
-story=假装这些是糖球：紫、橙、黄、紫、橙、黄、紫、橙、黄、紫。队伍中间空了一个位置，空着的那个该是什么颜色？
+title=小汽车谁的位置空了
+story=假装这些是小汽车：蓝、绿、黄、红、蓝、绿、黄、红、蓝、绿、黄。中间空了一个位置，空着的那个该是什么颜色？
 kind=repeat
-unit=POY
-shown=POYP?YPOYP
-answer=O
-rule=三颗一循环：紫、橙、黄。空着的那一格正好轮到橙。
+unit=BGYR
+shown=BGYR?GYRBGY
+answer=B
+rule=4颗一循环：蓝、绿、黄、红。空着的那一格正好轮到蓝。

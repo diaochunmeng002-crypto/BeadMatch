@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110509-058b
 level=5
-title=小铃铛越来越少
-story=假装这些是小铃铛：5颗橙色，4颗绿色，3颗橙色。这次一群比一群少一个，后面两群怎么摆？
+title=小蘑菇越来越少
+story=假装这些是小蘑菇：6颗红色。这次一群比一群少1颗，后面两群怎么摆？
 kind=groups
-unit=OG
-counts=5,4,3,2,1
-shown=OOOOO/GGGG/OOO/?/?
-answer=GGO
-rule=这回一组比一组少一颗：5、4、3、2、1，颜色橙、绿交替。
+unit=RBO
+counts=6,5,4
+shown=RRRRRR/?/?
+answer=BBBBBOOOO
+rule=一组比一组少1颗（6、5、4），颜色按红、蓝、橙循环。

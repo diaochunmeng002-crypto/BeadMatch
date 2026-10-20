@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110514-05cc
 level=5
-title=小星星越来越少
-story=假装这些是小星星：5颗红色，4颗黄色，3颗红色。这次一群比一群少一颗，后面两群怎么摆？
+title=小雨滴越来越少
+story=假装这些是小雨滴：6颗紫色。这次一群比一群少2颗，后面两群怎么摆？
 kind=groups
-unit=RY
-counts=5,4,3,2,1
-shown=RRRRR/YYYY/RRR/?/?
-answer=YYR
-rule=这回一组比一组少一颗：5、4、3、2、1，颜色红、黄交替。
+unit=PB
+counts=6,4,2
+shown=PPPPPP/?/?
+answer=BBBBPP
+rule=一组比一组少2颗（6、4、2），颜色按紫、蓝循环。

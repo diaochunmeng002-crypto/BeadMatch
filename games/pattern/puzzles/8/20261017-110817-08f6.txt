@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110817-08f6
 level=8
-title=气球翻一倍
-story=假装这些是气球：1颗绿色，2颗紫色，4颗绿色。每一群都是上一群的两倍，下一群几个、什么颜色？
+title=积木翻3倍
+story=假装这些是积木：3颗蓝色。每一群都是上一群的3倍，下一群几块、什么颜色？
 kind=groups
-unit=GP
-counts=1,2,4,8
-shown=G/PP/GGGG/?
-answer=PPPPPPPP
-rule=每一组都是上一组的两倍：1、2、4、8，颜色绿、紫交替。
+unit=BO
+counts=3,9
+shown=BBB/?
+answer=OOOOOOOOO
+rule=每一组都是上一组的3倍（3、9），颜色按蓝、橙循环。

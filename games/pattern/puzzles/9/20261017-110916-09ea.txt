@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110916-09ea
 level=9
-title=小皮球照镜子
-story=假装这些是小皮球：绿、黄、橙、橙、黄、绿、绿…… 排到最中间就往回走，像照镜子。下一个是什么颜色？
+title=积木照镜子
+story=假装这些是积木：绿、紫、黄、黄、紫、绿…… 排到最中间就往回走，像照镜子。下一块是什么颜色？
 kind=repeat
-unit=GYOOYG
-shown=GYOOYGG?
-answer=Y
-rule=六颗一组，走到头就反过来走：绿、黄、橙、橙、黄、绿……
+unit=GPYYPG
+shown=GPYYPG?
+answer=G
+rule=6颗一组，走到头就反过来走：绿、紫、黄、黄、紫、绿……

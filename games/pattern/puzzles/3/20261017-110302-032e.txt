@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110302-032e
 level=3
 title=小铃铛谁的位置空了
-story=假装这些是小铃铛：紫、橙、蓝、紫、橙、蓝、紫、橙。队伍中间空了一个位置，空着的那个该是什么颜色？
+story=假装这些是小铃铛：橙、紫、黄、红、橙、紫、黄、红。中间空了一个位置，空着的那个该是什么颜色？
 kind=repeat
-unit=POB
-shown=POBPO?PO
-answer=B
-rule=三颗一循环：紫、橙、蓝。空着的那一格正好轮到蓝。
+unit=OPYR
+shown=OPYROP?R
+answer=Y
+rule=4颗一循环：橙、紫、黄、红。空着的那一格正好轮到黄。

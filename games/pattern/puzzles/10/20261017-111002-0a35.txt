@@ -1,16 +1,16 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-111002-0a35
 level=10
-title=气球少了一个
-story=假装这些是气球：1颗黄色，2颗紫色，2颗黄色…… 有一群少摆了一个。先找出少的那一个，再摆出下一群。
+title=小皮球少了一个
+story=假装这些是小皮球：2颗绿色，2颗蓝色，4颗橙色，5颗绿色…… 有一群少摆了一个。先找出少的那一个，再摆出下一群。
 kind=groups
-unit=YP
-counts=1,2,3,4
-shown=Y/PP/YY/?
-answer=PPPP
-fix=5:+Y
-rule=每组比上一组多一颗，颜色黄、紫交替 —— 有一组少摆了一颗。
+unit=GBO
+counts=2,3,4,5,6
+shown=GG/BB/OOOO/GGGGG/?
+answer=BBBBBB
+fix=4:+B
+rule=每组比上一组多1颗（2、3、4、5、6），颜色按绿、蓝、橙循环 —— 有一组少摆了一颗。

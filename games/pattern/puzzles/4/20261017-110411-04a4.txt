@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110411-04a4
 level=4
-title=跳跳球越来越多
-story=假装这些是跳跳球：1颗蓝色，2颗黄色，3颗蓝色。下一群该有几个、什么颜色？
+title=小铃铛越来越多
+story=假装这些是小铃铛：2颗蓝色，3颗橙色。下一群该有几个、什么颜色？
 kind=groups
-unit=BY
-counts=1,2,3,4
-shown=B/YY/BBB/?
-answer=YYYY
-rule=每组比上一组多一颗，颜色蓝、黄交替（1、2、3、4）。
+unit=BOR
+counts=2,3,4
+shown=BB/OOO/?
+answer=RRRR
+rule=每组比上一组多1颗（2、3、4），颜色按蓝、橙、红循环。

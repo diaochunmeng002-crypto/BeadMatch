@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110508-057e
 level=5
-title=小汽车越来越少
-story=假装这些是小汽车：5颗红色，4颗紫色，3颗红色。这次一群比一群少一辆，后面两群怎么摆？
+title=小蘑菇越来越少
+story=假装这些是小蘑菇：3颗黄色。这次一群比一群少1颗，后面两群怎么摆？
 kind=groups
-unit=RP
-counts=5,4,3,2,1
-shown=RRRRR/PPPP/RRR/?/?
-answer=PPR
-rule=这回一组比一组少一颗：5、4、3、2、1，颜色红、紫交替。
+unit=YBG
+counts=3,2,1
+shown=YYY/?/?
+answer=BBG
+rule=一组比一组少1颗（3、2、1），颜色按黄、蓝、绿循环。

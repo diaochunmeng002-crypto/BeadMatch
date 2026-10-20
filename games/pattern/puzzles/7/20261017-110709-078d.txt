@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110709-078d
 level=7
-title=跳跳球站错队
-story=假装这些是跳跳球：紫、黄、红、紫、橙、红、紫、黄、红。队伍里有一个站错了颜色，第几个错了？该改成什么颜色？
+title=积木站错队
+story=假装这些是积木：紫、黄、紫、黄、紫、黄、紫、绿、紫、黄。队伍里有一块站错了颜色，第几块错了？该改成什么颜色？
 kind=repeat
-unit=PYR
-shown=PYRPORPYR
-fix=5:O>Y
-rule=三颗一循环：紫、黄、红…… 有一颗站错了队，把它改回来就顺了。
+unit=PY
+shown=PYPYPYPGPY
+fix=8:G>Y
+rule=2颗一循环：紫、黄。有一颗站错了队，把它改回来就顺了。

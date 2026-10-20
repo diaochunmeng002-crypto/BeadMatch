@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110803-0840
 level=8
-title=小铃铛翻一倍
-story=假装这些是小铃铛：1颗蓝色，2颗橙色，4颗蓝色。每一群都是上一群的两倍，下一群几个、什么颜色？
+title=气球翻2倍
+story=假装这些是气球：1颗橙色。每一群都是上一群的2倍，下一群几个、什么颜色？
 kind=groups
-unit=BO
-counts=1,2,4,8
-shown=B/OO/BBBB/?
-answer=OOOOOOOO
-rule=每一组都是上一组的两倍：1、2、4、8，颜色蓝、橙交替。
+unit=OP
+counts=1,2
+shown=O/?
+answer=PP
+rule=每一组都是上一组的2倍（1、2），颜色按橙、紫循环。

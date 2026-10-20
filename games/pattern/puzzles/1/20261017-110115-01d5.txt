@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110115-01d5
 level=1
-title=小火车排队
-story=假装这些是小火车：紫、橙、紫、橙、紫、橙、紫，一节接一节挂上来。下一节该是什么颜色？
+title=小蘑菇四个一伙
+story=假装这些是小蘑菇：橙、黄、紫、绿、橙、黄…… 四颗一组、颜色都不一样。下一朵该是什么颜色？
 kind=repeat
-unit=PO
-shown=POPOPOP?
-answer=O
-rule=两颗一循环：紫、橙、紫、橙……
+unit=OYPG
+shown=OYPGOY?
+answer=P
+rule=4颗一循环：橙、黄、紫、绿。

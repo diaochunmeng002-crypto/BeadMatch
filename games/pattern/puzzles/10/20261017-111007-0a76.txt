@@ -1,16 +1,16 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-111007-0a76
 level=10
-title=糖球少了一个
-story=假装这些是糖球：1颗紫色，2颗蓝色，2颗紫色…… 有一群少摆了一颗。先找出少的那一颗，再摆出下一群。
+title=积木少了一个
+story=假装这些是积木：1颗橙色，2颗红色，3颗蓝色，3颗橙色…… 有一群少摆了一块。先找出少的那一块，再摆出下一群。
 kind=groups
-unit=PB
-counts=1,2,3,4
-shown=P/BB/PP/?
-answer=BBBB
-fix=5:+P
-rule=每组比上一组多一颗，颜色紫、蓝交替 —— 有一组少摆了一颗。
+unit=ORB
+counts=1,2,3,4,5
+shown=O/RR/BBB/OOO/?
+answer=RRRRR
+fix=9:+O
+rule=每组比上一组多1颗（1、2、3、4、5），颜色按橙、红、蓝循环 —— 有一组少摆了一颗。

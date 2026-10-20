@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110517-05f3
 level=5
-title=小皮球越来越少
-story=假装这些是小皮球：5颗绿色，4颗橙色，3颗绿色。这次一群比一群少一个，后面两群怎么摆？
+title=气球越来越少
+story=假装这些是气球：6颗紫色。这次一群比一群少1颗，后面两群怎么摆？
 kind=groups
-unit=GO
-counts=5,4,3,2,1
-shown=GGGGG/OOOO/GGG/?/?
-answer=OOG
-rule=这回一组比一组少一颗：5、4、3、2、1，颜色绿、橙交替。
+unit=PG
+counts=6,5,4
+shown=PPPPPP/?/?
+answer=GGGGGPPPP
+rule=一组比一组少1颗（6、5、4），颜色按紫、绿循环。

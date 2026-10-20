@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110612-06b3
 level=6
-title=小星星学新颜色
-story=假装这些是小星星：1颗黄色，2颗黄色，3颗黄色，4颗黄色，5颗黄色…… 每群比前一群多一颗，颜色也一次多用一种。下一群是什么？
+title=糖球学新颜色
+story=假装这些是糖球：1颗橙色，2颗橙色，3颗橙色…… 每群比前一群多一颗，颜色也一次多用一种。下一群是什么？
 kind=prefix
-unit=YGPBOR
-counts=1,2,3,4,5,6
-shown=Y/YG/YGP/YGPB/YGPBO/?
-answer=YGPBOR
-rule=每组比上一组多一颗，颜色按黄、绿、紫、蓝、橙、红的顺序往后取。
+unit=OBPYGR
+counts=1,2,3,4
+shown=O/OB/OBP/?
+answer=OBPY
+rule=每组比上一组多取1种颜色，顺序是橙、蓝、紫、黄、绿、红。

@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110407-0470
 level=4
-title=小蘑菇越来越多
-story=假装这些是小蘑菇：1颗黄色，2颗蓝色，3颗黄色。下一群该有几朵、什么颜色？
+title=跳跳球越来越多
+story=假装这些是跳跳球：1颗绿色，3颗蓝色。下一群该有几个、什么颜色？
 kind=groups
-unit=YB
-counts=1,2,3,4
-shown=Y/BB/YYY/?
-answer=BBBB
-rule=每组比上一组多一颗，颜色黄、蓝交替（1、2、3、4）。
+unit=GBR
+counts=1,3,5
+shown=G/BBB/?
+answer=RRRRR
+rule=每组比上一组多2颗（1、3、5），颜色按绿、蓝、红循环。

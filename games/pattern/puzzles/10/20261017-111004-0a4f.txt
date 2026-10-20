@@ -1,16 +1,16 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-111004-0a4f
 level=10
 title=小鸭子少了一个
-story=假装这些是小鸭子：1颗橙色，2颗绿色，2颗橙色…… 有一群少摆了一只。先找出少的那一只，再摆出下一群。
+story=假装这些是小鸭子：3颗黄色，4颗绿色…… 有一群少摆了一只。先找出少的那一只，再摆出下一群。
 kind=groups
-unit=OG
-counts=1,2,3,4
-shown=O/GG/OO/?
-answer=GGGG
-fix=5:+O
-rule=每组比上一组多一颗，颜色橙、绿交替 —— 有一组少摆了一颗。
+unit=YGP
+counts=3,5,7
+shown=YYY/GGGG/?
+answer=PPPPPPP
+fix=7:+G
+rule=每组比上一组多2颗（3、5、7），颜色按黄、绿、紫循环 —— 有一组少摆了一颗。

@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110419-050c
 level=4
-title=小鸭子越来越多
-story=假装这些是小鸭子：1颗橙色，2颗蓝色，3颗橙色。下一群该有几只、什么颜色？
+title=积木越来越多
+story=假装这些是积木：4颗绿色，5颗红色。下一群该有几块、什么颜色？
 kind=groups
-unit=OB
-counts=1,2,3,4
-shown=O/BB/OOO/?
-answer=BBBB
-rule=每组比上一组多一颗，颜色橙、蓝交替（1、2、3、4）。
+unit=GRY
+counts=4,5,6
+shown=GGGG/RRRRR/?
+answer=YYYYYY
+rule=每组比上一组多1颗（4、5、6），颜色按绿、红、黄循环。

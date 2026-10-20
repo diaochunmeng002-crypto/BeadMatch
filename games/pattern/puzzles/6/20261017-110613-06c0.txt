@@ -1,15 +1,15 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110613-06c0
 level=6
-title=小蘑菇学新颜色
-story=假装这些是小蘑菇：1颗红色，2颗红色，3颗红色，4颗红色，5颗红色…… 每群比前一群多一朵，颜色也一次多用一种。下一群是什么？
+title=糖球学新颜色
+story=假装这些是糖球：2颗蓝色…… 每群比前一群多一颗，颜色也一次多用一种。下一群是什么？
 kind=prefix
-unit=RYBOPG
-counts=1,2,3,4,5,6
-shown=R/RY/RYB/RYBO/RYBOP/?
-answer=RYBOPG
-rule=每组比上一组多一颗，颜色按红、黄、蓝、橙、紫、绿的顺序往后取。
+unit=BRO
+counts=2,3
+shown=BR/?
+answer=BRO
+rule=每组比上一组多取1种颜色，顺序是蓝、红、橙。

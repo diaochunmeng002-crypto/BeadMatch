@@ -548,6 +548,32 @@ def payload(card: Card) -> Dict[str, Any]:
     }
 
 
+def shape_key(card: Card) -> str:
+    """这道题的**形状**（跟颜色无关）—— 用来查"是不是同一道题换个颜色"。
+
+    * `repeat` / 带 `fix`：单元里的颜色换成"第几次出现"（`AB` 和 `RB` 都是 `01`），
+      再加上整道题的长度、空位位置、错的那一颗位置；
+    * `groups` / `prefix`：颜色循环 + 每组的颗数。
+
+    同一档里的题，**形状签名不应该重复**。
+    """
+    seen: Dict[str, int] = {}
+    pattern: List[str] = []
+    for ch in card.unit:
+        if ch not in seen:
+            seen[ch] = len(seen)
+        pattern.append(str(seen[ch]))
+    parts = [card.kind, "".join(pattern), str(len(card.full))]
+    if card.kind in GROUP_KINDS:
+        parts.append(",".join(str(n) for n in card.counts))
+    else:
+        blanks = [i for row in card.rows for i, x in enumerate(row) if x is None]
+        parts.append("blank:" + ",".join(str(i) for i in blanks))
+    if card.fix:
+        parts.append("fix:%d:%s" % (card.fix["pos"], card.fix["kind"]))
+    return "|".join(parts)
+
+
 def display_rows(card: Card) -> List[List[Dict[str, Any]]]:
     """题面（给页面看的）：一格要么 `{'bead': 'R'}`，要么 `{'blank': True}`；
     "整组空着"的行就一个 `{'blank_group': True}` —— 该摆几颗，正是要孩子想的。"""

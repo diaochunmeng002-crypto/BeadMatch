@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110201-0220
 level=2
-title=小蘑菇三个一组
-story=假装这些是小蘑菇：红、红、橙、红、红、橙、红、红、橙、红…… 每三朵一组。接下来三朵该是什么颜色？
+title=小蘑菇三个一样的
+story=假装这些是小蘑菇：红、红、红、绿、红、红、红、绿、红、红…… 这一小段里有相同的颜色。接下来三朵是什么颜色？
 kind=repeat
-unit=RRO
-shown=RRORRORROR???
-answer=ROR
-rule=三颗一循环：红、红、橙。
+unit=RRRG
+shown=RRRGRRRGRR???
+answer=RGR
+rule=4颗一循环：红、红、红、绿。

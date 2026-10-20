@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110313-03bd
 level=3
-title=小皮球谁的位置空了
-story=假装这些是小皮球：紫、红、蓝、紫、红、蓝、紫、红、蓝、紫。队伍中间空了一个位置，空着的那个该是什么颜色？
+title=气球谁的位置空了
+story=假装这些是气球：紫、紫、黄、紫、紫、黄、紫、紫、黄、紫、紫。中间空了一个位置，空着的那个该是什么颜色？
 kind=repeat
-unit=PRB
-shown=PR?PRBPRBP
-answer=B
-rule=三颗一循环：紫、红、蓝。空着的那一格正好轮到蓝。
+unit=PPY
+shown=PPYPPY?PYPP
+answer=P
+rule=3颗一循环：紫、紫、黄。空着的那一格正好轮到紫。

@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110217-02f0
 level=2
-title=小火车三个一组
-story=假装这些是小火车：紫、紫、黄、紫、紫、黄、紫、紫、黄…… 每三节一组。接下来三节该是什么颜色？
+title=小星星后面两个
+story=假装这些是小星星：蓝、紫、紫、蓝、紫、紫、蓝、紫…… 这一小段里有相同的颜色。接下来三颗是什么颜色？
 kind=repeat
-unit=PPY
-shown=PPYPPYPPY???
-answer=PPY
-rule=三颗一循环：紫、紫、黄。
+unit=BPP
+shown=BPPBPPBP???
+answer=PBP
+rule=3颗一循环：蓝、紫、紫。

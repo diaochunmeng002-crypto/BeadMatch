@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110104-0146
 level=1
-title=小雨滴排队
-story=假装这些是小雨滴：红、黄、红、黄、红，一滴接一滴落下来。下一滴该是什么颜色？
+title=小皮球排队
+story=假装这些是小皮球：黄、蓝、黄、蓝、黄、蓝、黄、蓝…… 一颗接一颗。下一个该是什么颜色？
 kind=repeat
-unit=RY
-shown=RYRYR?
+unit=YB
+shown=YBYBYBYB?
 answer=Y
-rule=两颗一循环：红、黄、红、黄……
+rule=2颗一循环：黄、蓝。

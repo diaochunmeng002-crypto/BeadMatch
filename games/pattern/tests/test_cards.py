@@ -25,6 +25,14 @@ class LibraryTest(unittest.TestCase):
         self.assertEqual([r["level"] for r in rows], list(range(1, 11)))
         self.assertEqual([r["count"] for r in rows], [20] * 10)
 
+    def test_each_level_has_twenty_distinct_shapes(self):
+        """同一档 20 道题 = **20 个不同形状**（不是"同一道题换个颜色"）。"""
+        for level in range(1, 11):
+            cards = [card for card in k.iter_cards(ROOT) if card.level == level]
+            shapes = [k.shape_key(card) for card in cards]
+            self.assertEqual(len(cards), 20, level)
+            self.assertEqual(len(set(shapes)), 20, "第 %d 档有重复形状" % level)
+
     def test_every_puzzle_has_a_story(self):
         """每道题都配了一句小故事（假装是小汽车 / 小皮球……）。"""
         for card in k.iter_cards(ROOT):

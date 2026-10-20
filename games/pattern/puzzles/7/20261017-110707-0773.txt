@@ -1,14 +1,14 @@
 # colors: Yellow Green Red Purple Blue Orange
 
-created_at=2026-10-17 09:46:10
+created_at=2026-10-21 01:23:42
 created_by=pattern
 generator=make_puzzles@1
 id=20261017-110707-0773
 level=7
-title=小蘑菇站错队
-story=假装这些是小蘑菇：黄、紫、红、黄、紫、红、黄、紫、绿。队伍里有一朵站错了颜色，第几朵错了？该改成什么颜色？
+title=糖球站错队
+story=假装这些是糖球：蓝、绿、紫、绿、绿、紫、绿、绿、紫、绿。队伍里有一颗站错了颜色，第几颗错了？该改成什么颜色？
 kind=repeat
-unit=YPR
-shown=YPRYPRYPG
-fix=9:G>R
-rule=三颗一循环：黄、紫、红…… 有一颗站错了队，把它改回来就顺了。
+unit=GGP
+shown=BGPGGPGGPG
+fix=1:B>G
+rule=3颗一循环：绿、绿、紫。有一颗站错了队，把它改回来就顺了。
