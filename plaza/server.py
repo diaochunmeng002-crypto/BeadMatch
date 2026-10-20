@@ -79,7 +79,8 @@ _NAV_CSS = """<style>
 .plaza-nav .here{color:var(--ink,#333);font-weight:600}
 .plaza-nav .plaza-star{margin-left:auto;font:inherit;font-size:.8rem;color:inherit;
   background:none;border:1px solid rgba(128,128,128,.35);border-radius:999px;
-  padding:1px 10px;cursor:pointer;white-space:nowrap}
+  padding:1px 10px;cursor:pointer;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:4px}
 .plaza-nav .plaza-star:hover{border-color:var(--ink,#333);color:var(--ink,#333)}
 .plaza-nav .plaza-star .glyph{font-size:1.05em;line-height:1;opacity:.8}
 .plaza-nav .plaza-star.on .glyph{color:#f2c231;opacity:1}   /* 已收藏 = 黄色五角星 */

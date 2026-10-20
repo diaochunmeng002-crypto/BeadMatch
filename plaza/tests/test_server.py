@@ -185,6 +185,7 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn('id="plaza-star"', page)       # 星标按钮
         self.assertIn("plaza-star", page)
         self.assertIn('class="glyph"', page)         # ☆ / ★ 单独一个 span，好上色
+        self.assertIn("align-items:center;gap:4px", page)  # 星形和文字之间留空格
         self.assertIn("plazaSetPuzzle", page)        # 游戏页面调它上报当前题
         self.assertIn("/api/star", page)             # 点了打这条接口
         self.assertIn("/api/stars", page)            # 初始状态读这条
