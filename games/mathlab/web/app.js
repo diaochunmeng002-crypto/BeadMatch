@@ -215,6 +215,8 @@ function fillSelect() {
 
 function show(d) {
   state.demo = d;
+  // 告诉广场"现在是哪一个"（收藏星标用；单独跑时没有这个函数）
+  if (window.plazaSetPuzzle) window.plazaSetPuzzle({ id: d.id, level: d.level });
   state.revealed = false;
   $('level').value = String(d.level);
   $('demo-title').textContent = d.title || '';

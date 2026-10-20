@@ -148,6 +148,54 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("/api/history/clear", page)      # 前端打的是这条接口
         self.assertIn("已清空", page)                   # 清完在状态行报一句
 
+    def test_star_api_toggles_one_puzzle(self) -> None:
+        """收藏接口：POST /api/star 幂等，GET /api/stars 列出来、能筛。"""
+        body = {"game": "logic", "puzzle_id": "p1", "level": 5}
+        first = self.client.post("/api/star", json=body)
+        self.assertEqual(first.status_code, 200)
+        self.assertTrue(first.json()["starred"])
+
+        self.client.post("/api/star", json=body)      # 再收一次：不该多一条
+        data = self.client.get("/api/stars").json()
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(data["stars"][0]["level"], 5)
+        self.assertEqual(self.client.get("/api/stars", params={"game": "calc"}).json()["count"], 0)
+
+        off = self.client.post("/api/star",
+                               json={"game": "logic", "puzzle_id": "p1", "starred": False})
+        self.assertEqual(off.status_code, 200)
+        self.assertFalse(off.json()["starred"])
+        self.assertEqual(self.client.get("/api/stars").json()["count"], 0)
+
+    def test_star_api_rejects_bad_input(self) -> None:
+        self.assertEqual(self.client.post("/api/star", json={"game": "nope", "puzzle_id": "p1"})
+                         .status_code, 400)
+        self.assertEqual(self.client.post("/api/star", json={"game": "logic", "puzzle_id": "  "})
+                         .status_code, 400)
+
+    def test_game_page_gets_the_star_widget(self) -> None:
+        """每个游戏页面都由广场注入收藏星标；游戏侧只要上报"现在是哪一道"。"""
+        page = self.client.get("/games/logic/").text
+        self.assertIn('id="plaza-star"', page)       # 星标按钮
+        self.assertIn("plaza-star", page)
+        self.assertIn('class="glyph"', page)         # ☆ / ★ 单独一个 span，好上色
+        self.assertIn("plazaSetPuzzle", page)        # 游戏页面调它上报当前题
+        self.assertIn("/api/star", page)             # 点了打这条接口
+        self.assertIn("/api/stars", page)            # 初始状态读这条
+
+    def test_stars_page_and_home_link(self) -> None:
+        """收藏页：布局照历史页；首页副标题有「收藏 →」入口。"""
+        page = self.client.get("/stars")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("我收藏的题", page.text)
+        self.assertIn("/api/stars", page.text)      # 页面读收藏列表
+        self.assertIn("/api/star", page.text)       # 点星取消收藏
+        self.assertIn("/games/", page.text)         # 「打开」还是深链接
+
+        home = self.client.get("/").text
+        self.assertIn('href="/stars"', home)
+        self.assertIn("收藏", home)
+
     def test_every_game_can_serve_a_puzzle_by_id(self) -> None:
         """深链接靠的是各游戏的 `/puzzles/{id}` —— 五个游戏都得能按 id 取题。"""
         games = self.client.get("/api/games").json()["games"]

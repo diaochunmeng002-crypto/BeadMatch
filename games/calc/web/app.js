@@ -295,6 +295,8 @@ async function newCard(opts = {}) {
     const p = await r.json();
     if (id) syncLevel(p.level);   // 下拉框跟着这张卡走，免得"卡是 20 级的、框里写着 1 级"
     state.card = p;
+    // 告诉广场"现在是哪一道"（收藏星标用；单独跑时没有这个函数）
+    if (window.plazaSetPuzzle) window.plazaSetPuzzle({ id: p.id, level: p.level });
     renderCard(p);
     if (!(opts && opts.silent)) playTick(0.9);
     return true;

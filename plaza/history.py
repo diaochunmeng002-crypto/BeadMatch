@@ -139,6 +139,11 @@ def _connect(path: Optional[Union[str, Path]] = None) -> sqlite3.Connection:
     return con
 
 
+def connect(path: Optional[Union[str, Path]] = None) -> sqlite3.Connection:
+    """公共的连接入口 —— 别的本地数据（比如收藏）也用这个库、这套连接设置。"""
+    return _connect(path)
+
+
 def init_db(path: Optional[Union[str, Path]] = None) -> Path:
     """建库 / 建表。已经在了就什么也不改。返回数据库文件路径。"""
     target = Path(path) if path is not None else db_path()

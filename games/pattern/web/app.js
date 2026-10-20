@@ -287,6 +287,8 @@ function syncLevel(level) {
 /** 拿到一道题之后：重置"揭晓/自评"，画题面。 */
 function showCard(p, opts = {}) {
   state.card = p;
+  // 告诉广场"现在是哪一道"（收藏星标用；单独跑时没有这个函数）
+  if (window.plazaSetPuzzle) window.plazaSetPuzzle({ id: p.id, level: p.level });
   state.revealed = false;
   state.solved = false;
   syncLevel(p.level);

@@ -83,3 +83,5 @@ footer a { color: inherit; }
   white-space: nowrap;
 }
 .lead a.sidelink:hover { text-decoration-color: currentColor; color: var(--ink); }
+/* 并排的两个小链接之间留一口气（别让它们的下划线挨在一起） */
+.lead a.sidelink + a.sidelink { margin-left: 12px; }

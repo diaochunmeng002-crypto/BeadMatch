@@ -21,13 +21,16 @@
     GET  /api/health                       广场活着没
     GET  /api/history?limit=200            最近访问记录（新的在前）
     POST /api/history/clear                把访问记录全清掉（历史页那个「清空」按钮）
+    GET  /api/stars?game=&level=           收藏列表（新的在前）
+    POST /api/star                         收藏 / 取消（幂等：{"game","puzzle_id","level","starred"}）
 
 **广场自己不知道任何游戏规则**，它只是把每个游戏 `api.py` 里的 `router` 换个前缀挂上，
 再把它的 `web/` 托管出去（见 registry.py）。
 
 页面 `/history` 是那条访问清单：默认拉最近 200 条，看"时间 / 游戏 / 等级 / 题目 / 出题者"，
-上头有「刷新」和「清空」。入口在首页副标题后面（「查看历史 →」），旁边还挂着「GitHub →」
-（给自己人看提交记录用的）—— 这俩都是给自己人看的，不往游戏页面上放。
+上头有「刷新」和「清空」。入口在首页副标题后面（「历史」）；「GitHub」在页脚
+（跟接口清单 / 接口文档一排）—— 都是给自己人看的，不往游戏页面上放。
+页面 `/stars` 是我收藏的题：布局照历史页，一颗黄星点一下取消、行尾「打开」是深链接。
 """
 
 from __future__ import annotations
@@ -41,8 +44,9 @@ from typing import Dict, List, Optional, Sequence
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
-from . import history, registry
+from . import history, registry, stars
 from .nocache import keep_fresh
 from .registry import Game
 
@@ -73,12 +77,96 @@ _NAV_CSS = """<style>
 .plaza-nav a:hover{color:var(--ink,#333);text-decoration-color:currentColor}
 .plaza-nav .sep{opacity:.35}
 .plaza-nav .here{color:var(--ink,#333);font-weight:600}
+.plaza-nav .plaza-star{margin-left:auto;font:inherit;font-size:.8rem;color:inherit;
+  background:none;border:1px solid rgba(128,128,128,.35);border-radius:999px;
+  padding:1px 10px;cursor:pointer;white-space:nowrap}
+.plaza-nav .plaza-star:hover{border-color:var(--ink,#333);color:var(--ink,#333)}
+.plaza-nav .plaza-star .glyph{font-size:1.05em;line-height:1;opacity:.8}
+.plaza-nav .plaza-star.on .glyph{color:#f2c231;opacity:1}   /* 已收藏 = 黄色五角星 */
+.plaza-nav .plaza-star.on{border-color:rgba(226,181,44,.65)}
+.plaza-nav .plaza-star[hidden]{display:none}
 </style>"""
 
 
 def _game_names() -> Dict[str, str]:
     """id → 中文名。历史页把 ``calc`` 这种 id 显示成「计算」用。"""
     return {game.id: game.name for game in GAMES}
+
+
+# 收藏星标：广场给每个游戏页面注入同一份脚本，游戏只要在"拿到一道题"时调
+# `window.plazaSetPuzzle({id, level})` 告诉它现在是哪一道（单独跑时不注入，调不到也没事）。
+# 单独的 `__GAME_ID__` 由广场替换成这个游戏 id。
+_STAR_JS = """<script>
+(function () {
+  var GAME_ID = __GAME_ID__;
+  var current = null;      // 现在是哪一道：{id, level}
+  var starred = false;
+  var busy = false;
+
+  function button() { return document.getElementById('plaza-star'); }
+
+  function paint() {
+    var el = button();
+    if (!el) return;
+    if (!current) { el.hidden = true; return; }
+    el.hidden = false;
+    // 未收藏 = 空心五角星（不填色）；已收藏 = 黄色实心五角星（颜色写在 CSS 里）
+    el.querySelector('.glyph').textContent = starred ? '★' : '☆';
+    el.querySelector('.label').textContent = starred ? '已收藏' : '收藏';
+    el.title = starred ? '点一下取消收藏' : '收藏这道题（以后好找）';
+    el.classList.toggle('on', starred);
+    el.setAttribute('aria-pressed', starred ? 'true' : 'false');
+  }
+
+  function refresh() {
+    if (!current) return;
+    fetch('/api/stars?game=' + encodeURIComponent(GAME_ID))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !current) return;
+        starred = (data.stars || []).some(function (s) { return s.puzzle_id === current.id; });
+        paint();
+      })
+      .catch(function () { /* 读不到就先显示 ☆，点了再说 */ });
+  }
+
+  /** 游戏页面拿到一道题就调这个：`{id, level}` */
+  window.plazaSetPuzzle = function (p) {
+    if (!p || !p.id) { current = null; starred = false; paint(); return; }
+    current = { id: String(p.id), level: (p.level === undefined || p.level === null) ? null : Number(p.level) };
+    paint();
+    refresh();
+  };
+
+  function toggle() {
+    if (!current || busy) return;
+    busy = true;
+    fetch('/api/star', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: GAME_ID, puzzle_id: current.id,
+                             level: current.level, starred: !starred }),
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data) { starred = !!data.starred; paint(); }
+        busy = false;
+      })
+      .catch(function () { busy = false; });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var el = button();
+    if (el) {
+      el.addEventListener('click', toggle);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    }
+    paint();
+  });
+})();
+</script>"""
 
 
 def _nav_html(current: Game) -> str:
@@ -89,6 +177,10 @@ def _nav_html(current: Game) -> str:
             parts.append('<span class="here">%s</span>' % game.name)
         else:
             parts.append('<a href="%s">%s</a>' % (game.url, game.name))
+    parts.append('<button type="button" class="plaza-star" id="plaza-star" hidden'
+                 ' title="收藏这道题（以后好找）">'
+                 '<span class="glyph" aria-hidden="true">☆</span>'
+                 '<span class="label">收藏</span></button>')
     return '<nav class="plaza-nav" aria-label="换个游戏">' + "".join(parts) + "</nav>"
 
 
@@ -106,6 +198,7 @@ def _game_page(game: Game) -> str:
     # 接口基址 + 导航的样式都塞进 head（样式早一步到，就不会先闪一个没样式的导航）
     inject = "<script>window.API_BASE=%s;</script>" % json.dumps(game.api_base)
     inject += "\n" + _NAV_CSS
+    inject += "\n" + _STAR_JS.replace("__GAME_ID__", json.dumps(game.id))
     if "</head>" in html:
         html = html.replace("</head>", inject + "\n</head>", 1)
     else:
@@ -211,6 +304,48 @@ def api_history_clear() -> Dict[str, object]:
     return {"ok": True, "deleted": deleted}
 
 
+class StarRequest(BaseModel):
+    """`POST /api/star` 的入参。"""
+
+    game: str
+    puzzle_id: str
+    level: Optional[int] = None
+    starred: bool = True          # false = 取消收藏
+
+
+@app.get("/api/stars")
+def api_stars(
+    game: Optional[str] = Query(None, description="只看某个游戏，例如 logic"),
+    level: Optional[int] = Query(None, ge=0, description="只看某个等级"),
+) -> Dict[str, object]:
+    """收藏列表，新的在前（可按游戏 / 等级筛）。数据来源见 plaza/stars.py。"""
+    try:
+        rows = stars.list_stars(game, level)
+    except Exception as exc:
+        raise HTTPException(500, "收藏读不了：%s" % exc)
+    return {"count": len(rows), "stars": rows}
+
+
+@app.post("/api/star")
+def api_star(req: StarRequest) -> Dict[str, object]:
+    """收藏 / 取消收藏一道题 —— **幂等**：连着发两次结果一样。
+
+    收藏是"状态"不是"事件"：一道题（游戏 + 题目 id）最多一条，跟访问日志分开存。
+    `starred=false` 就是取消；`level` 只有第一次收藏时用得着（以后不会来回改）。
+    """
+    game = (req.game or "").strip()
+    puzzle_id = (req.puzzle_id or "").strip()
+    if game not in {g.id for g in GAMES}:
+        raise HTTPException(400, "没有这个游戏：%s" % game)
+    if not puzzle_id:
+        raise HTTPException(400, "puzzle_id 是空的")
+    try:
+        state = stars.set_starred(game, puzzle_id, req.level, req.starred)
+    except Exception as exc:
+        raise HTTPException(500, "收藏写不进去：%s" % exc)
+    return {"ok": True, **state}
+
+
 # --------------------------------------------------------------------------
 # 首页
 # --------------------------------------------------------------------------
@@ -227,7 +362,8 @@ _PAGE = """<!doctype html>
 <header>
   <h1>游戏广场</h1>
   <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。
-     <a class="sidelink" href="/history">查看历史 →</a></p>
+     <a class="sidelink" href="/history">历史 →</a>
+     <a class="sidelink" href="/stars">收藏 →</a></p>
 </header>
 <main>
 %s
@@ -291,7 +427,7 @@ td.open a:hover{text-decoration-color:currentColor}
 <body>
 <header>
   <h1>玩过什么</h1>
-  <p class="lead">按天分组，新的在最上面 · <a href="/">← 回广场</a></p>
+  <p class="lead">按天分组，新的在最上面 · <a href="/stars">收藏 →</a> · <a href="/">← 回广场</a></p>
 </header>
 <main>
   <div class="bar">
@@ -477,6 +613,167 @@ load(false);
 """
 
 
+# 收藏清单：布局照历史页（标题 + 状态栏 + 一张表），但**不按天分组**（收藏一般没几条），
+# 每行末尾的「打开」跟历史页一样是深链接 `/games/<游戏>/?p=<题目 id>`；
+# 最左边那颗黄星点一下就取消收藏。
+_STARS_PAGE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>收藏 · BeadMatch</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+.bar{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem;flex-wrap:wrap}
+.bar button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--border);
+  border-radius:999px;padding:3px 12px;cursor:pointer}
+.bar button:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
+.wrap{overflow:hidden;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-size:.78rem;color:var(--muted);font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.time{color:var(--muted);font-variant-numeric:tabular-nums}
+td.game{font-weight:600}
+td .muted{color:var(--muted);font-weight:400}
+td.id{font-family:ui-monospace,Consolas,monospace;font-size:.85rem}
+td.open a{color:inherit;text-decoration:underline;text-underline-offset:3px;
+  text-decoration-color:rgba(128,128,128,.45)}
+td.open a:hover{text-decoration-color:currentColor}
+td.star button{font:inherit;font-size:1.15rem;line-height:1;background:none;border:0;
+  color:#f2c231;cursor:pointer;padding:0 2px}
+td.star button:hover{filter:brightness(1.15)}
+.none{color:var(--muted);line-height:1.9}
+</style>
+</head>
+<body>
+<header>
+  <h1>我收藏的题</h1>
+  <p class="lead">觉得好的题都在这儿 · <a href="/history">历史 →</a> · <a href="/">← 回广场</a></p>
+</header>
+<main>
+  <div class="bar">
+    <span id="status">读取中…</span>
+    <button id="reload">刷新</button>
+  </div>
+  <div id="list"></div>
+  <p class="none" id="empty" hidden>还没有收藏 —— 玩到喜欢的题，点页面右上角的 ☆ 收藏。</p>
+</main>
+<script>
+const GAME_NAMES = __GAME_NAMES__;          // id → 中文名（后端注入）
+const listEl = document.getElementById('list');
+const emptyEl = document.getElementById('empty');
+const statusEl = document.getElementById('status');
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+// "2026-10-21T08:12:30+08:00" → "2026-10-21 08:12"
+function when(text) {
+  const d = new Date(text);
+  if (isNaN(d.getTime())) return text || '';
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} `
+       + `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function tableBody() {
+  const wrap = document.createElement('div');
+  wrap.className = 'wrap';
+  const table = document.createElement('table');
+  table.innerHTML = '<thead><tr><th>收藏</th><th>游戏</th><th>等级</th>'
+                  + '<th>题目</th><th>收藏时间</th><th></th></tr></thead><tbody></tbody>';
+  wrap.appendChild(table);
+  listEl.appendChild(wrap);
+  return table.querySelector('tbody');
+}
+
+function row(s) {
+  const tr = document.createElement('tr');
+
+  const star = document.createElement('td');
+  star.className = 'star';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = '★';
+  btn.title = '取消收藏';
+  btn.setAttribute('aria-label', '取消收藏 ' + s.puzzle_id);
+  btn.addEventListener('click', () => unstar(s));
+  star.appendChild(btn);
+
+  const game = document.createElement('td');
+  game.className = 'game';
+  game.textContent = GAME_NAMES[s.game] || s.game || '';
+
+  const level = document.createElement('td');
+  level.className = 'muted';
+  level.textContent = (s.level === null || s.level === undefined) ? '' : s.level + ' 级';
+
+  const id = document.createElement('td');
+  id.className = 'id';
+  id.textContent = s.puzzle_id || '';
+
+  const time = document.createElement('td');
+  time.className = 'time';
+  time.textContent = when(s.created_at);
+
+  const open = document.createElement('td');
+  open.className = 'open';
+  const a = document.createElement('a');
+  // 跟历史页一样是深链接：直接开这道题
+  a.href = '/games/' + encodeURIComponent(s.game) + '/'
+         + (s.puzzle_id ? '?p=' + encodeURIComponent(s.puzzle_id) : '');
+  a.title = s.puzzle_id ? '打开 ' + s.puzzle_id : '打开这个游戏';
+  a.textContent = '打开';
+  open.appendChild(a);
+
+  tr.append(star, game, level, id, time, open);
+  return tr;
+}
+
+async function unstar(s) {
+  statusEl.textContent = '取消收藏…';
+  try {
+    const r = await fetch('/api/star', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: s.game, puzzle_id: s.puzzle_id, starred: false }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    await load();
+  } catch (e) {
+    statusEl.textContent = '取消收藏失败：' + e.message;
+  }
+}
+
+async function load() {
+  statusEl.textContent = '读取中…';
+  try {
+    const r = await fetch('/api/stars');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const rows = data.stars || [];
+    listEl.replaceChildren();
+    if (!rows.length) {
+      emptyEl.hidden = false;
+      statusEl.textContent = '还没有收藏';
+      return;
+    }
+    emptyEl.hidden = true;
+    statusEl.textContent = `共收藏 ${rows.length} 道`;
+    const tbody = tableBody();
+    rows.forEach((s) => tbody.appendChild(row(s)));
+  } catch (e) {
+    statusEl.textContent = '读取失败：' + e.message;
+  }
+}
+
+document.getElementById('reload').addEventListener('click', load);
+load();
+</script>
+</body>
+</html>
+"""
+
+
 def _home_html() -> str:
     cards: List[str] = []
     for game in registry.list_games():
@@ -513,6 +810,13 @@ def index() -> str:
 def history_page() -> str:
     """玩过什么 —— 首页右侧导航「历史」进来的。"""
     return _HISTORY_PAGE.replace(
+        "__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
+
+
+@app.get("/stars", response_class=HTMLResponse)
+def stars_page() -> str:
+    """我收藏的题 —— 首页副标题的「收藏 →」进来的。"""
+    return _STARS_PAGE.replace(
         "__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
 
 
