@@ -82,6 +82,12 @@ class HistoryPageTest(unittest.TestCase):
         # 首页副标题后面并排两个小链接：查看历史 + GitHub（都给自己人看）
         self.assertIn("github.com/diaochunmeng002-crypto/BeadMatch", home.text)
 
+    def test_home_shows_only_the_total(self) -> None:
+        """首页每张卡片只报总数（"共 N 题"），不铺每级多少题。"""
+        home = self.client.get("/").text
+        self.assertIn("共 ", home)
+        self.assertNotIn("1 级", home)              # 等级明细只在游戏页的难度下拉里
+
     def test_history_page_link_points_at_the_puzzle(self) -> None:
         """「打开」得带上题目 id（/games/<游戏>/?p=<id>）—— 光回游戏首页就开成随机一道了。"""
         page = self.client.get("/history").text

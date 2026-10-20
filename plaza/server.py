@@ -779,11 +779,8 @@ def _home_html() -> str:
     for game in registry.list_games():
         info = registry.levels_of(game)
         levels = info["levels"]
-        if levels:
-            detail = "、".join("%s 级 %d 题" % (row["level"], row["count"]) for row in levels)
-            detail = "共 %d 题（%s）" % (info["total"], detail)
-        else:
-            detail = "还没有题目"
+        # 首页只报总数 —— 等级明细太长（竞技串珠 20 档、找规律 10 档），要细看进游戏里选难度
+        detail = ("共 %d 题" % info["total"]) if levels else "还没有题目"
         warn = ""
         if game.error:
             warn = '<p class="warn">起不来：%s</p>' % game.error
