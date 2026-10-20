@@ -227,15 +227,16 @@ _PAGE = """<!doctype html>
 <header>
   <h1>游戏广场</h1>
   <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。
-     <a class="sidelink" href="https://github.com/diaochunmeng002-crypto/BeadMatch/commits/master"
-        target="_blank" rel="noreferrer">GitHub →</a><a class="sidelink" href="/history">查看历史 →</a></p>
+     <a class="sidelink" href="/history">查看历史 →</a></p>
 </header>
 <main>
 %s
 </main>
 <footer>
   <p>共 %d 个游戏 · 接口清单在 <a href="/api/games">/api/games</a> ·
-     每个游戏的接口文档在 <a href="/docs">/docs</a></p>
+     每个游戏的接口文档在 <a href="/docs">/docs</a> ·
+     源码在 <a href="https://github.com/diaochunmeng002-crypto/BeadMatch/commits/master"
+              target="_blank" rel="noreferrer">GitHub</a></p>
 </footer>
 </body>
 </html>
