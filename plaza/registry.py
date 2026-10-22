@@ -29,6 +29,7 @@ class Game:
     category: str          # group / sort / space / plan / logic / memory / pattern / calc
     summary: str           # 一句话（首页上显示）
     folder: Path
+    order: int = 0         # 数字越大越靠后；默认按 id 排序
     api: object = None     # games.<id>.api 模块（起不来的话是 None）
     error: str = ""        # 起不来的话，错在哪
 
@@ -71,7 +72,8 @@ def _load(folder: Path) -> Optional[Game]:
         error = "%s: %s" % (type(exc).__name__, exc)
 
     return Game(id=gid, name=str(meta["name"]).strip(), category=str(meta["category"]).strip(),
-                summary=str(meta["summary"]).strip(), folder=folder, api=api, error=error)
+                summary=str(meta["summary"]).strip(), folder=folder,
+                order=int(meta.get("order", 0)), api=api, error=error)
 
 
 def list_games(root: Path = GAMES_DIR) -> List[Game]:
@@ -89,7 +91,7 @@ def list_games(root: Path = GAMES_DIR) -> List[Game]:
             continue
         if game is not None:
             out.append(game)
-    return out
+    return sorted(out, key=lambda game: (game.order, game.id))
 
 
 def get(game_id: str, root: Path = GAMES_DIR) -> Optional[Game]:

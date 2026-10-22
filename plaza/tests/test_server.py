@@ -204,7 +204,7 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("收藏", home)
 
     def test_every_game_can_serve_a_puzzle_by_id(self) -> None:
-        """深链接靠的是各游戏的 `/puzzles/{id}` —— 五个游戏都得能按 id 取题。"""
+        """深链接靠的是各游戏的 `/puzzles/{id}` —— 所有题库非空的游戏都得能按 id 取题。"""
         games = self.client.get("/api/games").json()["games"]
         self.assertTrue(games)
         for game in games:
@@ -219,6 +219,25 @@ class HistoryPageTest(unittest.TestCase):
             self.assertEqual(again.status_code, 200, game["id"])
             self.assertEqual(again.json()["id"], picked["id"], game["id"])
             self.assertEqual(again.json()["level"], picked["level"], game["id"])
+
+    def test_beadcipher_is_served_by_the_plaza(self) -> None:
+        """新游戏要自动进首页，题目页要挂上广场接口前缀和收藏星标。"""
+        games = self.client.get("/api/games").json()["games"]
+        game = next((row for row in games if row["id"] == "beadcipher"), None)
+        self.assertIsNotNone(game)
+        self.assertEqual(game["name"], "彩珠密令")
+        self.assertEqual(game["total"], 21)
+        self.assertEqual(games[-1]["id"], "beadcipher")   # 新模块固定放在最后
+
+        page = self.client.get("/games/beadcipher/")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("彩珠密令", page.text)
+        self.assertIn('window.API_BASE="/api/games/beadcipher"', page.text)
+        self.assertIn('id="plaza-star"', page.text)
+
+        js = self.client.get("/games/beadcipher/static/app.js")
+        self.assertEqual(js.status_code, 200)
+        self.assertIn("__beadcipher_loaded", js.text)
 
     def test_game_url_without_slash_keeps_the_query(self) -> None:
         """/games/<游戏>?p=<id>（少个斜杠）跳过去时，题目 id 不能丢。"""

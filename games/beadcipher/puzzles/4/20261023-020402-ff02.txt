@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-23 02:04:02
+created_by=manual
+id=20261023-020402-ff02
+level=4
+title=六珠重复数量
+beads=RRBGYO
+kind=positions
+clue_rule=每次只告诉位置对了几颗，不说是哪几个位置。

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeadMatch · 彩珠密令</title>
+<link rel="stylesheet" href="static/style.css?v=20261023a">
+</head>
+<body>
+
+<header class="top">
+  <h1>彩珠密令</h1>
+  <div class="controls">
+    <label class="field">难度
+      <select id="level"></select>
+    </label>
+    <button id="next">换一题</button>
+  </div>
+</header>
+
+<main>
+  <p class="title" id="puzzle-title"></p>
+
+  <section class="card">
+    <h2>参与者</h2>
+    <div class="bead-row" id="beads"></div>
+  </section>
+
+  <section class="card">
+    <h2>题目</h2>
+    <ol class="clues" id="clues"></ol>
+  </section>
+
+  <p id="status" class="status" aria-live="polite"></p>
+</main>
+
+<script>
+window.addEventListener('error', function (e) {
+  var el = document.getElementById('boot-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'boot-error';
+    el.style.cssText = 'position:fixed;inset:0 0 auto 0;z-index:99;padding:12px 18px;'
+      + 'background:#8c2f2f;color:#fff;font:14px/1.7 "Microsoft YaHei",system-ui,sans-serif';
+    document.body.prepend(el);
+  }
+  el.textContent = '页面出错了：' + (e.message || '脚本没有加载成功');
+});
+</script>
+<script src="static/app.js?v=20261023a"></script>
+</body>
+</html>

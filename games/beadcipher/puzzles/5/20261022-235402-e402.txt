@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-22 23:54:02
+created_by=manual
+id=20261022-235402-e402
+level=5
+title=结构二选一
+beads=RBYG
+kind=choice
+clue_rule=每轮选一种线索：第一处错误在第几位，或相邻正确组数；同一种不能连续用两轮。

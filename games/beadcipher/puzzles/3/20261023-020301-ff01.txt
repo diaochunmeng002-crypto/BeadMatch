@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-23 02:03:01
+created_by=manual
+id=20261023-020301-ff01
+level=3
+title=五色连续
+beads=RBYGP
+kind=run
+clue_rule=每次只告诉最长连续正确的一串有几颗，不说是哪一段。

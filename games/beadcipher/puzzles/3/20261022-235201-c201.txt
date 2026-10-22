@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-22 23:52:01
+created_by=manual
+id=20261022-235201-c201
+level=3
+title=连续两格
+beads=RGBY
+kind=run
+clue_rule=每次只告诉最长连续正确的一串有几颗，不说是哪一段。

@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-23 03:06:01
+created_by=manual
+id=20261023-030601-a6a1
+level=6
+title=六色数位置
+beads=RBYGPO
+kind=positions
+clue_rule=每次只告诉位置对了几颗，不说是哪几个位置。

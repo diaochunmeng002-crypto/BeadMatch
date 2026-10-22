@@ -23,6 +23,7 @@ python run.py --puzzles beadsort=games/beadsort/puzzles_layershuffle --port 8001
 - [推理 http://127.0.0.1:8000/games/logic/](http://127.0.0.1:8000/games/logic/)
 - [记忆 http://127.0.0.1:8000/games/memory/](http://127.0.0.1:8000/games/memory/)
 - [计算 http://127.0.0.1:8000/games/calc/](http://127.0.0.1:8000/games/calc/)
+- [彩珠密令 http://127.0.0.1:8000/games/beadcipher/](http://127.0.0.1:8000/games/beadcipher/)
 - [接口文档 http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ## 4. 出题
@@ -69,6 +70,7 @@ python -m games.beadsort.tools.merge games/beadsort/puzzles games/beadsort/puzzl
 python -m games.logic.core.puzzles
 python -m games.memory.core.cards
 python -m games.calc.core.cards
+python -m games.beadcipher.core.cards --list
 python -m unittest discover -s games/beadsort/tests -t .
 python -m unittest games.beadmatch.tests.test_app
 ```

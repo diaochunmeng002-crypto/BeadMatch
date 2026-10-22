@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-22 23:55:01
+created_by=manual
+id=20261022-235501-f501
+level=5
+title=三问选一
+beads=RBYG
+kind=questions
+clue_rule=每次猜完只能从三个问题中选一个：红色在最左边吗？蓝色在最右边吗？至少有一个位置已经正确吗？

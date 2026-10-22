@@ -1,0 +1,10 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-23 03:07:01
+created_by=manual
+id=20261023-030701-a7a1
+level=7
+title=六色两排一答
+beads=RBYGPO
+kind=delayed
+clue_rule=先连续猜两排，再只告诉最新一排位置对了几颗。

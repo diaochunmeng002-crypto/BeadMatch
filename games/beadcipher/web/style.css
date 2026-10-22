@@ -1,0 +1,131 @@
+:root {
+  --bg: #17181a;
+  --ink: #ececec;
+  --muted: #9aa0a6;
+  --card: #1e2023;
+  --border: #3a3d42;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #faf9f7;
+    --ink: #33312e;
+    --muted: #8a857f;
+    --card: #fff;
+    --border: #d9d5d0;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 40px 20px 56px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+header, main { width: 100%; max-width: 46rem; }
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+h1 { margin: 0; font-size: 1.2rem; letter-spacing: .02em; }
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.field { display: flex; align-items: center; gap: 6px; font-size: .9rem; }
+
+select, button {
+  font: inherit;
+  font-size: .9rem;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: inherit;
+  cursor: pointer;
+}
+
+button:disabled { opacity: .42; cursor: default; }
+
+.title {
+  margin: 18px 2px 0;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card {
+  margin-top: 18px;
+  padding: 20px 22px 22px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+h2 {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+}
+
+.bead-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.bead-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bead {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  box-shadow: inset -3px -4px 8px rgba(0, 0, 0, .2),
+              inset 3px 4px 8px rgba(255, 255, 255, .48);
+}
+
+.bead-name {
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.clues {
+  margin: 0;
+  padding-left: 1.7rem;
+  line-height: 1.9;
+}
+
+.clues li { margin: 9px 0; padding-left: 3px; }
+
+.status {
+  min-height: 1.4em;
+  margin: 14px 2px 0;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+@media (max-width: 480px) {
+  body { padding: 24px 14px 40px; }
+  .card { padding: 18px; }
+  .bead { width: 34px; height: 34px; }
+}

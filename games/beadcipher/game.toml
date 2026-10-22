@@ -1,0 +1,6 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "beadcipher"
+name = "彩珠密令"
+category = "logic"
+summary = "根据反馈，破译藏起来的颜色顺序"
+order = 100
