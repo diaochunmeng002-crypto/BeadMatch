@@ -1,0 +1,18 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-133000-002d
+level=3
+title=绿珠去哪只袋子？
+story=两只袋子里的珠子总数一样，颜色组成不同。
+kind=compare
+target=G
+question=从哪只袋子更容易摸到绿珠？
+action=两只袋子轮流摸 5 次，每次放回并摇匀。
+bag=左边的袋子|G:2 Y:6
+bag=右边的袋子|G:4 Y:4
+answer=right
+hint=总数一样时，比一比目标颜色各有几颗。
+explain=两只袋子都有 8 颗珠子；左边有 2 颗绿珠，右边有 4 颗。右边的袋子目标珠更多，所以机会更大。

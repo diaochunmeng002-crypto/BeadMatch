@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-125600-001c
+level=2
+title=哪种颜色更常见？
+story=袋里只有两种颜色的珠子，形状都一样。
+kind=most
+question=闭眼摸 5 次，每次放回摇匀。通常哪种颜色更容易摸到？
+action=从袋里摸一颗、看一眼、放回、摇 3 下；重复 5 次。
+bag=神秘袋|O:9 G:2
+answer=O
+hint=两种颜色在同一个袋子里，直接比较颗数。
+explain=橙珠 9 颗、绿珠 2 颗；橙珠更多，所以通常更容易摸到橙珠。

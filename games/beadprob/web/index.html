@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeadMatch · 彩珠机会屋</title>
+<link rel="stylesheet" href="static/style.css?v=20261024h">
+</head>
+<body>
+
+<header class="top">
+  <h1>彩珠机会屋</h1>
+  <div class="controls">
+    <label class="field">难度
+      <select id="level" aria-label="选择难度"></select>
+    </label>
+    <button id="next">换一题</button>
+    <button id="read">读一遍</button>
+    <button id="show" class="primary" disabled>看答案</button>
+  </div>
+</header>
+
+<main>
+  <p class="title" id="puzzle-title"></p>
+  <p class="story" id="story" hidden></p>
+
+  <section class="card">
+    <h2>题目</h2>
+    <div class="bags" id="bags"></div>
+    <div class="sequence" id="sequence" hidden>
+      <span class="sequence-label" id="sequence-label"></span>
+      <div class="sequence-beads" id="sequence-beads"></div>
+    </div>
+    <p class="question" id="question"></p>
+    <div class="action">
+      <span class="action-label">动手</span>
+      <p id="action"></p>
+    </div>
+  </section>
+
+  <section class="card result" id="result" hidden>
+    <h2 id="result-title">答案</h2>
+    <p class="answer" id="answer"></p>
+    <p class="explain" id="explain"></p>
+  </section>
+
+  <p id="status" class="status" aria-live="polite"></p>
+
+  <p class="footnote">
+    每题都先在线下摸珠、说出答案，再查看解释。普通摸珠每次都放回并摇匀。<br>
+    <kbd>空格</kbd> 读题，<kbd>回车</kbd> 看答案或规律，<kbd>→</kbd> 换一题。
+  </p>
+</main>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script>
+window.addEventListener('error', function (e) {
+  var el = document.getElementById('boot-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'boot-error';
+    el.style.cssText = 'position:fixed;inset:0 0 auto 0;z-index:99;padding:12px 18px;'
+      + 'background:#8c2f2f;color:#fff;font:14px/1.7 "Microsoft YaHei",system-ui,sans-serif';
+    document.body.prepend(el);
+  }
+  el.textContent = '页面出错了：' + (e.message || '脚本没有加载成功');
+});
+</script>
+<script src="static/app.js?v=20261024h"></script>
+</body>
+</html>

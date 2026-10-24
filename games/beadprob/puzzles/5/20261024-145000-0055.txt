@@ -1,0 +1,18 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-145000-0055
+level=5
+title=真的不一样吗？
+story=两只袋子的总数不同，但目标颜色所占的比例相同。
+kind=compare
+target=P
+question=从哪只袋子更容易摸到紫珠？
+action=先猜，再从两袋各摸 5 次；每次放回并摇匀。
+bag=左边的袋子|P:3 G:4 B:5
+bag=右边的袋子|P:2 G:6
+answer=same
+hint=别只看总颗数，要比较目标颜色占多少。
+explain=左袋紫珠 3 颗、绿珠 4 颗、蓝珠 5 颗，右袋紫珠 2 颗、绿珠 6 颗。两只袋子里紫珠所占的比例一样，所以机会相同；各摸几次得到的结果不同也很正常。

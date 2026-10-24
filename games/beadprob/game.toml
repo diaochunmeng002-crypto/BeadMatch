@@ -1,0 +1,6 @@
+# 广场靠这个文件发现游戏（见 ../../docs/plaza.md §4.1）
+id = "beadprob"
+name = "彩珠机会屋"
+category = "lab"
+summary = "摸一摸袋里的彩珠，理解机会、随机和放回"
+order = 110

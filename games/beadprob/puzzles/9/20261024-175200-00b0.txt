@@ -1,0 +1,18 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-175200-00b0
+level=9
+title=不放回会怎样？
+story=这一次摸出的珠子留在桌上，不再放回袋子。
+kind=without
+target=P
+question=已经拿出紫珠、紫珠，都不放回。现在再摸一颗，摸到紫珠的机会会怎样变化？
+action=先照题把紫珠、紫珠拿出留在桌上，再摸下一颗。
+bag=神秘袋|P:6 O:1
+removed=PP
+answer=smaller
+hint=先看目标珠少了几颗，再看袋里总数少了几颗。
+explain=一开始袋里紫珠 6 颗、橙珠 1 颗；拿出后剩下 5 颗，其中紫珠 4 颗。拿出的珠子里有紫珠，剩下的紫珠所占比例变小。

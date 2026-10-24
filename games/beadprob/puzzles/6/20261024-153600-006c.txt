@@ -1,0 +1,16 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-153600-006c
+level=6
+title=三颗赛跑
+story=用袋外剩下的同色珠做计分珠，每种颜色准备 3 颗。
+kind=race
+ask=upset
+question=少数颜色也可能先到 3 颗。先猜会不会出现反超，再玩三轮。
+action=摸一颗、看一眼、放回、摇 3 下；摸到哪色就推该色一颗计分珠，先到 3 颗赢一轮。
+bag=神秘袋|B:6 R:4
+hint=不用算数，只看哪一种颜色的珠子先排满三格。
+explain=袋里红珠 4 颗、蓝珠 6 颗。多数颜色通常更容易先到 3 颗，但少数颜色也可能抢先完成一轮；这正是随机结果，不能因为一次反超就说袋里的组成变了。

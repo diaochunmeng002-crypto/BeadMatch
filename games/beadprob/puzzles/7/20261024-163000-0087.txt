@@ -1,0 +1,18 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-163000-0087
+level=7
+title=前面摸过，后面会变吗？
+story=下面记录的是刚才已经摸到的结果，每次摸完都放回去并摇匀了。
+kind=independence
+target=G
+question=前面依次摸到紫珠、紫珠、紫珠、紫珠、紫珠。现在再摸一颗，摸到绿珠的机会会变大吗？
+action=照着上面的记录再摸一颗；之前每次都已经放回并摇匀。
+bag=神秘袋|G:5 P:2
+prior=PPPPP
+answer=same
+hint=先想一想：袋子里的颜色组成有没有变？
+explain=不会。每次放回并摇匀后，袋子都恢复原样，绿珠仍然是 7 颗中的 5 颗；前面碰巧摸到什么，不会让下一次更容易。

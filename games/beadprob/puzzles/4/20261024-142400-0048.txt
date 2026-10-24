@@ -1,0 +1,18 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-142400-0048
+level=4
+title=袋子大就更占优吗？
+story=两只袋子的总数不同，目标颜色的颗数也不同。
+kind=compare
+target=Y
+question=从哪只袋子更容易摸到黄珠？
+action=先猜，再从两只袋子各摸 5 次；每次放回并摇匀。
+bag=左边的袋子|Y:3 G:2
+bag=右边的袋子|Y:6 G:5
+answer=left
+hint=目标珠更多，不一定占的比例更大。
+explain=左袋黄珠 3 颗、绿珠 2 颗，右袋黄珠 6 颗、绿珠 5 颗。目标珠更多的那只袋子，不一定更容易摸到它。

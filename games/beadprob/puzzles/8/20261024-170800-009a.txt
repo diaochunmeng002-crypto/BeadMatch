@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@1
+id=20261024-170800-009a
+level=8
+title=多摸几次会更清楚吗？
+story=小样本会有波动，多记录一些结果通常更有帮助。
+kind=convergence
+target=Y
+question=先记录 12 次，再继续累计到 30 次；哪一份累计记录通常更接近袋里的比例？
+action=每次摸完都放回并摇匀。先摸 12 次记两列，再继续摸到累计 30 次。
+bag=神秘袋|Y:4 G:3
+first=12
+total=30
+answer=later
+hint=不是保证完全一样，而是通常会更接近。
+explain=摸得更多的那一份累计记录通常更接近袋里的真实比例。黄珠 4 颗、绿珠 3 颗；少量试验容易碰巧偏到一边，但不能保证最后一定完全一样。
