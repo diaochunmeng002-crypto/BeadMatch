@@ -137,8 +137,8 @@ button:disabled { opacity: .45; cursor: default; }
 .example .group.wide { gap: 18px; }
 
 .example .bead {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
 }

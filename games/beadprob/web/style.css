@@ -110,7 +110,7 @@ h2 {
 
 .bags {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
 }
 
@@ -159,17 +159,19 @@ h2 {
   gap: 4px;
   flex-wrap: nowrap;
   min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 .row-beads .bead {
-  width: 21px;
-  height: 21px;
-  flex: 0 0 21px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
 }
 
 .bead {
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
   border-radius: 50%;
   box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .2),
               inset 2px 3px 6px rgba(255, 255, 255, .48);
@@ -202,7 +204,7 @@ h2 {
   gap: 7px;
   flex-wrap: wrap;
 }
-.sequence-beads .bead { width: 26px; height: 26px; flex-basis: 26px; }
+.sequence-beads .bead { width: 34px; height: 34px; flex-basis: 34px; }
 
 .action {
   display: flex;
@@ -267,12 +269,8 @@ kbd {
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-@media (max-width: 620px) {
-  .bags { grid-template-columns: 1fr; }
-}
-
 @media (max-width: 480px) {
   body { padding: 24px 14px 40px; }
   .card { padding: 16px 14px 18px; }
-  .sequence .bead { width: 26px; height: 26px; flex-basis: 26px; }
+  .sequence .bead { width: 34px; height: 34px; flex-basis: 34px; }
 }

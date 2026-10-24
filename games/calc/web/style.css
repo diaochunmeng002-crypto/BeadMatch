@@ -128,8 +128,8 @@ main { width: 100%; max-width: 46rem; }
 .material .dots { display: flex; gap: 6px; }
 
 .material .dot {
-  width: 22px;
-  height: 22px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   flex: 0 0 auto;
   box-shadow: inset -2px -3px 6px rgba(0, 0, 0, .18), inset 2px 3px 6px rgba(255, 255, 255, .5);
