@@ -56,7 +56,7 @@ def levels() -> Dict[str, object]:
 @router.get("/puzzles")
 def puzzles(level: Optional[int] = Query(None, ge=1, description="只看某一档")) -> Dict[str, object]:
     """列出演示（接口路径跟别的游戏统一叫 `/puzzles`，页面里还是叫"演示"）。"""
-    rows = [{"id": demo.id, "level": demo.level, "title": demo.title}
+    rows = [{"id": demo.id, "level": demo.level, "theme": demo.theme, "title": demo.title}
             for demo in d.list_demos(level) if not demo.problems]
     return {"count": len(rows), "demos": rows}
 

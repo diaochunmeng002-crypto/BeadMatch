@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l1-match
 level=1
+theme=数与量
 title=一样多吗？
 thing=小皮球
 unit=个

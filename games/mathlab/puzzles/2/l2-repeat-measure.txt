@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l2-repeat-measure
+level=2
+theme=测量
+title=用短尺一格一格量
+thing=小火车
+unit=节
+materials=R:2 B:4
+example=单位尺：2 节|RR|1 个单位|
+example=要测：4 节|BBBB|共 4 节|
+example=量一量|RR RR|2 个单位|
+answer=用 2 节的短尺量 4 节，正好能放下 2 次，所以长度是 2 个单位。
+why=同一个单位一格一格地接下去量；量了几次，就是几个单位。
+
+把红色 2 节的小火车当作单位尺。
+从蓝色 4 节小火车的左端开始量。
+每次量完做一个记号，接着往下量。
+能完整量几次？还剩几节？

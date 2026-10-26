@@ -219,6 +219,8 @@ function show(d) {
   if (window.plazaSetPuzzle) window.plazaSetPuzzle({ id: d.id, level: d.level });
   state.revealed = false;
   $('level').value = String(d.level);
+  $('demo-theme').textContent = d.theme || '';
+  $('demo-theme').hidden = !d.theme;
   $('demo-title').textContent = d.title || '';
   $('demo-title').hidden = !d.title;
   renderMaterials(d);

@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l3-graph
+level=3
+theme=数据
+title=排成两条比一比
+thing=珠子
+unit=颗
+materials=R:2 B:3
+example=排成两条|RR BBB|红 2 / 蓝 3|
+answer=蓝色条更长，所以蓝色珠子更多；红色 2 颗，蓝色 3 颗。
+why=把数量排成一样起点、一样间隔的条，条越长表示数量越多。
+
+把红色珠子排成一条，把蓝色珠子排成另一条。
+两条都从同一条左线开始排。
+哪条更长？
+如果不看数字，只看两条的长度，你能比出多少吗？

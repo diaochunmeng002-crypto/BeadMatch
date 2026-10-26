@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l2-share
 level=2
+theme=分组
 title=平均分配
 thing=小饼干
 unit=块

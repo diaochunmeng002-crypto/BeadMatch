@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l4-measure
 level=4
+theme=测量
 title=珠子测量师
 thing=小火车
 unit=节

@@ -50,9 +50,9 @@ GAME_DIR = Path(__file__).resolve().parent.parent
 PUZZLE_DIR = GAME_DIR / "puzzles"
 
 # 认得的元信息键（不在这儿的 `键=值` 行，就当正文）
-META_KEYS = ("created_at", "created_by", "id", "level", "title", "thing", "unit",
+META_KEYS = ("created_at", "created_by", "id", "level", "theme", "title", "thing", "unit",
              "materials", "example", "answer", "why")
-REQUIRED = ("id", "level", "title", "thing", "unit", "answer", "why")
+REQUIRED = ("id", "level", "theme", "title", "thing", "unit", "answer", "why")
 EXAMPLE_FLAGS = ("wide",)
 
 
@@ -79,6 +79,10 @@ class Demo:
     @property
     def title(self) -> str:
         return self.meta.get("title", "")
+
+    @property
+    def theme(self) -> str:
+        return self.meta.get("theme", "")
 
     @property
     def thing(self) -> str:
@@ -255,6 +259,7 @@ def payload(demo: Demo) -> Dict[str, Any]:
         "id": demo.id,
         "level": demo.level,
         "level_name": LEVEL_NAMES.get(demo.level, ""),
+        "theme": demo.theme,
         "title": demo.title,
         "thing": demo.thing,
         "unit": demo.unit,

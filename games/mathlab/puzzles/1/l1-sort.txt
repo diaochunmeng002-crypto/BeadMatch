@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l1-sort
+level=1
+theme=数据
+title=按颜色分一分
+thing=珠子
+unit=颗
+materials=R:2 B:1
+example=分成两堆|RR B|红 2 / 蓝 1|
+answer=可以分成红色和蓝色两堆；红色 2 颗，蓝色 1 颗。
+why=把相同颜色的放在一起，数量和比较都会更容易看出来。
+
+把 3 颗珠子按颜色分开。
+每堆分别有几颗？
+哪一堆更多？
+如果再拿来一颗蓝珠子，两堆会一样多吗？

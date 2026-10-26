@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l3-array
 level=3
+theme=乘除
 title=珠子方阵
 thing=珠子
 unit=颗

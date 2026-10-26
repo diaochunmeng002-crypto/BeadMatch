@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l2-take
 level=2
+theme=加减
 title=拿走几个
 thing=珠子
 unit=颗

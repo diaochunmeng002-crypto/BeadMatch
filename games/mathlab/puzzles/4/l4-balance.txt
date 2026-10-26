@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l4-balance
+level=4
+theme=关系
+title=让两边一样多
+thing=小球
+unit=颗
+materials=R:4
+example=一开始：3 和 1|RRR R|左边多 2 颗|
+example=移动一颗：2 和 2|RR RR|两边一样多|
+answer=从左边移 1 颗到右边，两边就都变成 2 颗，总数仍然是 4 颗。
+why=移动不会改变总数，但会改变两边的数量；让两边一样多，可以做一个小小的平衡实验。
+
+左边放 3 颗，右边放 1 颗。
+现在哪边多？总共还是几颗？
+只移动 1 颗，让两边一样多。
+你移动了哪一边的珠子？

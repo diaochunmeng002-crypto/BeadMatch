@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l3-shape-rotate
+level=3
+theme=图形空间
+title=转一转，形状变了吗？
+thing=小球
+unit=颗
+materials=B:4
+example=摆成正方形|BB BB|2 行 × 2 颗|
+example=把纸转一下|BB BB|还是 2 行 × 2 颗|
+answer=只是转动了方向，形状仍然是同一个正方形，4 颗的数量也没有改变。
+why=平移或旋转会改变位置和方向，但不会改变图形本身的形状。
+
+把 4 颗小球摆在一个正方形的四个角上。
+记住这个形状，再慢慢转动纸张或桌面。
+它现在和刚才是不是同一个形状？
+如果拿走一颗，还能保持四角齐全吗？

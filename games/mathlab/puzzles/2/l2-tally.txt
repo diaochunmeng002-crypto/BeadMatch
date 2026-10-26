@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l2-tally
+level=2
+theme=数据
+title=记一记有多少
+thing=珠子
+unit=颗
+materials=R:3 B:1
+example=先分类|RRR B|红 3 / 蓝 1|
+answer=分类后可以记成「红 3、蓝 1」；这样不用一直看着珠子也能记住数量。
+why=分类、数数、记录是三件事；记录下来的数可以用来比较和回答问题。
+
+把 4 颗珠子分成红色和蓝色两堆。
+数一数每堆有几颗。
+用圆点或短线把结果记在纸上。
+过一会儿只看看记录，你还能说出哪一堆多吗？

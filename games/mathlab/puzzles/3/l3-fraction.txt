@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l3-fraction
 level=3
+theme=分数
 title=分数切切乐
 thing=豆腐
 unit=块

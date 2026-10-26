@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l4-data-represent
+level=4
+theme=数据
+title=同一份数据，换种说法
+thing=珠子
+unit=颗
+materials=R:2 G:1 B:2
+example=用珠子表示|RR G BB|红 2 / 绿 1 / 蓝 2|
+example=用记录表示|R G B|2 / 1 / 2|
+answer=同一组数量可以用珠子、长短条或数字记录来表示，三种说法描述的是同一份数据。
+why=表示方式可以不同，只要数量和对应关系没有变，表达的数据就没有变。
+
+先按颜色摆好红 2、绿 1、蓝 2。
+把它们排成三条，比较长短。
+再用「颜色 + 数量」记在纸上。
+两种表示说的是同一件事吗？

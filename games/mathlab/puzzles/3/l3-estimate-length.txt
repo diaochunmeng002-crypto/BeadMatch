@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l3-estimate-length
+level=3
+theme=测量
+title=先估一估，再量一量
+thing=小火车
+unit=节
+materials=R:1 B:4
+example=1 节是 1 个单位|R|每次移动 1 节|
+example=要量 4 节|BBBB|先猜需要几次|
+answer=用 1 节的单位去量 4 节，需要移动 4 次，所以是 4 个单位。
+why=估测是使用测量之前的判断；量一量可以检验猜测，而不是只相信眼睛。
+
+把蓝色 4 节小火车排在桌上。
+先不摆单位尺，估一估它大约有几个短单位长。
+再用 1 节红色小火车从头到尾一格一格量。
+估的和量出来的相差多少？

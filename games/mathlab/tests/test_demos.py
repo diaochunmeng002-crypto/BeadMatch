@@ -14,6 +14,7 @@ class DemosTest(unittest.TestCase):
                 self.assertGreaterEqual(len(demo.steps), 2)   # 题目：编号步骤
                 self.assertTrue(demo.answer.strip())    # 答案 = 性质
                 self.assertTrue(demo.why.strip())       # 为什么
+                self.assertTrue(demo.theme.strip())     # 主题标签
                 self.assertIn(demo.level, d.LEVEL_NAMES)
                 self.assertEqual(demo.path.stem, demo.id)     # 一个演示一个文件
                 self.assertEqual(demo.path.parent.name, str(demo.level))
@@ -21,9 +22,9 @@ class DemosTest(unittest.TestCase):
     def test_levels_count(self):
         info = d.levels()
         self.assertEqual(info["total"], len(d.iter_demos()))
-        self.assertEqual(info["total"], 18)              # 18 个演示
+        self.assertEqual(info["total"], 30)              # 30 个演示
         self.assertEqual([row["level"] for row in info["levels"]], [1, 2, 3, 4])
-        self.assertEqual([row["count"] for row in info["levels"]], [4, 4, 5, 5])
+        self.assertEqual([row["count"] for row in info["levels"]], [7, 7, 8, 8])
         self.assertEqual(sum(row["count"] for row in info["levels"]), len(d.iter_demos()))
 
     def test_lookup(self):
@@ -37,10 +38,11 @@ class DemosTest(unittest.TestCase):
 
     def test_payload_shape(self):
         body = d.payload(d.iter_demos()[0])
-        for key in ("id", "level", "level_name", "title", "thing", "unit",
+        for key in ("id", "level", "level_name", "theme", "title", "thing", "unit",
                     "materials", "steps", "answer", "why", "example"):
             self.assertIn(key, body)
         self.assertEqual(body["level_name"], "感知")
+        self.assertEqual(body["theme"], "数与量")
         self.assertEqual(body["materials"], [{"bead": "R", "count": 3}])
         self.assertTrue(body["steps"][-1].endswith("？"))     # 最后一步就是那句"问"
         self.assertTrue(body["example"])
@@ -59,6 +61,11 @@ class DemosTest(unittest.TestCase):
                         counts[bead] = counts.get(bead, 0) + 1
                 for bead, count in counts.items():
                     self.assertLessEqual(count, ceiling, (demo.id, example["label"], bead))
+
+    def test_missing_topic_areas_are_covered(self):
+        """除了数与运算，也要有图形、测量、数据、关系和实验过程。"""
+        themes = {demo.theme for demo in d.iter_demos()}
+        self.assertTrue({"图形空间", "测量", "数据", "关系", "实验过程"} <= themes)
 
     def test_unknown_level_is_empty(self):
         self.assertEqual(d.list_demos(9), [])

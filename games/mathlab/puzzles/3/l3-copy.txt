@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l3-copy
 level=3
+theme=乘除
 title=复制魔法
 thing=小星星
 unit=颗

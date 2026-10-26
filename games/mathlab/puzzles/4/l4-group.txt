@@ -4,6 +4,7 @@ created_at=2026-10-26
 created_by=manual
 id=l4-group
 level=4
+theme=分组
 title=满组换盒
 thing=小球
 unit=颗

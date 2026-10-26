@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l2-split
 level=2
+theme=加减
 title=数字拆拆乐
 thing=糖球
 unit=颗

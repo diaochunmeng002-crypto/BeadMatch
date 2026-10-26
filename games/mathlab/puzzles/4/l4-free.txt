@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l4-free
 level=4
+theme=实验过程
 title=自由实验
 thing=珠子
 unit=颗

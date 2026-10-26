@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l1-direct-measure
+level=1
+theme=测量
+title=不靠眼睛比长短
+thing=小火车
+unit=节
+materials=R:3 B:2
+example=起点对齐|RRR BB|红 3 节 / 蓝 2 节|
+answer=红色小火车更长，长出 1 节。把起点对齐后，看另一端伸出来多少就行。
+why=比较长度不能只看哪根摆得靠右；要从同一个起点开始，再比较终点。
+
+摆两列小火车：红色 3 节、蓝色 2 节。
+先猜哪一列更长。
+把两列的最左边对齐。
+哪一列更长？长几节？

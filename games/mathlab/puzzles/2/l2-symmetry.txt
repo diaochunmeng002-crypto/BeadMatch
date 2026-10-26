@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l2-symmetry
+level=2
+theme=图形空间
+title=两边一样吗？
+thing=珠子
+unit=颗
+materials=R:2 B:2
+example=沿中线摆好|RB BR|左：红蓝，右：蓝红|
+answer=沿中线看，左边和右边的颗数一样，位置和颜色也左右对应，这就是对称。
+why=对称不仅要求两边数量一样，还要求位置能一一对应。
+
+在纸上画一条中线。
+左边放红、蓝两颗，右边放蓝、红两颗。
+左右两边的珠子离中线一样远吗？
+把纸对折，两边的珠子能重合吗？

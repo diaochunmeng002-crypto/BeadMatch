@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l1-pair
 level=1
+theme=数与量
 title=配对找单双
 thing=小球
 unit=颗

@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l1-conserve
 level=1
+theme=数与量
 title=小球变魔术
 thing=小球
 unit=颗

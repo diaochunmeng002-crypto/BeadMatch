@@ -4,6 +4,7 @@ created_at=2026-10-17
 created_by=manual
 id=l1-more
 level=1
+theme=数与量
 title=哪边更多？
 thing=气球
 unit=个
