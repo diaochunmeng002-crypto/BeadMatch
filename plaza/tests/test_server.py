@@ -75,11 +75,14 @@ class HistoryPageTest(unittest.TestCase):
         page = self.client.get("/history")
         self.assertEqual(page.status_code, 200)
         self.assertIn("玩过什么", page.text)        # 页面上那行标题（原来写的是"访问清单"）
+        self.assertIn('<nav class="home-tools" aria-label="历史页导航">', page.text)
+        self.assertIn('<a class="home-action" href="/stars">', page.text)
+        self.assertIn('<a class="home-action" href="/">← 游戏广场</a>', page.text)
 
         home = self.client.get("/")
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/history"', home.text)
-        # 首页副标题后面并排两个小链接：查看历史 + GitHub（都给自己人看）
+        self.assertIn('<a class="home-action" href="/history">历史</a>', home.text)
         self.assertIn("github.com/diaochunmeng002-crypto/BeadMatch", home.text)
 
     def test_home_shows_only_the_total(self) -> None:
@@ -185,7 +188,9 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn('id="plaza-star"', page)       # 星标按钮
         self.assertIn("plaza-star", page)
         self.assertIn('class="glyph"', page)         # ☆ / ★ 单独一个 span，好上色
-        self.assertIn("align-items:center;gap:4px", page)  # 星形和文字之间留空格
+        self.assertIn('class="star-label"', page)    # 别用游戏的 .label，免得样式串台
+        self.assertIn("flex-direction:row;align-items:center", page)
+        self.assertIn("gap:4px", page)               # 星形和文字之间留空格
         self.assertIn("plazaSetPuzzle", page)        # 游戏页面调它上报当前题
         self.assertIn("/api/star", page)             # 点了打这条接口
         self.assertIn("/api/stars", page)            # 初始状态读这条
@@ -195,6 +200,9 @@ class HistoryPageTest(unittest.TestCase):
         page = self.client.get("/stars")
         self.assertEqual(page.status_code, 200)
         self.assertIn("我收藏的题", page.text)
+        self.assertIn('<nav class="home-tools" aria-label="收藏页导航">', page.text)
+        self.assertIn('<a class="home-action" href="/history">历史</a>', page.text)
+        self.assertIn('<a class="home-action" href="/">← 游戏广场</a>', page.text)
         self.assertIn("/api/stars", page.text)      # 页面读收藏列表
         self.assertIn("/api/star", page.text)       # 点星取消收藏
         self.assertIn("/games/", page.text)         # 「打开」还是深链接
@@ -202,6 +210,107 @@ class HistoryPageTest(unittest.TestCase):
         home = self.client.get("/").text
         self.assertIn('href="/stars"', home)
         self.assertIn("收藏", home)
+
+    def test_extras_menu_is_a_light_top_right_entry(self) -> None:
+        """首页只留历史与收藏；游戏页仍有其他入口，收藏留在最右边。"""
+        home = self.client.get("/").text
+        self.assertIn('class="home-tools"', home)
+        self.assertNotIn('class="plaza-extra-toggle"', home)
+        self.assertNotIn(">加餐<", home)
+        self.assertLess(home.index('href="/history">历史</a>'),
+                        home.index('href="/stars"'))
+        for extra_id, name in (("slingshot", "弹弓"), ("pitchpot", "投壶"),
+                               ("pickleball", "匹克球")):
+            self.assertIn('href="/extras/%s"' % extra_id, home)
+        self.assertIn('href="/extras/kendama"', home)
+        self.assertIn('class="extra-games"', home)
+        self.assertLess(home.index('href="/games/beadprob/"'),
+                        home.index('class="extra-games"'))
+        self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
+        self.assertIn("用小目标练发球、连续对打和控球。", home)
+
+        game = self.client.get("/games/logic/").text
+        self.assertIn('class="plaza-tools"', game)
+        self.assertNotIn(">加餐<", game)
+        self.assertLess(game.index('class="plaza-extra"'), game.index('class="plaza-tools"'))
+        self.assertLess(game.index('class="plaza-tools"'), game.index('id="plaza-star"'))
+        self.assertIn("flex-wrap:nowrap", game)
+        self.assertIn("DOMContentLoaded", game)
+        self.assertIn("background:var(--panel,var(--card,var(--bg,#fff)))", game)
+        self.assertIn('href="/extras/kendama">剑玉</a>', game)
+        for extra_id, name in (("slingshot", "弹弓"), ("pitchpot", "投壶"),
+                               ("pickleball", "匹克球")):
+            self.assertIn('href="/extras/%s">%s</a>' % (extra_id, name), game)
+
+    def test_kendama_has_five_ordered_challenges(self) -> None:
+        """剑玉按实际可区分的动作做 5 级；用普通游戏页的版式，没有换一题。"""
+        page = self.client.get("/extras/kendama")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("剑玉", page.text)
+        self.assertEqual(page.text.count("<option value="), 5)
+        for name in ("侧皿平衡", "底皿平衡", "剑尖平衡", "抛上侧皿", "抛上剑尖"):
+            self.assertIn(name, page.text)
+        self.assertIn('class="plaza-nav"', page.text)
+        self.assertIn('<span class="here" aria-current="page">剑玉</span>', page.text)
+        self.assertIn("怎么玩", page.text)
+        self.assertIn("过关", page.text)
+        self.assertIn("开始前", page.text)
+        self.assertNotIn("换一题", page.text)
+        self.assertIn('id="plaza-star"', page.text)
+        self.assertIn("plazaSetPuzzle", page.text)
+        self.assertIn("/api/extras/kendama/view", page.text)
+        self.assertIn("recordView(panel)", page.text)
+
+        missing = self.client.get("/extras/not-found")
+        self.assertEqual(missing.status_code, 404)
+
+    def test_extra_view_is_recorded_and_opens_the_same_level(self) -> None:
+        """打开物理玩法也进历史；历史页打开时回到同一玩具和级别。"""
+        got = self.client.post("/api/extras/kendama/view", json={"level": 3})
+        self.assertEqual(got.status_code, 200)
+        self.assertEqual(got.json()["puzzle_id"], "剑尖平衡")
+
+        rows = history.query(game="kendama")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["puzzle_id"], "剑尖平衡")
+        self.assertEqual(rows[0]["level"], 3)
+        self.assertEqual(rows[0]["source"], "extra")
+        self.assertEqual(rows[0]["detail"]["created_by"], "其他玩法")
+
+        page = self.client.get("/history").text
+        self.assertIn('"kendama": "/extras/kendama"', page)
+        self.assertIn("const EXTRA_LINKS =", page)
+        self.assertIn("extraUrl + '?level='", page)
+        self.assertEqual(
+            self.client.post("/api/extras/kendama/view", json={"level": 6}).status_code,
+            400,
+        )
+
+    def test_other_physical_play_pages_and_their_stars(self) -> None:
+        """弹弓、投壶、匹克球各有 5 级，并能收藏当前级别。"""
+        for extra_id, name in (("slingshot", "儿童弹弓"),
+                               ("pitchpot", "投壶"),
+                               ("pickleball", "匹克球")):
+            page = self.client.get("/extras/%s" % extra_id)
+            self.assertEqual(page.status_code, 200, extra_id)
+            self.assertIn(name, page.text)
+            self.assertEqual(page.text.count("<option value="), 5, extra_id)
+            self.assertIn('id="plaza-star"', page.text, extra_id)
+            self.assertIn("GAME_ID = %s" % ('"' + extra_id + '"'), page.text)
+
+        starred = self.client.post("/api/star", json={
+            "game": "kendama", "puzzle_id": "侧皿平衡", "level": 1,
+        })
+        self.assertEqual(starred.status_code, 200)
+        self.assertEqual(starred.json()["game"], "kendama")
+        listed = self.client.get("/api/stars", params={"game": "kendama"}).json()
+        self.assertEqual(listed["count"], 1)
+        self.assertEqual(listed["stars"][0]["puzzle_id"], "侧皿平衡")
+
+        stars = self.client.get("/stars").text
+        self.assertIn('"kendama": "/extras/kendama"', stars)
+        self.assertIn("const EXTRA_LINKS =", stars)
+        self.assertIn("extraUrl + '?level='", stars)
 
     def test_every_game_can_serve_a_puzzle_by_id(self) -> None:
         """深链接靠的是各游戏的 `/puzzles/{id}` —— 所有题库非空的游戏都得能按 id 取题。"""

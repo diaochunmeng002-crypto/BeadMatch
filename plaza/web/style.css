@@ -38,6 +38,30 @@ header, main, footer { width: 100%; max-width: 46rem; }
 
 h1 { font-size: 1.5rem; margin: 0 0 8px; letter-spacing: .02em; }
 
+.home-head { display: flex; align-items: flex-start; gap: 16px; }
+.home-head h1 { margin-bottom: 0; }
+.home-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.home-tools .home-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 1px 10px;
+  border: 1px solid rgba(128, 128, 128, .35);
+  border-radius: 999px;
+}
+.home-tools .home-action:hover { color: var(--ink); border-color: var(--ink); }
+
 .lead { color: var(--muted); font-size: .95rem; margin: 0 0 26px; line-height: 1.8; }
 
 main { display: flex; flex-direction: column; gap: 14px; }
@@ -68,12 +92,39 @@ a.game .summary { display: block; margin: 8px 0 0; line-height: 1.8; }
 a.game .count { display: block; margin: 8px 0 0; font-size: .85rem; color: var(--muted); }
 a.game .warn { color: var(--bad); font-size: .85rem; margin: 8px 0 0; }
 
+.extra-games { margin-top: 18px; }
+.extra-games h2 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+.extra-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+a.extra-game {
+  display: block;
+  padding: 14px 16px;
+  color: inherit;
+  text-decoration: none;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  transition: border-color .12s ease, background .12s ease;
+}
+a.extra-game:hover { border-color: var(--muted); background: rgba(128, 128, 128, .05); }
+.extra-name { display: block; font-size: 1rem; font-weight: 600; }
+.extra-summary { display: block; margin-top: 6px; color: var(--muted); font-size: .85rem; line-height: 1.65; }
+
 .empty { color: var(--muted); line-height: 1.8; }
 
 footer { margin-top: 30px; color: var(--muted); font-size: .85rem; line-height: 1.9; }
 footer a { color: inherit; }
 
-/* 副标题后面那些小链接（「查看历史」「GitHub」）：就在那句话尾巴上，不抢眼 */
+/* 副标题后面的小链接（「历史」「GitHub」）：就在那句话尾巴上，不抢眼 */
 .lead a.sidelink {
   color: inherit;
   text-decoration: underline;
@@ -83,5 +134,8 @@ footer a { color: inherit; }
   white-space: nowrap;
 }
 .lead a.sidelink:hover { text-decoration-color: currentColor; color: var(--ink); }
-/* 并排的两个小链接之间留一口气（别让它们的下划线挨在一起） */
-.lead a.sidelink + a.sidelink { margin-left: 12px; }
+
+@media (max-width: 560px) {
+  .home-head { align-items: center; }
+  .home-tools { gap: 6px; }
+}

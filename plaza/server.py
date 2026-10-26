@@ -38,6 +38,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import tomllib
+from html import escape
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
@@ -51,6 +53,7 @@ from .nocache import keep_fresh
 from .registry import Game
 
 WEB_DIR = Path(__file__).resolve().parent / "web"
+EXTRA_DIR = Path(__file__).resolve().parent.parent / "extras"
 
 app = FastAPI(
     title="BeadMatch 游戏广场",
@@ -71,27 +74,165 @@ app = FastAPI(
 # **游戏自己不用改代码**；单独跑某个游戏时不会出现外链。
 _NAV_CSS = """<style>
 .plaza-nav{width:100%;max-width:46rem;margin:0 0 10px;font-size:.82rem;line-height:1.8;
-  color:var(--muted,#8a857f);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  color:var(--muted,#8a857f);display:flex;align-items:center;gap:5px;flex-wrap:nowrap}
 .plaza-nav a{color:inherit;text-decoration:underline;text-underline-offset:3px;
-  text-decoration-thickness:1px;text-decoration-color:rgba(128,128,128,.45)}
+  text-decoration-thickness:1px;text-decoration-color:rgba(128,128,128,.45);
+  white-space:nowrap}
 .plaza-nav a:hover{color:var(--ink,#333);text-decoration-color:currentColor}
 .plaza-nav .sep{opacity:.35}
-.plaza-nav .here{color:var(--ink,#333);font-weight:600}
-.plaza-nav .plaza-star{margin-left:auto;font:inherit;font-size:.8rem;color:inherit;
+.plaza-nav .here{color:var(--ink,#333);font-weight:600;white-space:nowrap}
+.plaza-nav .plaza-tools{margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+  flex-shrink:0}
+.plaza-nav .plaza-star{font:inherit;font-size:.8rem;color:inherit;
   background:none;border:1px solid rgba(128,128,128,.35);border-radius:999px;
-  padding:1px 10px;cursor:pointer;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:4px}
+  padding:1px 10px;cursor:pointer;white-space:nowrap;line-height:1.4;
+  display:inline-flex;flex-direction:row;align-items:center;justify-content:center;
+  gap:4px;flex:0 0 auto}
 .plaza-nav .plaza-star:hover{border-color:var(--ink,#333);color:var(--ink,#333)}
-.plaza-nav .plaza-star .glyph{font-size:1.05em;line-height:1;opacity:.8}
+.plaza-nav .plaza-star .glyph{font-size:1.05em;line-height:1;opacity:.8;flex:0 0 auto}
+.plaza-nav .plaza-star .star-label{font:inherit;line-height:1;letter-spacing:normal;
+  margin:0;padding:0;color:inherit;flex:0 0 auto}
 .plaza-nav .plaza-star.on .glyph{color:#f2c231;opacity:1}   /* 已收藏 = 黄色五角星 */
 .plaza-nav .plaza-star.on{border-color:rgba(226,181,44,.65)}
 .plaza-nav .plaza-star[hidden]{display:none}
 </style>"""
 
 
+# 其他菜单：入口跟游戏链接排在左边，「收藏」仍在最右边。当前正在看的
+# 其他玩法保留在下拉里并加粗，菜单本身仍跟普通游戏页共用同一套结构。
+_EXTRA_LINKS = (
+    ("kendama", "剑玉", "/extras/kendama"),
+    ("slingshot", "弹弓", "/extras/slingshot"),
+    ("pitchpot", "投壶", "/extras/pitchpot"),
+    ("pickleball", "匹克球", "/extras/pickleball"),
+)
+
+
+def _extras_menu_html(current_id: Optional[str] = None) -> str:
+    links: List[str] = []
+    for extra_id, label, url in _EXTRA_LINKS:
+        if extra_id == current_id:
+            links.append('<span class="here" aria-current="page">%s</span>' % label)
+        else:
+            links.append('<a href="%s">%s</a>' % (url, label))
+    return ('<div class="plaza-extra">'
+            '<button type="button" class="plaza-extra-toggle" aria-expanded="false"'
+            ' aria-haspopup="true">其他<span class="caret" aria-hidden="true">⌄</span></button>'
+            '<div class="plaza-extra-menu" role="group" aria-label="其他玩法" hidden>'
+            + "".join(links) + "</div></div>")
+
+
+_EXTRA_HOME_CARDS = """<section class="extra-games" aria-labelledby="extra-title">
+<h2 id="extra-title">其他玩法</h2>
+<div class="extra-grid">
+<a class="extra-game" href="/extras/kendama">
+  <span class="extra-name">剑玉</span>
+  <span class="extra-summary">照着动作卡练接球、平衡和进阶招式。</span>
+</a>
+<a class="extra-game" href="/extras/slingshot">
+  <span class="extra-name">弹弓</span>
+  <span class="extra-summary">在安全目标前练习瞄准，看看谁打得更稳。</span>
+</a>
+<a class="extra-game" href="/extras/pitchpot">
+  <span class="extra-name">投壶</span>
+  <span class="extra-summary">从近到远调整距离，把箭稳稳投进壶里。</span>
+</a>
+<a class="extra-game" href="/extras/pickleball">
+  <span class="extra-name">匹克球</span>
+  <span class="extra-summary">用小目标练发球、连续对打和控球。</span>
+</a>
+</div>
+</section>"""
+
+
+_EXTRAS_CSS = """<style>
+.plaza-extra{position:relative}
+.plaza-extra-toggle{font:inherit;color:inherit;background:none;border:0;padding:0 2px;
+  display:inline-flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap}
+.plaza-extra-toggle:hover,.plaza-extra.open .plaza-extra-toggle{color:var(--ink,#333)}
+.plaza-extra .caret{font-size:.85em;opacity:.65;transition:transform .12s ease}
+.plaza-extra.open .caret{transform:rotate(180deg)}
+.plaza-extra-menu{position:absolute;z-index:30;top:calc(100% + 7px);right:0;min-width:8.5rem;
+  padding:5px;color:var(--ink,#333);
+  background:var(--panel,var(--card,var(--bg,#fff)));
+  border:1px solid var(--border,#d9d5d0);border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.plaza-extra-menu[hidden]{display:none}
+.plaza-extra-menu a{display:block;padding:6px 9px;border-radius:6px;color:var(--ink,#333);
+  opacity:1;text-decoration:none;white-space:nowrap}
+.plaza-extra-menu a[hidden]{display:none}
+.plaza-extra-menu .here{display:block;padding:6px 9px;white-space:nowrap}
+.plaza-extra-menu a:hover{background:rgba(128,128,128,.12)}
+.plaza-nav .plaza-extra-menu{left:0;right:auto}
+</style>"""
+
+
+_EXTRAS_JS = """<script>
+(function () {
+  function setOpen(root, open) {
+    var toggle = root.querySelector('.plaza-extra-toggle');
+    var menu = root.querySelector('.plaza-extra-menu');
+    if (!toggle || !menu) return;
+    root.classList.toggle('open', open);
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function closeAll() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll('.plaza-extra'));
+    roots.forEach(function (root) { setOpen(root, false); });
+  }
+
+  function init() {
+    var roots = Array.prototype.slice.call(document.querySelectorAll('.plaza-extra'));
+
+    roots.forEach(function (root) {
+      var toggle = root.querySelector('.plaza-extra-toggle');
+      var menu = root.querySelector('.plaza-extra-menu');
+      if (!toggle || !menu) return;
+
+      toggle.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var open = !root.classList.contains('open');
+        closeAll();
+        setOpen(root, open);
+      });
+
+      menu.addEventListener('click', function (event) {
+        var link = event.target.closest('a');
+        if (!link) return;
+        if ((link.getAttribute('href') || '') === '#') event.preventDefault();
+        setOpen(root, false);
+      });
+    });
+
+  }
+
+  document.addEventListener('click', closeAll);
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeAll();
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>"""
+
+
 def _game_names() -> Dict[str, str]:
-    """id → 中文名。历史页把 ``calc`` 这种 id 显示成「计算」用。"""
-    return {game.id: game.name for game in GAMES}
+    """id → 中文名。历史 / 收藏页也认识“其他玩法”的名字。"""
+    names = {game.id: game.name for game in GAMES}
+    names.update({extra_id: label for extra_id, label, _ in _EXTRA_LINKS})
+    return names
+
+
+def _extra_routes() -> Dict[str, str]:
+    """已挂好页面的其他玩法：id → URL。空占位链接不会被当成可打开项。"""
+    return {extra_id: url for extra_id, _, url in _EXTRA_LINKS if url != "#"}
 
 
 # 收藏星标：广场给每个游戏页面注入同一份脚本，游戏只要在"拿到一道题"时调
@@ -113,7 +254,7 @@ _STAR_JS = """<script>
     el.hidden = false;
     // 未收藏 = 空心五角星（不填色）；已收藏 = 黄色实心五角星（颜色写在 CSS 里）
     el.querySelector('.glyph').textContent = starred ? '★' : '☆';
-    el.querySelector('.label').textContent = starred ? '已收藏' : '收藏';
+    el.querySelector('.star-label').textContent = starred ? '已收藏' : '收藏';
     el.title = starred ? '点一下取消收藏' : '收藏这道题（以后好找）';
     el.classList.toggle('on', starred);
     el.setAttribute('aria-pressed', starred ? 'true' : 'false');
@@ -170,18 +311,22 @@ _STAR_JS = """<script>
 </script>"""
 
 
-def _nav_html(current: Game) -> str:
+def _nav_html(current: Optional[Game], extra_current: Optional[str] = None) -> str:
     parts = ['<a class="home" href="/">游戏广场</a>']
     for game in GAMES:
         parts.append('<span class="sep">·</span>')
-        if game.id == current.id:
+        if current is not None and game.id == current.id:
             parts.append('<span class="here">%s</span>' % game.name)
         else:
             parts.append('<a href="%s">%s</a>' % (game.url, game.name))
+    parts.append('<span class="sep">·</span>')
+    parts.append(_extras_menu_html(extra_current))
+    parts.append('<span class="plaza-tools">')
     parts.append('<button type="button" class="plaza-star" id="plaza-star" hidden'
                  ' title="收藏这道题（以后好找）">'
                  '<span class="glyph" aria-hidden="true">☆</span>'
-                 '<span class="label">收藏</span></button>')
+                 '<span class="star-label">收藏</span></button>')
+    parts.append('</span>')
     return '<nav class="plaza-nav" aria-label="换个游戏">' + "".join(parts) + "</nav>"
 
 
@@ -198,8 +343,9 @@ def _game_page(game: Game) -> str:
     html = index.read_text(encoding="utf-8")
     # 接口基址 + 导航的样式都塞进 head（样式早一步到，就不会先闪一个没样式的导航）
     inject = "<script>window.API_BASE=%s;</script>" % json.dumps(game.api_base)
-    inject += "\n" + _NAV_CSS
+    inject += "\n" + _NAV_CSS + "\n" + _EXTRAS_CSS
     inject += "\n" + _STAR_JS.replace("__GAME_ID__", json.dumps(game.id))
+    inject += "\n" + _EXTRAS_JS
     if "</head>" in html:
         html = html.replace("</head>", inject + "\n</head>", 1)
     else:
@@ -314,6 +460,12 @@ class StarRequest(BaseModel):
     starred: bool = True          # false = 取消收藏
 
 
+class ExtraViewRequest(BaseModel):
+    """`POST /api/extras/{id}/view` 的入参。"""
+
+    level: int
+
+
 @app.get("/api/stars")
 def api_stars(
     game: Optional[str] = Query(None, description="只看某个游戏，例如 logic"),
@@ -336,7 +488,7 @@ def api_star(req: StarRequest) -> Dict[str, object]:
     """
     game = (req.game or "").strip()
     puzzle_id = (req.puzzle_id or "").strip()
-    if game not in {g.id for g in GAMES}:
+    if game not in {g.id for g in GAMES} and game not in set(_extra_routes()):
         raise HTTPException(400, "没有这个游戏：%s" % game)
     if not puzzle_id:
         raise HTTPException(400, "puzzle_id 是空的")
@@ -347,9 +499,204 @@ def api_star(req: StarRequest) -> Dict[str, object]:
     return {"ok": True, **state}
 
 
+@app.post("/api/extras/{extra_id}/view")
+def api_extra_view(extra_id: str, req: ExtraViewRequest) -> Dict[str, object]:
+    """记录当前展示的其他玩法级别；历史页靠它认出物理玩法。"""
+    data = _load_extra(extra_id)
+    levels = data["levels"]
+    assert isinstance(levels, list)
+    if req.level < 1 or req.level > len(levels):
+        raise HTTPException(400, "没有这个难度：%s" % req.level)
+    level = levels[req.level - 1]
+    if not isinstance(level, dict):
+        raise HTTPException(500, "这个难度读不了")
+    level_name = str(level.get("name") or "").strip()
+    if not level_name:
+        raise HTTPException(500, "这个难度没有名称")
+    history.record_served(
+        game=extra_id,
+        payload={"id": level_name, "level": req.level, "created_by": "其他玩法"},
+        source="extra",
+    )
+    return {"ok": True, "game": extra_id, "puzzle_id": level_name, "level": req.level}
+
+
 # --------------------------------------------------------------------------
 # 首页
 # --------------------------------------------------------------------------
+
+_EXTRA_PAGE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__NAME__ · 其他玩法 · BeadMatch</title>
+<link rel="stylesheet" href="/static/style.css">
+__NAV_CSS__
+__STAR_JS__
+<style>
+.extra-top{width:100%;max-width:46rem;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;flex-wrap:wrap}
+.extra-top h1{margin:0}
+.extra-controls{display:flex;align-items:center;gap:8px;font-size:.9rem}
+.extra-controls select{font:inherit;padding:6px 30px 6px 12px;border:1px solid var(--border);
+  border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.extra-main{width:100%;max-width:46rem;display:block;margin-top:12px}
+.extra-summary{margin:0 0 14px;color:var(--muted);font-size:.88rem;line-height:1.7}
+.safety{display:flex;gap:12px;padding:12px 15px;border:1px solid var(--border);
+  border-radius:11px;color:var(--muted);font-size:.84rem;line-height:1.7}
+.safety strong{flex:0 0 auto;color:var(--ink)}
+.level-panels{margin-top:16px}
+.level-card{margin:0;padding:20px;background:var(--card);border:1px solid var(--border);
+  border-radius:14px}
+.level-card[hidden]{display:none}
+.level-kicker{margin:0 0 5px;color:var(--muted);font-size:.78rem;letter-spacing:.05em}
+.level-card h2{margin:0;font-size:1.25rem}
+.goal{margin:7px 0 20px;color:var(--muted);line-height:1.7}
+.level-card h3{margin:18px 0 8px;color:var(--muted);font-size:.78rem;letter-spacing:.06em}
+.steps{margin:0;padding-left:1.5rem;line-height:1.9}
+.pass{margin-top:18px;padding:11px 13px;border-radius:9px;background:rgba(128,128,128,.09);
+  line-height:1.65}
+.pass span{display:block;color:var(--muted);font-size:.75rem;margin-bottom:2px}
+.tip{margin:14px 0 0;color:var(--muted);line-height:1.7;font-size:.86rem}
+.tip strong{color:var(--ink)}
+</style>
+</head>
+<body>
+__NAV__
+<header class="extra-top">
+  <h1>__NAME__</h1>
+  <div class="extra-controls">
+    <label for="level">难度</label>
+    <select id="level" aria-label="难度">__OPTIONS__</select>
+  </div>
+</header>
+<main class="extra-main">
+  <p class="extra-summary">__SUMMARY__</p>
+  <section class="safety"><strong>开始前</strong><span>__SAFETY__</span></section>
+  <section class="level-panels" aria-live="polite">__PANELS__</section>
+</main>
+<script>
+(function () {
+  var select = document.getElementById('level');
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.level-card'));
+  var viewUrl = __VIEW_URL__;
+  var recordedLevel = null;
+
+  function recordView(panel) {
+    var level = Number(panel.dataset.levelNumber);
+    if (level === recordedLevel) return;
+    recordedLevel = level;
+    fetch(viewUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ level: level }),
+    }).catch(function () {
+      recordedLevel = null;
+    });
+  }
+
+  function show(index, updateUrl) {
+    if (!panels[index]) return;
+    select.value = String(index);
+    panels.forEach(function (panel, i) {
+      panel.hidden = i !== index;
+    });
+    var panel = panels[index];
+    if (typeof window.plazaSetPuzzle === 'function') {
+      window.plazaSetPuzzle({
+        id: panel.dataset.puzzleId,
+        level: Number(panel.dataset.levelNumber),
+      });
+    }
+    recordView(panel);
+    if (updateUrl && window.history && window.history.replaceState) {
+      var url = new URL(window.location.href);
+      url.searchParams.set('level', String(index + 1));
+      window.history.replaceState(null, '', url);
+    }
+  }
+
+  select.addEventListener('change', function () { show(Number(select.value), true); });
+  var wanted = Number(new URLSearchParams(window.location.search).get('level') || 1) - 1;
+  show(wanted >= 0 && wanted < panels.length ? wanted : 0, false);
+})();
+</script>
+__EXTRAS_JS__
+</body>
+</html>
+"""
+
+
+def _load_extra(extra_id: str) -> Dict[str, object]:
+    """读 `extras/<id>.toml`。其他玩法共用一个最小内容格式，不进入游戏注册表。"""
+    if not re.fullmatch(r"[a-z0-9-]+", extra_id):
+        raise HTTPException(404, "没有这个其他玩法")
+    path = EXTRA_DIR / ("%s.toml" % extra_id)
+    if not path.is_file():
+        raise HTTPException(404, "没有这个其他玩法")
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError) as exc:
+        raise HTTPException(500, "其他玩法读不了：%s" % exc)
+    if data.get("id") != extra_id:
+        raise HTTPException(500, "%s 的 id 跟文件名对不上" % path)
+    levels = data.get("levels")
+    if not isinstance(levels, list) or not levels:
+        raise HTTPException(500, "%s 没有难度" % path)
+    return data
+
+
+def _extra_page(extra_id: str) -> str:
+    data = _load_extra(extra_id)
+    name = escape(str(data["name"]))
+    summary = escape(str(data["summary"]))
+    safety = escape(str(data["safety"]))
+    levels = data["levels"]
+    assert isinstance(levels, list)
+
+    options: List[str] = []
+    panels: List[str] = []
+    for index, level in enumerate(levels):
+        if not isinstance(level, dict):
+            continue
+        level_name = escape(str(level["name"]))
+        short = escape(str(level["short"]))
+        selected = " selected" if index == 0 else ""
+        options.append(
+            '<option value="%d"%s>%d 级（%s）</option>'
+            % (index, selected, index + 1, short)
+        )
+        steps = "".join("<li>%s</li>" % escape(str(step)) for step in level["steps"])
+        hidden = "" if index == 0 else " hidden"
+        panels.append(
+            '<article class="level-card" data-level="%d" data-level-number="%d"'
+            ' data-puzzle-id="%s"%s>'
+            '<p class="level-kicker">第 %d 级 · %s</p>'
+            '<h2>%s</h2><p class="goal">%s</p>'
+            '<h3>怎么玩</h3><ol class="steps">%s</ol>'
+            '<div class="pass"><span>过关</span>%s</div>'
+            '<p class="tip"><strong>提示：</strong>%s</p>'
+            "</article>"
+            % (index, index + 1, level_name, hidden, index + 1, short,
+               level_name, escape(str(level["goal"])),
+               steps, escape(str(level["pass_condition"])), escape(str(level["tip"])))
+        )
+    if not options:
+        raise HTTPException(500, "%s 没有可显示的难度" % extra_id)
+    return (_EXTRA_PAGE.replace("__NAV_CSS__", _NAV_CSS + "\n" + _EXTRAS_CSS)
+                      .replace("__STAR_JS__",
+                               _STAR_JS.replace("__GAME_ID__", json.dumps(extra_id)))
+                      .replace("__VIEW_URL__",
+                               json.dumps("/api/extras/%s/view" % extra_id))
+                      .replace("__NAV__", _nav_html(None, extra_current=extra_id))
+                      .replace("__EXTRAS_JS__", _EXTRAS_JS)
+                      .replace("__NAME__", name)
+                      .replace("__SUMMARY__", summary)
+                      .replace("__SAFETY__", safety)
+                      .replace("__OPTIONS__", "".join(options))
+                      .replace("__PANELS__", "".join(panels)))
+
 
 _PAGE = """<!doctype html>
 <html lang="zh-CN">
@@ -361,13 +708,18 @@ _PAGE = """<!doctype html>
 </head>
 <body>
 <header>
-  <h1>游戏广场</h1>
-  <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。
-     <a class="sidelink" href="/history">历史 →</a>
-     <a class="sidelink" href="/stars">收藏 →</a></p>
+  <div class="home-head">
+    <h1>游戏广场</h1>
+    <nav class="home-tools" aria-label="广场工具">
+      <a class="home-action" href="/history">历史</a>
+      <a class="home-action" href="/stars"><span aria-hidden="true">☆</span> 收藏</a>
+    </nav>
+  </div>
+  <p class="lead">实体串珠 + 一个小程序：家长出题，孩子在实物上动手。</p>
 </header>
 <main>
 %s
+__EXTRA_HOME_CARDS__
 </main>
 <footer>
   <p>共 %d 个游戏 · 接口清单在 <a href="/api/games">/api/games</a> ·
@@ -427,8 +779,14 @@ td.open a:hover{text-decoration-color:currentColor}
 </head>
 <body>
 <header>
-  <h1>玩过什么</h1>
-  <p class="lead">按天分组，新的在最上面 · <a href="/stars">收藏 →</a> · <a href="/">← 回广场</a></p>
+  <div class="home-head">
+    <h1>玩过什么</h1>
+    <nav class="home-tools" aria-label="历史页导航">
+      <a class="home-action" href="/stars"><span aria-hidden="true">☆</span> 收藏</a>
+      <a class="home-action" href="/">← 游戏广场</a>
+    </nav>
+  </div>
+  <p class="lead">按天分组，新的在最上面。</p>
 </header>
 <main>
   <div class="bar">
@@ -444,6 +802,7 @@ td.open a:hover{text-decoration-color:currentColor}
 </main>
 <script>
 const GAME_NAMES = __GAME_NAMES__;          // id → 中文名（后端注入）
+const EXTRA_LINKS = __EXTRA_LINKS__;        // 其他玩法 id → 页面路径
 const PAGE = 100;                          // 每次加载几条
 const listEl = document.getElementById('list');
 const emptyEl = document.getElementById('empty');
@@ -511,10 +870,16 @@ function row(ev) {
   const open = document.createElement('td');
   open.className = 'open';
   const a = document.createElement('a');
-  // 直接开**这**一道题：/games/<游戏>/?p=<题目 id>；万一条目里没有 id，就退回游戏首页
-  a.href = '/games/' + encodeURIComponent(ev.game) + '/'
-         + (ev.puzzle_id ? '?p=' + encodeURIComponent(ev.puzzle_id) : '');
-  a.title = ev.puzzle_id ? '打开 ' + ev.puzzle_id : '打开这个游戏';
+  const extraUrl = EXTRA_LINKS[ev.game];
+  if (extraUrl) {
+    a.href = extraUrl + '?level=' + encodeURIComponent(ev.level || 1);
+    a.title = '打开' + (GAME_NAMES[ev.game] || '') + '第 ' + (ev.level || 1) + ' 级';
+  } else {
+    // 直接开**这**一道题：/games/<游戏>/?p=<题目 id>；万一条目里没有 id，就退回游戏首页
+    a.href = '/games/' + encodeURIComponent(ev.game) + '/'
+           + (ev.puzzle_id ? '?p=' + encodeURIComponent(ev.puzzle_id) : '');
+    a.title = ev.puzzle_id ? '打开 ' + ev.puzzle_id : '打开这个游戏';
+  }
   a.textContent = '打开';
   open.appendChild(a);
 
@@ -649,8 +1014,14 @@ td.star button:hover{filter:brightness(1.15)}
 </head>
 <body>
 <header>
-  <h1>我收藏的题</h1>
-  <p class="lead">觉得好的题都在这儿 · <a href="/history">历史 →</a> · <a href="/">← 回广场</a></p>
+  <div class="home-head">
+    <h1>我收藏的题</h1>
+    <nav class="home-tools" aria-label="收藏页导航">
+      <a class="home-action" href="/history">历史</a>
+      <a class="home-action" href="/">← 游戏广场</a>
+    </nav>
+  </div>
+  <p class="lead">觉得好的题都在这儿。</p>
 </header>
 <main>
   <div class="bar">
@@ -662,6 +1033,7 @@ td.star button:hover{filter:brightness(1.15)}
 </main>
 <script>
 const GAME_NAMES = __GAME_NAMES__;          // id → 中文名（后端注入）
+const EXTRA_LINKS = __EXTRA_LINKS__;        // 其他玩法 id → 页面路径
 const listEl = document.getElementById('list');
 const emptyEl = document.getElementById('empty');
 const statusEl = document.getElementById('status');
@@ -719,10 +1091,16 @@ function row(s) {
   const open = document.createElement('td');
   open.className = 'open';
   const a = document.createElement('a');
-  // 跟历史页一样是深链接：直接开这道题
-  a.href = '/games/' + encodeURIComponent(s.game) + '/'
-         + (s.puzzle_id ? '?p=' + encodeURIComponent(s.puzzle_id) : '');
-  a.title = s.puzzle_id ? '打开 ' + s.puzzle_id : '打开这个游戏';
+  const extraUrl = EXTRA_LINKS[s.game];
+  if (extraUrl) {
+    a.href = extraUrl + '?level=' + encodeURIComponent(s.level || 1);
+    a.title = '打开' + (GAME_NAMES[s.game] || '') + '第 ' + (s.level || 1) + ' 级';
+  } else {
+    // 跟历史页一样是深链接：直接开这道题
+    a.href = '/games/' + encodeURIComponent(s.game) + '/'
+           + (s.puzzle_id ? '?p=' + encodeURIComponent(s.puzzle_id) : '');
+    a.title = s.puzzle_id ? '打开 ' + s.puzzle_id : '打开这个游戏';
+  }
   a.textContent = '打开';
   open.appendChild(a);
 
@@ -796,7 +1174,8 @@ def _home_html() -> str:
         )
     if not cards:
         cards.append('<p class="empty">还没发现任何游戏 —— 游戏文件夹里要有 <code>game.toml</code>。</p>')
-    return _PAGE % ("\n".join(cards), len(cards))
+    page = _PAGE % ("\n".join(cards), len(cards))
+    return page.replace("__EXTRA_HOME_CARDS__", _EXTRA_HOME_CARDS)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -804,18 +1183,26 @@ def index() -> str:
     return _home_html()
 
 
+@app.get("/extras/{extra_id}", response_class=HTMLResponse)
+def extra_page(extra_id: str) -> str:
+    """其他玩法的说明页；内容来自 `extras/<id>.toml`。"""
+    return _extra_page(extra_id)
+
+
 @app.get("/history", response_class=HTMLResponse)
 def history_page() -> str:
     """玩过什么 —— 首页右侧导航「历史」进来的。"""
-    return _HISTORY_PAGE.replace(
-        "__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
+    return (_HISTORY_PAGE
+            .replace("__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
+            .replace("__EXTRA_LINKS__", json.dumps(_extra_routes(), ensure_ascii=False)))
 
 
 @app.get("/stars", response_class=HTMLResponse)
 def stars_page() -> str:
     """我收藏的题 —— 首页副标题的「收藏 →」进来的。"""
-    return _STARS_PAGE.replace(
-        "__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
+    return (_STARS_PAGE
+            .replace("__GAME_NAMES__", json.dumps(_game_names(), ensure_ascii=False))
+            .replace("__EXTRA_LINKS__", json.dumps(_extra_routes(), ensure_ascii=False)))
 
 
 # 静态目录先建出来再挂载 —— 免得"启动时 web/ 还不存在 → 没挂上"这种坑
@@ -824,7 +1211,7 @@ app.mount("/static", StaticFiles(directory=WEB_DIR), name="plaza-static")
 
 # 前端（游戏页面 + 各家 web/ 里的三件套）每次都回来问一句，别被浏览器的"启发式缓存"存住 ——
 # 不然改了 app.js、刷新还是旧页面（详见 plaza/nocache.py）
-keep_fresh(app, ("/static/", "/games/"))
+keep_fresh(app, ("/static/", "/games/", "/extras/"))
 
 
 # --------------------------------------------------------------------------
