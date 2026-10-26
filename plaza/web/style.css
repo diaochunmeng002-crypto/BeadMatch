@@ -118,6 +118,7 @@ a.extra-game {
 a.extra-game:hover { border-color: var(--muted); background: rgba(128, 128, 128, .05); }
 .extra-name { display: block; font-size: 1rem; font-weight: 600; }
 .extra-summary { display: block; margin-top: 6px; color: var(--muted); font-size: .85rem; line-height: 1.65; }
+.extra-count { display: block; margin-top: 6px; color: var(--muted); font-size: .8rem; }
 
 .empty { color: var(--muted); line-height: 1.8; }
 

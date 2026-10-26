@@ -122,29 +122,6 @@ def _extras_menu_html(current_id: Optional[str] = None) -> str:
             + "".join(links) + "</div></div>")
 
 
-_EXTRA_HOME_CARDS = """<section class="extra-games" aria-labelledby="extra-title">
-<h2 id="extra-title">其他玩法</h2>
-<div class="extra-grid">
-<a class="extra-game" href="/extras/kendama">
-  <span class="extra-name">剑玉</span>
-  <span class="extra-summary">照着动作卡练接球、平衡和进阶招式。</span>
-</a>
-<a class="extra-game" href="/extras/slingshot">
-  <span class="extra-name">弹弓</span>
-  <span class="extra-summary">在安全目标前练习瞄准，看看谁打得更稳。</span>
-</a>
-<a class="extra-game" href="/extras/pitchpot">
-  <span class="extra-name">投壶</span>
-  <span class="extra-summary">从近到远调整距离，把箭稳稳投进壶里。</span>
-</a>
-<a class="extra-game" href="/extras/pickleball">
-  <span class="extra-name">匹克球</span>
-  <span class="extra-summary">用小目标练发球、连续对打和控球。</span>
-</a>
-</div>
-</section>"""
-
-
 _EXTRAS_CSS = """<style>
 .plaza-extra{position:relative}
 .plaza-extra-toggle{font:inherit;color:inherit;background:none;border:0;padding:0 2px;
@@ -1153,6 +1130,30 @@ load();
 """
 
 
+def _extra_home_cards_html() -> str:
+    cards: List[str] = []
+    for extra_id, name, url in _EXTRA_LINKS:
+        try:
+            data = _load_extra(extra_id)
+            levels = data["levels"]
+            assert isinstance(levels, list)
+            summary = str(data.get("card_summary") or data.get("summary") or "")
+            count = "共 %d 级" % len(levels)
+        except Exception:
+            summary = "这个玩法暂时打不开。"
+            count = "内容读取失败"
+        cards.append(
+            '<a class="extra-game" href="%s">'
+            '<span class="extra-name">%s</span>'
+            '<span class="extra-summary">%s</span>'
+            '<span class="extra-count">%s</span>'
+            "</a>" % (url, escape(name), escape(summary), count)
+        )
+    return ('<section class="extra-games" aria-labelledby="extra-title">'
+            '<h2 id="extra-title">其他玩法</h2><div class="extra-grid">'
+            + "".join(cards) + "</div></section>")
+
+
 def _home_html() -> str:
     cards: List[str] = []
     for game in registry.list_games():
@@ -1175,7 +1176,7 @@ def _home_html() -> str:
     if not cards:
         cards.append('<p class="empty">还没发现任何游戏 —— 游戏文件夹里要有 <code>game.toml</code>。</p>')
     page = _PAGE % ("\n".join(cards), len(cards))
-    return page.replace("__EXTRA_HOME_CARDS__", _EXTRA_HOME_CARDS)
+    return page.replace("__EXTRA_HOME_CARDS__", _extra_home_cards_html())
 
 
 @app.get("/", response_class=HTMLResponse)

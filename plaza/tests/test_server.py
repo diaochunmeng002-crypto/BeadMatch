@@ -228,6 +228,7 @@ class HistoryPageTest(unittest.TestCase):
                         home.index('class="extra-games"'))
         self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
         self.assertIn("用小目标练发球、连续对打和控球。", home)
+        self.assertEqual(home.count("共 5 级"), 4)
 
         game = self.client.get("/games/logic/").text
         self.assertIn('class="plaza-tools"', game)
