@@ -7,12 +7,12 @@ level=4
 title=分色数一数
 thing=珠子
 unit=颗
-materials=R:10 G:10 B:10 Y:10 P:10 O:10
-example=每种颜色 10 颗|RRRRRRRRRR GGGGGGGGGG BBBBBBBBBB YYYYYYYYYY PPPPPPPPPP OOOOOOOOOO|6 × 10 = 60|
-answer=6 种颜色各 10 颗 —— 6 根条一样长，没有最多也没有最少。
+materials=R:2 G:1 B:2
+example=按颜色摆成条|RR G BB|红 2 / 绿 1 / 蓝 2|
+answer=红色和蓝色一样多，各有 2 颗；绿色最少，只有 1 颗。
 why=把数出来的结果排成条，一眼就能比：一样长就是一样多。
 
-把一整盒珠子倒出来，按颜色分成 6 堆。
+把 5 颗珠子按颜色分成 3 堆。
 一堆一堆数：每种颜色各几颗？
 把 6 堆排成 6 根「条」：每根一样长吗？
 哪种颜色最多？哪种最少？

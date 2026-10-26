@@ -7,9 +7,9 @@ level=4
 title=自由实验
 thing=珠子
 unit=颗
-materials=R:10 G:10 B:10 Y:10 P:10 O:10
-example=自由摆：怎么摆都行|RRRR GGGG BBB|随便几颗|
-example=随便拿一些|YYYY PPPP|随便几颗|
+materials=R:2 G:1 B:2
+example=自由摆：怎么摆都行|R G BB|5 颗里的几种摆法|
+example=换一种摆法|RR G B|还是这 5 颗|
 answer=没有标准答案 —— 只要数得对、说得清，就是一次好实验。可以试试：怎么摆总数都不变；两堆合起来等于原来的数；平均分会有余数。
 why=数学不只有标准答案：先猜、再摆、再数，能把「为什么」说清楚最要紧。
 

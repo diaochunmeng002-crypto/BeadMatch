@@ -7,14 +7,14 @@ level=3
 title=几倍
 thing=小星星
 unit=颗
-materials=G:3 P:9
-example=1 倍：3 颗|GGG|1 个 3|
-example=2 倍：3 和 6|GGG PPPPPP|6 是 3 的 2 倍|
-example=3 倍：3 和 9|GGG PPPPPPPPP|9 是 3 的 3 倍|
-answer=3 颗的 2 倍是 6 颗；9 颗里有 3 个 3，所以 9 是 3 的 3 倍。
+materials=G:1 P:3
+example=1 倍：1 颗|G|1 个 1|
+example=2 倍：1 和 2|G PP|2 是 1 的 2 倍|
+example=3 倍：1 和 3|G PPP|3 是 1 的 3 倍|
+answer=1 颗的 2 倍是 2 颗；3 颗里有 3 个 1，所以 3 是 1 的 3 倍。
 why=几倍就是「有几个这么多」：2 倍是两份，3 倍是三份。
 
-先摆一组：3 颗绿星星。
+先摆一组：1 颗绿星星。
 再摆一组紫星星，正好是绿星星的 2 倍。
 数一数紫星星几颗。
-紫的摆 9 颗时，是绿的几倍？
+紫的摆 3 颗时，是绿的几倍？

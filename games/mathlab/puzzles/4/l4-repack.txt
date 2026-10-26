@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l4-repack
+level=4
+title=换一种打包
+thing=小球
+unit=颗
+materials=P:5
+example=每 2 颗一盒|PP PP P|2 盒 + 余 1 颗|
+example=每 3 颗一盒|PPP PP|1 盒 + 余 2 颗|
+answer=同样 5 颗小球，每盒装 2 颗会得到 2 盒余 1 颗；每盒装 3 颗会得到 1 盒余 2 颗。
+why=总数没变，但「一盒有几颗」变了，能装几盒和剩下几颗也会跟着变。
+
+还是这 5 颗小球。
+先每 2 颗装一盒，看看能装几盒、剩几颗。
+再改成每 3 颗装一盒。
+两次的结果有什么不同？为什么？

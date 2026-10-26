@@ -41,9 +41,24 @@ class DemosTest(unittest.TestCase):
                     "materials", "steps", "answer", "why", "example"):
             self.assertIn(key, body)
         self.assertEqual(body["level_name"], "感知")
-        self.assertEqual(body["materials"], [{"bead": "R", "count": 7}])
+        self.assertEqual(body["materials"], [{"bead": "R", "count": 3}])
         self.assertTrue(body["steps"][-1].endswith("？"))     # 最后一步就是那句"问"
         self.assertTrue(body["example"])
+
+    def test_number_ceiling_by_level(self):
+        """先练关系，不先考计算：L1 / L2 / L3-L4 的组量分别不超过 3 / 4 / 5。"""
+        ceilings = {1: 3, 2: 4, 3: 5, 4: 5}
+        for demo in d.iter_demos():
+            ceiling = ceilings[demo.level]
+            for row in demo.materials:
+                self.assertLessEqual(row["count"], ceiling, demo.id)
+            for example in demo.example:
+                counts = {}
+                for group in example["groups"]:
+                    for bead in group:
+                        counts[bead] = counts.get(bead, 0) + 1
+                for bead, count in counts.items():
+                    self.assertLessEqual(count, ceiling, (demo.id, example["label"], bead))
 
     def test_unknown_level_is_empty(self):
         self.assertEqual(d.list_demos(9), [])

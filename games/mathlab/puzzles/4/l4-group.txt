@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-26
+created_by=manual
+id=l4-group
+level=4
+title=满组换盒
+thing=小球
+unit=颗
+materials=G:5
+example=先拿 5 颗|GGGGG|5 颗|
+example=每 2 颗装一盒|GG GG G|2 盒 + 余 1 颗|
+answer=5 颗每 2 颗装一盒，可以装 2 盒，还剩 1 颗 —— 5 = 2 + 2 + 1。
+why=每装满 2 颗，就把这一组装成一个「盒」；剩下不够装满一盒的，就继续单放。
+
+拿 5 颗小球。
+每 2 颗装进一个小盒子，装满就换下一个盒子。
+能装满几个盒子？
+最后还剩几颗？

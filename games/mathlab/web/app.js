@@ -2,7 +2,7 @@
  *
  * 数据约定（见 games/mathlab/core/demos.py 的 payload）：
  *   thing / unit             这些珠子假装是什么（小球 / 气球 / 豆腐…）、量词
- *   materials                参与者：[{'bead': 'R', 'count': 7}]
+ *   materials                参与者：[{'bead': 'R', 'count': 3}]
  *   steps                    题目：编号步骤（最后一步就是那句"问"）
  *   answer                    答案 = 一条性质（不是唯一结果）
  *   why                       为什么（一句给孩子听的话）
@@ -99,7 +99,7 @@ function readWhole() {
   speak(parts.filter(Boolean).join('。'));
 }
 
-/** "红色小球，7 颗" 这种说法（念出来 / 画参与者都用得上） */
+/** "红色小球，3 颗" 这种说法（念出来 / 画参与者都用得上） */
 function materialsText(d) {
   return (d.materials || []).map((row) => {
     const info = COLORS[row.bead] || { name: row.bead };
@@ -158,7 +158,7 @@ function renderExample(rows) {
 
     const count = document.createElement('span');
     count.className = 'count';
-    // 有 note 就用 note（"红 6 / 蓝 6" 这种比较说明），没有就报"一共 N 颗"
+    // 有 note 就用 note（"红 3 / 蓝 3" 这种比较说明），没有就报"一共 N 颗"
     const unit = (state.demo && state.demo.unit) || '颗';
     count.textContent = row.note || ('一共 ' + total + ' ' + unit);
     line.appendChild(count);
@@ -166,7 +166,7 @@ function renderExample(rows) {
   });
 }
 
-/** 参与者：一排珠子 + 一句"红色小球 · 7 颗" */
+/** 参与者：一排珠子 + 一句"红色小球 · 3 颗" */
 function renderMaterials(d) {
   const box = $('materials');
   box.innerHTML = '';

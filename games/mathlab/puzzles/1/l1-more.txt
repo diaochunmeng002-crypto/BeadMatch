@@ -7,14 +7,14 @@ level=1
 title=哪边更多？
 thing=气球
 unit=个
-materials=R:5 B:8
-example=红：5 个|RRRRR|5 个|
-example=蓝：8 个|BBBBBBBB|8 个|
-example=配一对：蓝多 3 个|RRRRR BBBBBBBB|红 5 / 蓝 8|
-answer=蓝的多 —— 8 个比 5 个多 3 个。
+materials=R:2 B:3
+example=红：2 个|RR|2 个|
+example=蓝：3 个|BBB|3 个|
+example=配一对：蓝多 1 个|RR BBB|红 2 / 蓝 3|
+answer=蓝的多 —— 3 个比 2 个多 1 个。
 why=比多少要一颗对一颗配：配完还剩下气球的那一边，就更多。
 
-摆两堆气球：一堆 5 个红、一堆 8 个蓝。
+摆两堆气球：一堆 2 个红、一堆 3 个蓝。
 先别数：猜猜哪边多？
 一颗对一颗地配起来。
 哪边多？多几个？

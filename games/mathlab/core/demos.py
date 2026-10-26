@@ -11,13 +11,13 @@
     title=一样多吗？
     thing=小皮球
     unit=个
-    materials=R:6 B:6
-    example=红串：6 个|RRRRRR|6 个|
-    example=蓝串拉开：还是 6 个|BBBBBB|6 个（看着更长）|wide
-    answer=看起来更长的那串不一定更多 —— 一颗对一颗地对齐，两串都是 6 个，一样多。
+    materials=R:3 B:3
+    example=红串：3 个|RRR|3 个|
+    example=蓝串拉开：还是 3 个|BBB|3 个（看着更长）|wide
+    answer=看起来更长的那串不一定更多 —— 一颗对一颗地对齐，两串都是 3 个，一样多。
     why=长度会被间距骗人。比多少要看个数：一颗配一颗，配得上的就一样多。
 
-    摆两串小皮球：一串 6 个红、一串 6 个蓝。
+    摆两串小皮球：一串 3 个红、一串 3 个蓝。
     把蓝的那串拉开一点，让它看起来更长。
     先猜一猜：看起来长的那串更多吗？
     一颗对一颗地对齐，数一数：两串各有几个？
@@ -25,7 +25,7 @@
 字段：
 
 * `thing` / `unit` —— 这些珠子假装是什么（小球 / 气球 / 豆腐…）、量词（颗 / 个 / 块）
-* `materials` —— **参与者**：`R:6 B:6`（颜色:颗数，空格分开）
+* `materials` —— **参与者**：`R:3 B:3`（颜色:颗数，空格分开）
 * `example` —— 示例摆法：`标签|珠子组|说明|标记`
   （珠子组用空格分开，如 `RRR RR`；说明可空；标记现在只有 `wide` = 拉开间距）
 * 正文（元信息后面那些行）—— **题目**：一行一步，最后一步就是那句"问"
@@ -103,7 +103,7 @@ class Demo:
 
 
 def _parse_materials(text: str, problems: List[str]) -> List[Dict[str, Any]]:
-    """`R:6 B:6` → [{'bead': 'R', 'count': 6}, …]"""
+    """`R:3 B:3` → [{'bead': 'R', 'count': 3}, …]"""
     out: List[Dict[str, Any]] = []
     for tok in (text or "").split():
         bead, sep, count = tok.partition(":")
