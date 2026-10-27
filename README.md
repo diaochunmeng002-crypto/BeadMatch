@@ -9,6 +9,8 @@
 > 一个游戏一个文件夹、自带题库和页面，广场只负责"有哪些游戏、怎么开"——见
 > [docs/plaza.md](docs/plaza.md)。
 
+![竞技串珠游戏界面：第 17 级题目、操作提示与步骤回放](docs/images/beadsort-game.png)
+
 ## 现在能干什么
 
 `python run.py` 起**广场**，首页 `/` 里挑游戏：
