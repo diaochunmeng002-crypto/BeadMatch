@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l7-three-views
+level=7
+theme=符号
+title=三种说法
+thing=木珠
+unit=颗
+materials=Y:5 G:5 R:4
+example=珠子摆法|YYYYYGGGGG RRRR|一捆和四颗|
+example=按位值记录|YYYYYGGGGG RRRR|1 个十，4 个一|
+example=写成数字|YYYYYGGGGG RRRR|14|
+answer=14 颗木珠、1 个十加 4 个一，以及数字 14，表示的是同一个数量，只是用了三种记录方式。
+why=珠子帮助我们看见数量，位值帮我们知道每个数字站在哪一位，数字则是更快的记录。
+
+把 14 颗木珠中每 10 颗捆成一捆。
+数一数有几个十、几个一。
+把十位和个位的数量记下来。
+再写成数字，三种说法表示的数量一样吗？

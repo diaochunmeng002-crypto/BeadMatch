@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l5-unknown-factor
+level=5
+theme=关系
+title=藏起来的一组
+thing=小珠子
+unit=颗
+materials=Y:4 G:4 R:4
+example=一共 12 颗，每组 4 颗|YYYY GGGG RRRR|12 ÷ 4 = 3|
+example=3 组倒回来验算|YYYY GGGG RRRR|3 × 4 = 12|
+answer=12 颗珠子，每 4 颗一组，可以分成 3 组。除法求出了藏起来的组数，乘法又能把它验算回来。
+why=知道总数和每组数量，就找组数；把组数和每组数量乘起来，应该正好回到总数。
+
+把 12 颗珠子摆出来，每 4 颗放成一组。
+先猜一猜：可以放成几组？
+数一数分成了几组。
+再用乘法验算：3 组，每组 4 颗，是不是 12 颗？

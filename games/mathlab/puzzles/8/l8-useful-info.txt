@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l8-useful-info
+level=8
+theme=建模
+title=哪些条件有用？
+thing=彩珠
+unit=颗
+materials=Y:3 G:3 R:3 B:3
+example=12 颗，每盒 3 颗|YYY GGG RRR BBB|12 ÷ 3 = 4|
+example=整理成 4 盒|YYY GGG RRR BBB|4 × 3 = 12|
+answer=“妹妹拿来一把椅子”跟装珠子没有关系；真正有用的是 12 颗、每盒 3 颗。用 12 ÷ 3 = 4，可以装 4 盒。
+why=解决生活问题时，先找和数量有关的信息；没有用到的条件不一定要写进算式。
+
+桌上有 12 颗彩珠，每盒要装 3 颗。
+妹妹又拿来一把椅子，她坐在旁边看。
+能装满几盒？椅子的数量需要放进算式吗？
+选出真正有用的条件，再算出答案。

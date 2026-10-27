@@ -1,0 +1,22 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l5-fact-family
+level=5
+theme=关系
+title=乘除一家人
+thing=小珠子
+unit=颗
+materials=Y:3 G:3 R:3 B:3
+example=3 盘，每盘 4 颗|YYYY GGGG RRRR|3 × 4 = 12|
+example=4 盘，每盘 3 颗|YYY GGG RRR BBB|4 × 3 = 12|
+example=平均分进 3 盘|YYYY GGGG RRRR|12 ÷ 3 = 4|
+example=每盘装 4 颗|YYY GGG RRR BBB|12 ÷ 4 = 3|
+answer=同样的 12 颗珠子，可以写成 3 × 4 = 12、4 × 3 = 12、12 ÷ 3 = 4、12 ÷ 4 = 3。乘法和除法在说同一件事。
+why=乘法问「4 颗一组，3 组一共有多少」；除法反过来问「12 颗每 4 颗一组，有几组」或者「分成 3 组，每组几颗」。
+
+把 12 颗小珠子摆出来，先分成 3 盘，每盘放 4 颗。
+数一数：3 个 4 颗，一共是多少？
+改成 4 盘，每盘放 3 颗，再数一数。
+还是原来的 12 颗吗？你能从 12 颗反着算出每盘几颗、共有几盘吗？

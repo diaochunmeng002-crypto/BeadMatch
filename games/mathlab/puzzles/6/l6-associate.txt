@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l6-associate
+level=6
+theme=规律
+title=先合哪两组
+thing=木珠
+unit=颗
+materials=Y:3 G:4 R:2
+example=先合 3 和 4|YYY GGGG RR|(3 + 4) + 2 = 9|
+example=先合 4 和 2|YYY GGGG RR|3 + (4 + 2) = 9|
+answer=先合哪两组，最后合起来都是 9 颗。总数没有变，只是加的顺序变了。
+why=加法可以把几堆分成任意几部分来算；最后把所有珠子合在一起，数量都一样。
+
+摆三堆木珠：3 颗、4 颗、2 颗。
+先把 3 颗和 4 颗合起来，再加上 2 颗。
+换一种顺序：先把 4 颗和 2 颗合起来，再加 3 颗。
+两次得到的总数一样吗？

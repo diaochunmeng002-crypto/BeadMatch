@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l6-zero-one
+level=6
+theme=规律
+title=加零和乘一
+thing=棋子
+unit=颗
+materials=Y:3 G:1
+example=原来有 3 颗|YYY|3|
+example=加 0 颗|YYY|3 + 0 = 3|
+example=同样的 1 组|YYY|3 × 1 = 3|
+answer=加 0 颗，数量不变；同样的一堆只算 1 组，数量也不变。0 和 1 在加法和乘法里有特别的作用。
+why=0 表示没有增加任何东西；乘 1 表示只数了原来那样的一组。
+
+先摆出 3 颗棋子。
+再放 0 颗棋子进来，现在有几颗？
+把原来那 3 颗看成 1 组，一共有几颗？
+为什么“加 0”和“乘 1”都没有改变数量？

@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l6-times-zero
+level=6
+theme=规律
+title=一份也没有
+thing=小珠子
+unit=颗
+materials=Y:3
+example=每盘放 3 颗|YYY|1 × 3 = 3|
+example=要摆 0 个这样的盘|YYY|0 × 3 = 0|
+answer=每盘 3 颗，本来一盘有 3 颗；可如果一个盘也不摆，就没有任何珠子，所以 0 × 3 = 0。
+why=乘法的第一个数表示“有几组”。组数是 0，就一组也没有，结果自然是 0。
+
+先在盘子里放 3 颗珠子。
+如果把盘子全部拿走，还剩几个装了珠子的盘子？
+0 个盘子，每盘 3 颗，一共能找到几颗珠子？
+为什么乘 0 以后结果变成了 0？

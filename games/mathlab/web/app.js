@@ -201,16 +201,22 @@ function renderSteps(d) {
 // 拿演示
 // ---------------------------------------------------------------------------
 
-/** 下拉框：`1 级（4 个演示）` —— 跟别的游戏一个写法 */
+function updateLevelSummary() {
+  const row = state.levels.find((item) => String(item.level) === $('level').value);
+  $('level-menu').textContent = row && row.summary ? row.summary : '';
+}
+
+/** 下拉框只放等级和题量；当前等级的题目类型用下面一行顿号文字概括。 */
 function fillSelect() {
   const sel = $('level');
   sel.innerHTML = '';
   state.levels.forEach((row) => {
     const o = document.createElement('option');
     o.value = String(row.level);
-    o.textContent = row.level + ' 级（' + row.count + ' 道）';
+    o.textContent = row.level + ' 级 · ' + (row.name || '') + '（' + row.count + ' 道）';
     sel.appendChild(o);
   });
+  updateLevelSummary();
 }
 
 function show(d) {
@@ -219,6 +225,7 @@ function show(d) {
   if (window.plazaSetPuzzle) window.plazaSetPuzzle({ id: d.id, level: d.level });
   state.revealed = false;
   $('level').value = String(d.level);
+  updateLevelSummary();
   $('demo-theme').textContent = d.theme || '';
   $('demo-theme').hidden = !d.theme;
   $('demo-title').textContent = d.title || '';
@@ -326,7 +333,11 @@ function step(delta) {
 $('show').addEventListener('click', reveal);
 $('read').addEventListener('click', readWhole);
 $('next').addEventListener('click', another);
-$('level').addEventListener('change', (e) => { loadLevel(e.target.value); e.target.blur(); });
+$('level').addEventListener('change', (e) => {
+  updateLevelSummary();
+  loadLevel(e.target.value);
+  e.target.blur();
+});
 
 window.addEventListener('keydown', (e) => {
   if (!state.demo) return;

@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l5-share-and-times
+level=5
+theme=关系
+title=分糖和装糖
+thing=糖
+unit=颗
+materials=Y:3 G:3 R:3 B:3
+example=装成 4 盒，每盒 3 颗|YYY GGG RRR BBB|4 × 3 = 12|
+example=平均倒回 4 堆|YYY GGG RRR BBB|12 ÷ 4 = 3|
+answer=4 盒、每盒 3 颗，一共是 12 颗；把 12 颗平均分回 4 盒，每盒还是 3 颗。乘法和除法在来回描述同一件事。
+why=先看“有几个几”用乘法；已知总数再找每份多少或份数，用除法。
+
+把糖果装进 4 个盒子，每盒放 3 颗。
+数一数一共有多少颗糖果。
+把 12 颗糖果倒出来，再平均装回 4 个盒子。
+每盒又是几颗？这两个结果为什么能互相回答？

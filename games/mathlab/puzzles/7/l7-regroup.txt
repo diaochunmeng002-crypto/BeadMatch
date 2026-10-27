@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l7-regroup
+level=7
+theme=符号
+title=一捆换十颗
+thing=木珠
+unit=颗
+materials=Y:5 G:5 R:5 P:5
+example=两捆|YYYYYGGGGG RRRRRPPPPP|2 个十 = 20|
+example=拆开一捆|YYYYYGGGGG RRRRRPPPPP|1 个十 + 10 个一 = 20|
+answer=把一个十拆成十个一，原来的 20 颗没有多也没有少，只是记录方式从“2 个十”变成了“1 个十加 10 个一”。
+why=位值可以让同样的数量有不同记录方式；十和一之间可以按十个一换一个十。
+
+先摆出两捆，每捆 10 颗木珠。
+一共有多少颗？
+把其中一捆解开，变成 10 颗零散的木珠。
+现在一共有几个十、几个一？总数变了吗？

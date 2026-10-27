@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l8-story-for-fact
+level=8
+theme=建模
+title=给算式编故事
+thing=彩珠
+unit=颗
+materials=Y:4 G:4 R:4
+example=可以讲装盒|YYYY GGGG RRRR|4 × 3 = 12|
+example=也可以讲分糖|YYYY GGGG RRRR|12 ÷ 3 = 4|
+answer=例如：4 盒彩珠，每盒 3 颗，一共有 12 颗；也可以说：12 颗彩珠平均装进 3 盒，每盒 4 颗。只要数量和关系对得上，就可以有不同故事。
+why=同一个算式可以对应很多生活情境；先想清楚哪些是总数、份数和每份数量，故事才不会说反。
+
+看到算式 4 × 3 = 12，编一个装彩珠的故事。
+再看到 12 ÷ 3 = 4，编一个分彩珠的故事。
+两个故事里的总数、份数和每份数量分别是什么？
+你还能用一个生活情境解释这两个算式吗？

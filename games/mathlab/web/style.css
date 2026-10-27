@@ -54,6 +54,15 @@ h1 { font-size: 1.25rem; margin: 0; letter-spacing: .02em; }
 
 .field { font-size: .9rem; display: flex; align-items: center; gap: 6px; }
 
+.level-menu {
+  flex-basis: 100%;
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.7;
+}
+.level-menu:empty { display: none; }
+
 select, button {
   font: inherit;
   font-size: .9rem;

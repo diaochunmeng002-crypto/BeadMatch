@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l5-equal-facts
+level=5
+theme=关系
+title=两个算式一样吗
+thing=积木
+unit=块
+materials=Y:4 G:4 R:4
+example=2 组，每组 6 块|YYYYGG RRRRGG|2 × 6 = 12|
+example=换一种分组|YYYY GGGG RRRR|3 × 4 = 12|
+answer=2 × 6 和 3 × 4 看起来不一样，但都表示 12 块积木。分成的组数和每组数量可以一起改变，总数仍相同。
+why=同一个总数可以写成不同的乘法算式；只要所有组合起来还是 12 块，它们就表示同一数量。
+
+先把 12 块积木分成 2 组，每组 6 块。
+再重新分成 3 组，每组 4 块。
+两个乘法算式各是多少？
+它们的结果一样吗？为什么不能只看组数判断谁更多？

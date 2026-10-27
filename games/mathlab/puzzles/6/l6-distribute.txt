@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l6-distribute
+level=6
+theme=规律
+title=拆开再合起来
+thing=糖果
+unit=颗
+materials=Y:4 G:4 R:4 B:2 P:2 O:2
+example=第一堆：3 组，每组 4 颗|YYYY GGGG RRRR|3 × 4 = 12|
+example=第二堆：3 组，每组 2 颗|BB PP OO|3 × 2 = 6|
+example=合在一起：3 组，每组 6 颗|YYYYBB GGGGPP RRRROO|3 × 6 = 18|
+answer=3 × 4 加 3 × 2，等于 3 × 6。因为每一组都多放了 2 颗，三组一共多放 6 颗。
+why=拆开数再合起来，和先合起来再乘，得到的是同一堆糖果。这叫作分配律。
+
+先摆 3 组糖，每组 4 颗。
+再摆 3 组糖，每组 2 颗。
+把每一组 4 颗和 2 颗合成一组，现在每组有几颗？
+比较「3 × 4 + 3 × 2」和「3 × 6」，结果一样吗？

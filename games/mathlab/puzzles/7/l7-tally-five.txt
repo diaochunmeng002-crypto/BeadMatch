@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l7-tally-five
+level=7
+theme=符号
+title=刻痕五个一组
+thing=木珠
+unit=颗
+materials=Y:5 G:4
+example=5 颗画成一组|YYYYY|五个刻痕一组|
+example=再加 4 颗|YYYYY GGGG|5 + 4 = 9|
+answer=先数出 5 颗、画成一组，再数剩下的 4 颗，就能很快读出 9 颗。刻痕或珠子分组，都是为了让计数更快、更不容易漏。
+why=数量多时，一个一个重新数容易出错；固定几个一组，可以先看有几组，再看剩下几个。
+
+拿 9 颗木珠，先把 5 颗排成一组。
+用 5 道刻痕把这一组记下来。
+剩下的珠子有几颗？
+别人看到一组刻痕加 4 道单刻痕，能不能马上知道是 9？

@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l8-check-plan
+level=8
+theme=建模
+title=这个说法对吗？
+thing=彩珠
+unit=颗
+materials=Y:3 G:3 R:3 B:3
+example=12 颗装 4 盒|YYY GGG RRR BBB|每盒 3 颗|
+example=验算|YYY GGG RRR BBB|4 × 3 = 12|
+answer=不对。12 颗平均装 4 盒，每盒是 3 颗，不是 4 颗；用 4 × 3 = 12 可以验证。
+why=判断答案时要回到原来的条件：4 盒、每盒 3 颗，合起来必须正好是 12 颗。
+
+有 12 颗彩珠，要平均装进 4 个盒子。
+有人说：每盒可以装 4 颗。先用珠子摆一摆。
+4 盒每盒 4 颗，一共会是多少颗？
+原来的 12 颗够不够？正确的每盒数量是多少？

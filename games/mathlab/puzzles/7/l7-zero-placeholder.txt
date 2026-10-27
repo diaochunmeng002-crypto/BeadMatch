@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l7-zero-placeholder
+level=7
+theme=符号
+title=空位也要记
+thing=木珠
+unit=颗
+materials=Y:5 G:5 R:5 P:5
+example=先捆两个十|YYYYYGGGGG RRRRRPPPPP|2 个十|
+example=没有零散的一|YYYYYGGGGG RRRRRPPPPP|20 = 2 个十 + 0 个一|
+answer=两捆正好是 2 个十，没有零散的一颗。写数字时要保留个位的 0，写成 20，这样才知道十位上有 2、个位上是 0。
+why=0 不是“什么都不要”，它会占住个位，告诉别人这里没有零散的一个一。
+
+把 20 颗木珠每 10 颗捆成一捆。
+一共有几个十？还剩几颗零散的木珠？
+如果只写十位上的 2，别人会不会以为只有 2 颗？
+要怎样用一个 0 把空着的个位记下来？

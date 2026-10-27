@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l6-split-array
+level=6
+theme=规律
+title=分开数更快
+thing=方糖
+unit=块
+materials=Y:4 G:4 R:4 B:4 P:4 O:4
+example=整块方阵：6 组，每组 4 块|YYYY GGGG RRRR BBBB PPPP OOOO|6 × 4 = 24|
+example=先数前 4 组|YYYY GGGG RRRR BBBB|4 × 4 = 16|
+example=再数后 2 组|PPPP OOOO|2 × 4 = 8|
+answer=6 × 4 可以拆成 4 × 4 加 2 × 4：16 加 8 还是 24。方阵切一刀，两部分合起来仍是原来的方阵。
+why=把一大组拆成两部分分别计算，再合起来，总数不变；这也能帮助我们心算。
+
+把 24 块方糖排成 6 组，每组 4 块。
+先把前 4 组圈起来，数一数有多少块。
+后面的 2 组又有多少块？
+把两部分加起来，和直接算 6 × 4 一样吗？

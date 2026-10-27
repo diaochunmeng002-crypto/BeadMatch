@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l8-choose-operation
+level=8
+theme=建模
+title=要装几盒？
+thing=彩珠
+unit=颗
+materials=Y:3 G:3 R:3 B:3
+example=每盒 3 颗|YYY GGG RRR BBB|每盒一颗颜色、共 3 颗|
+example=装成 4 盒|YYY GGG RRR BBB|4 × 3 = 12|
+example=反过来问|YYY GGG RRR BBB|12 ÷ 3 = 4|
+answer=一共有 12 颗彩珠，每盒装 3 颗，可以装 4 盒，写成 12 ÷ 3 = 4；反过来说，4 盒每盒 3 颗，就是 4 × 3 = 12。
+why=先用珠子摆出盒子，再说算式：知道总数和每盒多少，问盒数用除法；知道盒数和每盒多少，问总数用乘法。
+
+桌上有 12 颗彩珠，每盒要装 3 颗。
+先摆一摆：一共能装几盒？
+再换一种说法：如果有 4 盒，每盒 3 颗，一共有多少颗？
+哪一句该用乘法，哪一句该用除法？

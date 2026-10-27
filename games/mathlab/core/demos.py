@@ -42,7 +42,26 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
-LEVEL_NAMES = {1: "感知", 2: "组合", 3: "结构", 4: "探索"}
+LEVEL_NAMES = {
+    1: "感知",
+    2: "组合",
+    3: "结构",
+    4: "探索",
+    5: "关系",
+    6: "规律",
+    7: "符号",
+    8: "建模",
+}
+LEVEL_SUMMARIES = {
+    1: "守恒、比较、观察",
+    2: "拆分、合并、分配、空间",
+    3: "乘除、分数、图形、统计",
+    4: "测量、数据、实验、平衡",
+    5: "乘除互换、验算",
+    6: "拆分、结果不变",
+    7: "分组、位值、0",
+    8: "生活建模、验算",
+}
 COLORS = "YGRPBO"
 PER_COLOR = 10                       # 手上一共 6 色、每种 10 颗
 
@@ -185,7 +204,10 @@ def _check(demo: Demo) -> None:
         if not str(demo.meta.get(key, "") or "").strip():
             demo.problems.append("少了 %s=" % key)
     if demo.level not in LEVEL_NAMES:
-        demo.problems.append("level=%r 不认识（只能是 1 / 2 / 3 / 4）" % demo.meta.get("level"))
+        demo.problems.append(
+            "level=%r 不认识（只能是 %s）"
+            % (demo.meta.get("level"), " / ".join(map(str, LEVEL_NAMES)))
+        )
     if demo.path.stem != demo.id:
         demo.problems.append("文件名（%s）跟 id（%s）对不上" % (demo.path.stem, demo.id))
     folder = demo.path.parent.name
@@ -249,7 +271,15 @@ def levels(root: Path = PUZZLE_DIR) -> Dict[str, object]:
         if demo.problems:
             continue
         counts[demo.level] = counts.get(demo.level, 0) + 1
-    return {"levels": [{"level": lv, "count": counts[lv]} for lv in sorted(counts)],
+    return {"levels": [
+                {
+                    "level": lv,
+                    "name": LEVEL_NAMES.get(lv, ""),
+                    "summary": LEVEL_SUMMARIES.get(lv, ""),
+                    "count": counts[lv],
+                }
+                for lv in sorted(counts)
+            ],
             "total": sum(counts.values())}
 
 

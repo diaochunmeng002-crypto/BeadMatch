@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l8-share-remainder
+level=8
+theme=建模
+title=装满还剩几颗
+thing=彩珠
+unit=颗
+materials=Y:4 G:4 R:4 B:2
+example=每盒装 4 颗|YYYY GGGG RRRR BB|3 盒，余 2 颗|
+example=装回总数验算|YYYY GGGG RRRR BB|3 × 4 + 2 = 14|
+answer=14 颗彩珠，每盒装 4 颗，可以装满 3 盒，还剩 2 颗；验算时把 3 盒的 12 颗再加剩下的 2 颗，就回到 14 颗。
+why=分不完时先记录装满了几盒，再把余数加回去检查，这样不会丢掉珠子。
+
+桌上有 14 颗彩珠，每个盒子装 4 颗。
+能装满几盒？最后还剩几颗？
+用乘法算一算，3 个满盒一共有多少颗。
+再加上剩下的珠子，会不会回到原来的 14 颗？

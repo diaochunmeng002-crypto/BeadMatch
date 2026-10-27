@@ -22,9 +22,12 @@ class DemosTest(unittest.TestCase):
     def test_levels_count(self):
         info = d.levels()
         self.assertEqual(info["total"], len(d.iter_demos()))
-        self.assertEqual(info["total"], 30)              # 30 个演示
-        self.assertEqual([row["level"] for row in info["levels"]], [1, 2, 3, 4])
-        self.assertEqual([row["count"] for row in info["levels"]], [7, 7, 8, 8])
+        self.assertEqual(info["total"], 54)
+        self.assertEqual([row["level"] for row in info["levels"]], list(range(1, 9)))
+        self.assertEqual([row["count"] for row in info["levels"]], [7, 7, 8, 8, 6, 6, 6, 6])
+        self.assertEqual([row["name"] for row in info["levels"]],
+                         ["感知", "组合", "结构", "探索", "关系", "规律", "符号", "建模"])
+        self.assertTrue(all(row["summary"].strip() for row in info["levels"]))
         self.assertEqual(sum(row["count"] for row in info["levels"]), len(d.iter_demos()))
 
     def test_lookup(self):
@@ -49,7 +52,7 @@ class DemosTest(unittest.TestCase):
 
     def test_number_ceiling_by_level(self):
         """先练关系，不先考计算：L1 / L2 / L3-L4 的组量分别不超过 3 / 4 / 5。"""
-        ceilings = {1: 3, 2: 4, 3: 5, 4: 5}
+        ceilings = {1: 3, 2: 4, 3: 5, 4: 5, 5: 5, 6: 5, 7: 5, 8: 5}
         for demo in d.iter_demos():
             ceiling = ceilings[demo.level]
             for row in demo.materials:

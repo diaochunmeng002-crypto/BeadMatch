@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l5-missing-number
+level=5
+theme=关系
+title=空着的是几
+thing=小珠子
+unit=颗
+materials=Y:3 G:4 R:4
+example=每盘 4 颗，装 3 盘|GGGG RRRR YYY|3 × 4 = 12|
+example=从总数反着算|GGGG RRRR YYY|12 ÷ 3 = 4|
+answer=3 盘、每盘 4 颗，一共是 12 颗。所以空着的数是 4：3 × □ = 12 和 12 ÷ 3 = 4 说的是同一件事。
+why=从一个乘法算式里拿走一个因数，可以用除法把它找回来。
+
+把 12 颗小珠子每 4 颗放一盘，看看能放几盘。
+把算式写成 3 × □ = 12，方框里应该填几？
+再用除法算一遍：12 ÷ 3 等于几？
+两个答案为什么一样？

@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-27
+created_by=manual
+id=l6-commute
+level=6
+theme=规律
+title=横着数，竖着数
+thing=小方块
+unit=块
+materials=Y:3 G:3 R:3
+example=3 行，每行 4 块|YYYY GGGG RRRR|3 × 4 = 12|
+example=4 行，每行 3 块|YYY GGG RRR BBB|4 × 3 = 12|
+answer=同样的 12 块也能排成 3 × 4 或 4 × 3。转个方向，每行数量和行数交换了，总数不变。
+why=乘法里两个数的位置交换，表示把同一个方阵横着数或竖着数，所以结果一样。
+
+用 12 块小方块排成一个方阵。
+先横着数：几行，每行几块？
+再把方阵转个方向，竖着数：几行，每行几块？
+两个乘法算式不同，总数为什么一样？
