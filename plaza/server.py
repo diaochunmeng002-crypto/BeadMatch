@@ -6,6 +6,7 @@
 页面（广场占根路径，每个游戏在自己的前缀下，谁也不挡谁）：
 
     /                             广场首页：列出所有游戏
+    /difficulties                 难度管理：逐游戏选择游戏页里显示哪些等级
     /games/<id>/                  某个游戏的页面（广场顺手往页面里注入接口基址）
     /games/<id>/static/...        那个游戏的静态资源
     /static/...                   广场公共的前端（首页样式等）
@@ -13,6 +14,8 @@
 接口：
 
     GET  /api/games                        有哪些游戏
+    GET  /api/difficulty-settings          每个游戏的难度和显示开关
+    PUT  /api/difficulty-settings          保存哪些难度不在菜单里显示
     GET  /api/games/<id>/levels            那个游戏每级各多少题
     GET  /api/games/<id>/random?level=N    随机抽一道
     GET  /api/games/<id>/puzzles/{pid}     按 id 取一道
@@ -48,7 +51,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import history, registry, stars
+from . import difficulty_settings, history, registry, stars
 from .nocache import keep_fresh
 from .registry import Game
 
@@ -200,6 +203,62 @@ _EXTRAS_JS = """<script>
 </script>"""
 
 
+# 游戏自己的 /levels 响应在浏览器里过滤一次。这样不用改九套游戏前端，
+# 游戏仍从自己的接口动态读难度，广场只负责去掉管理页里关掉的项。
+_LEVEL_FILTER_JS = """<script>
+(function () {
+  var hidden = Array.isArray(window.PLAZA_HIDDEN_LEVELS)
+    ? window.PLAZA_HIDDEN_LEVELS.map(Number)
+    : [];
+  var requested = NaN;
+  try {
+    requested = Number(new URLSearchParams(window.location.search).get('level'));
+  } catch (error) { /* 参数读不到就按普通游戏页处理 */ }
+  var hasRequested = Number.isFinite(requested) && requested > 0;
+  if (!hidden.length && !hasRequested) return;
+
+  var nativeFetch = window.fetch;
+  if (typeof nativeFetch !== 'function') return;
+
+  window.fetch = function (input, init) {
+    var url = typeof input === 'string' ? input : ((input && input.url) || '');
+    var pending = nativeFetch.apply(this, arguments);
+    if (!/\\/levels(?:\\?.*)?$/.test(url)) return pending;
+
+    return pending.then(function (response) {
+      if (!response || !response.ok) return response;
+      if (typeof Response !== 'function' || typeof Headers !== 'function') return response;
+      return response.clone().json().then(function (data) {
+        if (!data || !Array.isArray(data.levels)) return response;
+        var visible = data.levels.filter(function (row) {
+          var level = Number(row && row.level);
+          return hidden.indexOf(level) < 0 || level === requested;
+        });
+        // 题库变动或手工改配置后也不让游戏页变成空菜单。
+        if (!visible.length) return response;
+        // 各游戏默认都取下拉框第一项；把链接指定的等级放第一项即可统一直达。
+        var target = visible.findIndex(function (row) {
+          return Number(row && row.level) === requested;
+        });
+        if (target >= 0) visible.unshift(visible.splice(target, 1)[0]);
+        data.levels = visible;
+        var headers = new Headers(response.headers);
+        headers.set('Content-Type', 'application/json');
+        headers.delete('Content-Length');
+        return new Response(JSON.stringify(data), {
+          status: response.status,
+          statusText: response.statusText,
+          headers: headers,
+        });
+      }).catch(function () {
+        return response;
+      });
+    });
+  };
+})();
+</script>"""
+
+
 def _game_names() -> Dict[str, str]:
     """id → 中文名。历史 / 收藏页也认识“其他玩法”的名字。"""
     names = {game.id: game.name for game in GAMES}
@@ -320,6 +379,9 @@ def _game_page(game: Game) -> str:
     html = index.read_text(encoding="utf-8")
     # 接口基址 + 导航的样式都塞进 head（样式早一步到，就不会先闪一个没样式的导航）
     inject = "<script>window.API_BASE=%s;</script>" % json.dumps(game.api_base)
+    hidden_levels = difficulty_settings.load_hidden().get(game.id, [])
+    inject += "\n<script>window.PLAZA_HIDDEN_LEVELS=%s;</script>" % json.dumps(hidden_levels)
+    inject += "\n" + _LEVEL_FILTER_JS
     inject += "\n" + _NAV_CSS + "\n" + _EXTRAS_CSS
     inject += "\n" + _STAR_JS.replace("__GAME_ID__", json.dumps(game.id))
     inject += "\n" + _EXTRAS_JS
@@ -398,6 +460,91 @@ def api_games() -> Dict[str, object]:
             row["levels_error"] = info["error"]
         rows.append(row)
     return {"count": len(rows), "games": rows}
+
+
+def _difficulty_rows() -> List[Dict[str, object]]:
+    """当前所有游戏及难度；开关状态从本地配置合并出来。"""
+    hidden = difficulty_settings.load_hidden()
+    rows: List[Dict[str, object]] = []
+    for game in GAMES:
+        info = registry.levels_of(game)
+        hidden_levels = set(hidden.get(game.id, []))
+        levels: List[Dict[str, object]] = []
+        for row in info["levels"]:
+            if not isinstance(row, dict):
+                continue
+            try:
+                number = int(row["level"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            name = str(row.get("name") or "").strip()
+            levels.append({
+                "level": number,
+                "count": int(row.get("count", 0) or 0),
+                "name": name,
+                "enabled": number not in hidden_levels,
+                "url": "%s?level=%d" % (game.url, number),
+            })
+        if levels and not any(row["enabled"] for row in levels):
+            for row in levels:
+                row["enabled"] = True
+        item: Dict[str, object] = {
+            "id": game.id,
+            "name": game.name,
+            "url": game.url,
+            "levels": levels,
+        }
+        if game.error:
+            item["error"] = game.error
+        if info.get("error"):
+            item["levels_error"] = info["error"]
+        rows.append(item)
+    return rows
+
+
+def _difficulty_payload() -> Dict[str, object]:
+    rows = _difficulty_rows()
+    return {"count": len(rows), "games": rows}
+
+
+class DifficultySettingsRequest(BaseModel):
+    """`PUT /api/difficulty-settings` 的入参；只传需要隐藏的等级。"""
+
+    hidden: Dict[str, List[int]]
+
+
+@app.get("/api/difficulty-settings")
+def api_difficulty_settings() -> Dict[str, object]:
+    """管理页的数据：每个游戏的难度、题量和当前开关状态。"""
+    return _difficulty_payload()
+
+
+@app.put("/api/difficulty-settings")
+def api_difficulty_settings_save(req: DifficultySettingsRequest) -> Dict[str, object]:
+    """保存隐藏等级。每个游戏至少留一个可见难度，免得游戏页没有入口。"""
+    games = _difficulty_rows()
+    by_id = {str(game["id"]): game for game in games}
+    normalized: Dict[str, List[int]] = {}
+
+    for game_id, values in req.hidden.items():
+        game = by_id.get(game_id)
+        if game is None:
+            raise HTTPException(400, "没有这个游戏：%s" % game_id)
+        valid = {int(row["level"]) for row in game["levels"]}
+        requested = set(values)
+        invalid = sorted(requested - valid)
+        if invalid:
+            raise HTTPException(
+                400,
+                "%s 没有这些难度：%s" % (game_id, "、".join(map(str, invalid))),
+            )
+        if valid and requested >= valid:
+            raise HTTPException(400, "%s 至少要保留一个难度" % game_id)
+        if requested:
+            normalized[game_id] = sorted(requested)
+
+    difficulty_settings.save_hidden(normalized)
+    return _difficulty_payload()
 
 
 @app.get("/api/history")
@@ -688,6 +835,7 @@ _PAGE = """<!doctype html>
   <div class="home-head">
     <h1>游戏广场</h1>
     <nav class="home-tools" aria-label="广场工具">
+      <a class="home-action" href="/difficulties">难度管理</a>
       <a class="home-action" href="/history">历史</a>
       <a class="home-action" href="/stars"><span aria-hidden="true">☆</span> 收藏</a>
     </nav>
@@ -704,6 +852,223 @@ __EXTRA_HOME_CARDS__
      源码在 <a href="https://github.com/diaochunmeng002-crypto/BeadMatch/commits/master"
               target="_blank" rel="noreferrer">GitHub</a></p>
 </footer>
+</body>
+</html>
+"""
+
+
+# 难度管理：开关只改本地配置；游戏页下次打开时按配置加载自己的 /levels。
+_DIFFICULTIES_PAGE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>难度管理 · BeadMatch</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+.bar{color:var(--muted);font-size:.85rem;min-height:1.6em}
+.game-card{padding:16px 18px;background:var(--card);border:1px solid var(--border);
+  border-radius:14px}
+.game-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.game-head h2{margin:0;font-size:1.08rem}
+.game-head h2 a{color:inherit;text-decoration:none}
+.game-head h2 a:hover{text-decoration:underline}
+.game-head .count,.game-error{color:var(--muted);font-size:.8rem}
+.game-error{line-height:1.7}
+.level-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.level-item{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 10px;
+  border:1px solid var(--border);border-radius:10px}
+.level-item:hover{border-color:var(--muted)}
+.level-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.level-name{display:block;font-size:.92rem;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;color:inherit;text-decoration:none}
+.level-name:hover{text-decoration:underline}
+.level-count{color:var(--muted);font-size:.76rem}
+.level-item input{position:absolute;opacity:0;pointer-events:none}
+.switch-label{display:flex;margin-left:auto;cursor:pointer}
+.switch-track{position:relative;width:42px;height:24px;flex:0 0 auto;
+  border-radius:999px;background:var(--border);transition:background .14s ease}
+.switch-track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;
+  border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.28);
+  transition:transform .14s ease}
+.level-item input:checked + .switch-track{background:#43a047}
+.level-item input:checked + .switch-track::after{transform:translateX(18px)}
+.level-item input:focus-visible + .switch-track{outline:2px solid var(--ink);
+  outline-offset:2px}
+.level-item input:disabled + .switch-track{opacity:.45}
+@media (max-width:560px){
+  .level-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="home-head">
+    <h1>难度管理</h1>
+    <nav class="home-tools" aria-label="难度管理导航">
+      <a class="home-action" href="/history">历史</a>
+      <a class="home-action" href="/stars"><span aria-hidden="true">☆</span> 收藏</a>
+      <a class="home-action" href="/">← 游戏广场</a>
+    </nav>
+  </div>
+  <p class="lead">关掉的难度不会出现在游戏菜单里。每个游戏至少保留一个。</p>
+</header>
+<main>
+  <div class="bar">
+    <span id="status">读取中…</span>
+  </div>
+  <div id="list"></div>
+</main>
+<script>
+const listEl = document.getElementById('list');
+const statusEl = document.getElementById('status');
+let games = [];
+let saveQueue = Promise.resolve();
+let pendingSaves = 0;
+
+function setStatus(text) { statusEl.textContent = text; }
+
+function levelRow(level, game) {
+  const item = document.createElement('div');
+  item.className = 'level-item';
+
+  const copy = document.createElement('span');
+  copy.className = 'level-copy';
+  const name = document.createElement('a');
+  name.className = 'level-name';
+  name.href = level.url || ('/games/' + encodeURIComponent(game.id)
+    + '/?level=' + encodeURIComponent(level.level));
+  name.textContent = level.level + ' 级' + (level.name ? ' · ' + level.name : '');
+  const count = document.createElement('span');
+  count.className = 'level-count';
+  count.textContent = level.count + ' 道';
+  copy.append(name, count);
+
+  const toggle = document.createElement('input');
+  toggle.type = 'checkbox';
+  toggle.checked = !!level.enabled;
+  toggle.disabled = level.single;
+  toggle.setAttribute('aria-label', (level.enabled ? '隐藏 ' : '显示 ') + level.level + ' 级');
+  toggle.addEventListener('change', () => {
+    const wouldRemain = games
+      .find((game) => game.levels.includes(level)).levels
+      .filter((row) => row === level ? toggle.checked : row.enabled).length;
+    if (!wouldRemain) {
+      toggle.checked = true;
+      setStatus('每个游戏至少要保留一个难度');
+      return;
+    }
+    level.enabled = toggle.checked;
+    toggle.setAttribute('aria-label',
+      (level.enabled ? '隐藏 ' : '显示 ') + level.level + ' 级');
+    queueSave();
+  });
+
+  const switchLabel = document.createElement('label');
+  switchLabel.className = 'switch-label';
+  if (level.single) switchLabel.title = '每个游戏至少要保留一个难度';
+
+  const track = document.createElement('span');
+  track.className = 'switch-track';
+  track.setAttribute('aria-hidden', 'true');
+  switchLabel.append(toggle, track);
+  item.append(copy, switchLabel);
+  return item;
+}
+
+function gameCard(game) {
+  const card = document.createElement('section');
+  card.className = 'game-card';
+  const head = document.createElement('div');
+  head.className = 'game-head';
+  const title = document.createElement('h2');
+  const titleLink = document.createElement('a');
+  titleLink.href = game.url;
+  titleLink.textContent = game.name;
+  title.appendChild(titleLink);
+  const count = document.createElement('span');
+  count.className = 'count';
+  count.textContent = game.levels.length + ' 个难度';
+  head.append(title, count);
+  card.appendChild(head);
+
+  if (game.error || game.levels_error) {
+    const error = document.createElement('p');
+    error.className = 'game-error';
+    error.textContent = game.error || game.levels_error;
+    card.appendChild(error);
+    return card;
+  }
+
+  if (!game.levels.length) {
+    const empty = document.createElement('p');
+    empty.className = 'game-error';
+    empty.textContent = '还没有可管理的难度。';
+    card.appendChild(empty);
+    return card;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'level-list';
+  game.levels.forEach((level) => {
+    level.single = game.levels.length === 1;
+    list.appendChild(levelRow(level, game));
+  });
+  card.appendChild(list);
+  return card;
+}
+
+function render() {
+  listEl.replaceChildren(...games.map(gameCard));
+}
+
+async function load() {
+  setStatus('读取中…');
+  try {
+    const response = await fetch('/api/difficulty-settings', { cache: 'no-store' });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const data = await response.json();
+    games = data.games || [];
+    render();
+    setStatus('共 ' + games.length + ' 个游戏');
+  } catch (error) {
+    setStatus('读取失败：' + error.message);
+  }
+}
+
+function hiddenSnapshot() {
+  const hidden = {};
+  games.forEach((game) => {
+    const levels = game.levels.filter((level) => !level.enabled).map((level) => level.level);
+    if (levels.length) hidden[game.id] = levels;
+  });
+  return hidden;
+}
+
+function queueSave() {
+  const hidden = hiddenSnapshot();
+  pendingSaves += 1;
+  setStatus('保存中…');
+  // 顺序保存：快速连点多个开关时，后一个完整快照一定最后落盘。
+  saveQueue = saveQueue.then(async () => {
+    const response = await fetch('/api/difficulty-settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hidden }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || ('HTTP ' + response.status));
+  }).then(() => {
+    pendingSaves -= 1;
+    if (!pendingSaves) setStatus('已保存，下次打开游戏按这个配置加载');
+  }).catch((error) => {
+    pendingSaves -= 1;
+    setStatus('保存失败：' + error.message);
+  });
+}
+
+load();
+</script>
 </body>
 </html>
 """
@@ -759,6 +1124,7 @@ td.open a:hover{text-decoration-color:currentColor}
   <div class="home-head">
     <h1>玩过什么</h1>
     <nav class="home-tools" aria-label="历史页导航">
+      <a class="home-action" href="/difficulties">难度管理</a>
       <a class="home-action" href="/stars"><span aria-hidden="true">☆</span> 收藏</a>
       <a class="home-action" href="/">← 游戏广场</a>
     </nav>
@@ -994,6 +1360,7 @@ td.star button:hover{filter:brightness(1.15)}
   <div class="home-head">
     <h1>我收藏的题</h1>
     <nav class="home-tools" aria-label="收藏页导航">
+      <a class="home-action" href="/difficulties">难度管理</a>
       <a class="home-action" href="/history">历史</a>
       <a class="home-action" href="/">← 游戏广场</a>
     </nav>
@@ -1182,6 +1549,12 @@ def _home_html() -> str:
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     return _home_html()
+
+
+@app.get("/difficulties", response_class=HTMLResponse)
+def difficulties_page() -> str:
+    """难度管理页；数据和开关都走 `/api/difficulty-settings`。"""
+    return _DIFFICULTIES_PAGE
 
 
 @app.get("/extras/{extra_id}", response_class=HTMLResponse)

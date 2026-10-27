@@ -16,13 +16,18 @@ from plaza.server import app
 class HistoryPageTest(unittest.TestCase):
     def setUp(self) -> None:
         self.db = Path(__file__).resolve().parent / ".tmp_history_server.db"
+        self.difficulty_config = (
+            Path(__file__).resolve().parent / ".tmp_difficulty_settings_server.json"
+        )
         self._remove()
         os.environ["BEADMATCH_HISTORY_DB"] = str(self.db)
+        os.environ["BEADMATCH_DIFFICULTY_SETTINGS"] = str(self.difficulty_config)
         os.environ.pop("BEADMATCH_HISTORY", None)      # 强制打开，别被别的测试的 off 影响
         self.client = TestClient(app)
 
     def tearDown(self) -> None:
         os.environ.pop("BEADMATCH_HISTORY_DB", None)
+        os.environ.pop("BEADMATCH_DIFFICULTY_SETTINGS", None)
         os.environ.pop("BEADMATCH_HISTORY", None)
         self._remove()
 
@@ -31,6 +36,8 @@ class HistoryPageTest(unittest.TestCase):
             path = Path(str(self.db) + suffix)
             if path.exists():
                 path.unlink()
+        if self.difficulty_config.exists():
+            self.difficulty_config.unlink()
 
     def test_api_is_newest_first(self) -> None:
         history.record(game="calc", puzzle_id="old", level=1,
@@ -83,7 +90,84 @@ class HistoryPageTest(unittest.TestCase):
         self.assertEqual(home.status_code, 200)
         self.assertIn('href="/history"', home.text)
         self.assertIn('<a class="home-action" href="/history">历史</a>', home.text)
+        self.assertIn('<a class="home-action" href="/difficulties">难度管理</a>', home.text)
         self.assertIn("github.com/diaochunmeng002-crypto/BeadMatch", home.text)
+
+    def test_difficulty_page_lists_levels_from_each_game(self) -> None:
+        """管理页数据动态来自每个游戏现有的 /levels，不维护第二份难度名单。"""
+        games = self.client.get("/api/games").json()["games"]
+        settings = self.client.get("/api/difficulty-settings")
+        self.assertEqual(settings.status_code, 200)
+        payload = settings.json()
+        self.assertEqual(payload["count"], len(games))
+        self.assertEqual(
+            [row["id"] for row in payload["games"]],
+            [row["id"] for row in games],
+        )
+        for listed, game in zip(payload["games"], games):
+            expected = [row["level"] for row in game["levels"]]
+            actual = [row["level"] for row in listed["levels"]]
+            self.assertEqual(actual, expected, game["id"])
+            self.assertTrue(all(row["enabled"] for row in listed["levels"]), game["id"])
+            for level in listed["levels"]:
+                self.assertEqual(
+                    level["url"],
+                    "/games/%s/?level=%d" % (game["id"], level["level"]),
+                )
+
+        page = self.client.get("/difficulties")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("难度管理", page.text)
+        self.assertIn("/api/difficulty-settings", page.text)
+        self.assertIn("method: 'PUT'", page.text)
+        self.assertIn("switch-track", page.text)
+        self.assertIn("grid-template-columns:repeat(4,minmax(0,1fr))", page.text)
+        self.assertIn("queueSave();", page.text)
+        self.assertNotIn('<button id="save"', page.text)
+        self.assertIn("name.href = level.url", page.text)
+        self.assertIn("titleLink.href = game.url", page.text)
+        self.assertIn("const item = document.createElement('div')", page.text)
+
+    def test_difficulty_settings_are_saved_and_loaded_by_game_pages(self) -> None:
+        saved = self.client.put("/api/difficulty-settings",
+                                json={"hidden": {"beadsort": [1, 2]}})
+        self.assertEqual(saved.status_code, 200)
+        self.assertTrue(self.difficulty_config.is_file())
+
+        listed = self.client.get("/api/difficulty-settings").json()
+        beadsort = next(row for row in listed["games"] if row["id"] == "beadsort")
+        states = {row["level"]: row["enabled"] for row in beadsort["levels"]}
+        self.assertEqual(
+            states,
+            {level: level not in {1, 2} for level in states},
+        )
+
+        # 新请求模拟下次打开游戏：页面拿到本地配置，在读取 /levels 后过滤菜单。
+        page = self.client.get("/games/beadsort/")
+        self.assertIn("window.PLAZA_HIDDEN_LEVELS=[1, 2]", page.text)
+        self.assertIn("new URLSearchParams(window.location.search).get('level')", page.text)
+        self.assertIn("visible.unshift(visible.splice(target, 1)[0])", page.text)
+        self.assertIn("var visible = data.levels.filter", page.text)
+        self.assertIn("/levels(?:", page.text)
+
+    def test_difficulty_settings_reject_invalid_changes(self) -> None:
+        games = self.client.get("/api/difficulty-settings").json()["games"]
+        beadsort = next(row for row in games if row["id"] == "beadsort")
+        all_beadsort = [row["level"] for row in beadsort["levels"]]
+        self.assertTrue(all_beadsort)
+
+        no_level = self.client.put("/api/difficulty-settings",
+                                   json={"hidden": {"beadsort": all_beadsort}})
+        self.assertEqual(no_level.status_code, 400)
+        self.assertIn("至少要保留一个难度", no_level.json()["detail"])
+
+        bad_level = self.client.put("/api/difficulty-settings",
+                                    json={"hidden": {"beadsort": [999]}})
+        self.assertEqual(bad_level.status_code, 400)
+
+        bad_game = self.client.put("/api/difficulty-settings",
+                                   json={"hidden": {"not-a-game": [1]}})
+        self.assertEqual(bad_game.status_code, 400)
 
     def test_home_shows_only_the_total(self) -> None:
         """首页每张卡片只报总数（"共 N 题"），不铺每级多少题。"""
