@@ -679,6 +679,7 @@ __STAR_JS__
 .goal{margin:7px 0 20px;color:var(--muted);line-height:1.7}
 .level-card h3{margin:18px 0 8px;color:var(--muted);font-size:.78rem;letter-spacing:.06em}
 .steps{margin:0;padding-left:1.5rem;line-height:1.9}
+.steps.plain-steps{list-style:none;padding-left:0}
 .pass{margin-top:18px;padding:11px 13px;border-radius:9px;background:rgba(128,128,128,.09);
   line-height:1.65}
 .pass span{display:block;color:var(--muted);font-size:.75rem;margin-bottom:2px}
@@ -786,28 +787,41 @@ def _extra_page(extra_id: str) -> str:
             continue
         level_name = escape(str(level["name"]))
         short = escape(str(level["short"]))
+        steps_title = escape(str(level.get("steps_title", "怎么玩"))).strip()
+        goal_html = escape(str(level["goal"]))
+        goal_details = level.get("goal_details")
+        if isinstance(goal_details, list):
+            goal_html += "".join("<br>%s" % escape(str(line))
+                                 for line in goal_details if str(line).strip())
         selected = " selected" if index == 0 else ""
         options.append(
             '<option value="%d"%s>%d 级（%s）</option>'
             % (index, selected, index + 1, short)
         )
-        steps = "".join("<li>%s</li>" % escape(str(step)) for step in level["steps"])
+        steps_plain = bool(level.get("steps_plain"))
+        steps_tag = "ul" if steps_plain else "ol"
+        steps_class = "steps plain-steps" if steps_plain else "steps"
+        steps_items = "".join("<li>%s</li>" % escape(str(step)) for step in level["steps"])
+        steps_html = '<%s class="%s">%s</%s>' % (
+            steps_tag, steps_class, steps_items, steps_tag,
+        )
         hidden = "" if index == 0 else " hidden"
         panels.append(
             '<article class="level-card" data-level="%d" data-level-number="%d"'
             ' data-puzzle-id="%s"%s>'
             '<p class="level-kicker">第 %d 级 · %s</p>'
-            '<h2>%s</h2><p class="goal">%s</p>'
-            '<h3>怎么玩</h3><ol class="steps">%s</ol>'
+            '<h2>%s</h2><p class="goal">%s</p>%s%s'
             '<div class="pass"><span>过关</span>%s</div>'
             '<p class="tip"><strong>提示：</strong>%s</p>'
             "</article>"
             % (index, index + 1, level_name, hidden, index + 1, short,
-               level_name, escape(str(level["goal"])),
-               steps, escape(str(level["pass_condition"])), escape(str(level["tip"])))
+               level_name, goal_html,
+               ("<h3>%s</h3>" % steps_title) if steps_title else "",
+               steps_html, escape(str(level["pass_condition"])), escape(str(level["tip"])))
         )
     if not options:
         raise HTTPException(500, "%s 没有可显示的难度" % extra_id)
+
     return (_EXTRA_PAGE.replace("__NAV_CSS__", _NAV_CSS + "\n" + _EXTRAS_CSS)
                       .replace("__STAR_JS__",
                                _STAR_JS.replace("__GAME_ID__", json.dumps(extra_id)))

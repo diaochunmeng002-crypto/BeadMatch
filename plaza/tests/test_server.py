@@ -312,7 +312,8 @@ class HistoryPageTest(unittest.TestCase):
                         home.index('class="extra-games"'))
         self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
         self.assertIn("用小目标练发球、连续对打和控球。", home)
-        self.assertEqual(home.count("共 5 级"), 4)
+        self.assertEqual(home.count("共 5 级"), 3)
+        self.assertEqual(home.count("共 2 级"), 1)
 
         game = self.client.get("/games/logic/").text
         self.assertIn('class="plaza-tools"', game)
@@ -372,16 +373,45 @@ class HistoryPageTest(unittest.TestCase):
         )
 
     def test_other_physical_play_pages_and_their_stars(self) -> None:
-        """弹弓、投壶、匹克球各有 5 级，并能收藏当前级别。"""
-        for extra_id, name in (("slingshot", "儿童弹弓"),
-                               ("pitchpot", "投壶"),
-                               ("pickleball", "匹克球")):
+        """实体玩法按各自的级数显示，并能收藏当前级别。"""
+        for extra_id, name, count in (
+            ("slingshot", "儿童弹弓", 2),
+            ("pitchpot", "投壶", 5),
+            ("pickleball", "匹克球", 5),
+        ):
             page = self.client.get("/extras/%s" % extra_id)
             self.assertEqual(page.status_code, 200, extra_id)
             self.assertIn(name, page.text)
-            self.assertEqual(page.text.count("<option value="), 5, extra_id)
+            self.assertEqual(page.text.count("<option value="), count, extra_id)
             self.assertIn('id="plaza-star"', page.text, extra_id)
             self.assertIn("GAME_ID = %s" % ('"' + extra_id + '"'), page.text)
+
+    def test_slingshot_has_two_summarised_levels(self) -> None:
+        """原来的五步动作归纳为基础训练，靶场单独作为第二级。"""
+        page = self.client.get("/extras/slingshot")
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(page.text.count("<option value="), 2)
+        self.assertIn("1 级（基础训练）", page.text)
+        self.assertIn("2 级（百变靶场）", page.text)
+        for text in ("空拉瞄准", "近距大靶", "连续命中",
+                     "一根主绳", "5 米以上", "8 毫米的尼龙编织绳",
+                     "每隔 25～30 厘米系一根", "垂绳末端绑长尾夹",
+                     "纸：旧卷子", "纸板：", "易拉罐：",
+                     "泡沫：", "气球：", "毛毡："):
+            self.assertIn(text, page.text)
+        second = page.text.split('data-level-number="2"', 1)[1].split("</article>", 1)[0]
+        self.assertNotIn("<h3>", second)
+        self.assertIn('<p class="goal">用一根主绳', second)
+        self.assertLess(second.index("用一根主绳"), second.index("<br>主绳：5 米以上"))
+        self.assertLess(second.index("主绳：5 米以上"), second.index("<br>垂绳：用"))
+        self.assertLess(second.index("垂绳：用"), second.index("<br>夹子：垂绳末端"))
+        self.assertIn('<ul class="steps plain-steps">', second)
+        self.assertNotIn('<ol class="steps">', second)
+        self.assertNotIn('id="target-rack"', page.text)
+
+        opened = self.client.post("/api/extras/slingshot/view", json={"level": 2})
+        self.assertEqual(opened.status_code, 200)
+        self.assertEqual(opened.json()["puzzle_id"], "百变靶场")
 
         starred = self.client.post("/api/star", json={
             "game": "kendama", "puzzle_id": "侧皿平衡", "level": 1,
