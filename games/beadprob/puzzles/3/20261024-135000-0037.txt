@@ -2,7 +2,7 @@
 
 created_at=2026-10-24
 created_by=beadprob
-generator=make_puzzles@1
+generator=make_puzzles@2
 id=20261024-135000-0037
 level=3
 title=紫珠去哪只袋子？
@@ -10,7 +10,7 @@ story=两只袋子里的珠子总数一样，颜色组成不同。
 kind=compare
 target=P
 question=从哪只袋子更容易摸到紫珠？
-action=两只袋子轮流摸 5 次，每次放回并摇匀。
+action=两只袋子轮流摸 10 次，每次放回并摇匀。结果不同也正常，结论看两只袋子的组成。
 bag=左边的袋子|P:1 B:6
 bag=右边的袋子|P:6 B:1
 answer=right

@@ -2,7 +2,7 @@
 
 created_at=2026-10-24
 created_by=beadprob
-generator=make_puzzles@1
+generator=make_puzzles@2
 id=20261024-121400-0007
 level=1
 title=可能还是一定？

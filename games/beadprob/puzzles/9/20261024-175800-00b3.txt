@@ -2,7 +2,7 @@
 
 created_at=2026-10-24
 created_by=beadprob
-generator=make_puzzles@1
+generator=make_puzzles@2
 id=20261024-175800-00b3
 level=9
 title=不放回会怎样？
@@ -14,5 +14,5 @@ action=先照题把紫珠、绿珠拿出留在桌上，再摸下一颗。
 bag=神秘袋|P:1 G:8
 removed=PG
 answer=smaller
-hint=先看目标珠少了几颗，再看袋里总数少了几颗。
-explain=一开始袋里紫珠 1 颗、绿珠 8 颗；拿出后剩下 7 颗，其中紫珠 0 颗。拿出的珠子里有紫珠，剩下的紫珠所占比例变小。
+hint=先看目标珠少了没有，再看其他颜色少了多少。
+explain=一开始袋里目标珠 1 颗、其他珠 8 颗；拿出后目标珠 0 颗、其他珠 7 颗。拿出的珠子里有紫珠，目标珠变少，所以机会变小。

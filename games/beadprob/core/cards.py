@@ -7,7 +7,7 @@
 
     created_at=2026-10-24
     created_by=beadprob
-    generator=make_puzzles@1
+    generator=make_puzzles@2
     id=20261024-120000-0a01
     level=3
     title=蓝珠去哪只袋子？
@@ -15,7 +15,7 @@
     kind=compare
     target=B
     question=哪只袋子更容易摸到蓝珠？
-    action=两只袋子轮流摸 5 次，每次放回并摇匀。
+    action=两只袋子轮流摸 10 次，每次放回并摇匀。
     bag=左边的袋子|R:4 B:4
     bag=右边的袋子|R:6 B:2
     answer=right

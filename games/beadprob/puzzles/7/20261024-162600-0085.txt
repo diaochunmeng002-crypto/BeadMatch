@@ -2,7 +2,7 @@
 
 created_at=2026-10-24
 created_by=beadprob
-generator=make_puzzles@1
+generator=make_puzzles@2
 id=20261024-162600-0085
 level=7
 title=前面摸过，后面会变吗？
@@ -15,4 +15,4 @@ bag=神秘袋|R:4 B:2
 prior=RRBR
 answer=same
 hint=先想一想：袋子里的颜色组成有没有变？
-explain=不会。每次放回并摇匀后，袋子都恢复原样，红珠仍然是 6 颗中的 4 颗；前面碰巧摸到什么，不会让下一次更容易。
+explain=不会。前面每次都已经放回并摇匀，袋里还是原来的 6 颗珠子，红珠也还是 4 颗；刚才碰巧摸到什么，不会让下一次更容易。

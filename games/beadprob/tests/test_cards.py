@@ -1,10 +1,11 @@
-"""彩珠机会屋题库：160 道都能读、答案能验、结构不重复。"""
+"""彩珠机会屋题库：180 道都能读、答案能验、结构不重复。"""
 
 from __future__ import annotations
 
 import tempfile
 import unittest
 from collections import Counter
+from math import gcd
 from pathlib import Path
 
 from games.beadprob.core import cards as k
@@ -81,6 +82,31 @@ class LibraryTest(unittest.TestCase):
             self.assertAlmostEqual(card.bags[0].chance(card.target),
                                    card.bags[1].chance(card.target))
             self.assertEqual(k.infer_answer(card), "same")
+            self.assertNotIn("比例相同", card.meta["story"])
+            self.assertNotIn("机会相同", card.meta["story"])
+            target_count = card.bags[0].count_of(card.target)
+            common = gcd(target_count, card.bags[0].total)
+            groups = card.bags[0].total // common
+            per_group = target_count // common
+            self.assertIn("每 %d 颗看成一个小组" % groups, card.meta["hint"], card.id)
+            self.assertIn("每组有 %d 颗" % per_group, card.meta["explain"], card.id)
+
+    def test_compare_cards_avoid_division_before_reveal(self) -> None:
+        """第 3～5 级只用计数、分组和观察说明，不先讲分数或比例。"""
+        for card in (card for card in self.cards if 3 <= card.level <= 5):
+            self.assertIn("10 次", card.meta["action"], card.id)
+            child_text = " ".join(card.meta.get(key, "") for key in (
+                "story", "question", "hint", "explain",
+            ))
+            self.assertNotIn("比例", child_text, card.id)
+            self.assertNotIn("分数", child_text, card.id)
+
+    def test_more_trials_does_not_require_fractions(self) -> None:
+        for card in (card for card in self.cards if card.level == 8):
+            child_text = " ".join(card.meta.get(key, "") for key in (
+                "story", "question", "hint", "explain",
+            ))
+            self.assertNotIn("比例", child_text, card.id)
 
     def test_level_six_is_the_three_bead_race(self) -> None:
         cards = [card for card in self.cards if card.level == 6]
@@ -110,6 +136,7 @@ class LibraryTest(unittest.TestCase):
         for card in (card for card in self.cards if card.level == 9):
             self.assertTrue(card.removed)
             self.assertIn(card.meta["answer"], ("larger", "smaller", "same"))
+            self.assertNotIn("比例", card.meta["explain"], card.id)
 
     def test_physical_bead_limit_across_both_bags(self) -> None:
         """两只袋子同时摆出来时，每种颜色合计也不能超过 10 颗。"""

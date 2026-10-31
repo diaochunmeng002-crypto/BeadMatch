@@ -2,7 +2,7 @@
 
 created_at=2026-10-24
 created_by=beadprob
-generator=make_puzzles@1
+generator=make_puzzles@2
 id=20261024-132400-002a
 level=3
 title=蓝珠去哪只袋子？
@@ -10,7 +10,7 @@ story=两只袋子里的珠子总数一样，颜色组成不同。
 kind=compare
 target=B
 question=从哪只袋子更容易摸到蓝珠？
-action=两只袋子轮流摸 5 次，每次放回并摇匀。
+action=两只袋子轮流摸 10 次，每次放回并摇匀。结果不同也正常，结论看两只袋子的组成。
 bag=左边的袋子|B:6 O:1
 bag=右边的袋子|B:2 O:5
 answer=left

@@ -2,15 +2,15 @@
 
 created_at=2026-10-24
 created_by=beadprob
-generator=make_puzzles@1
+generator=make_puzzles@2
 id=20261024-130200-001f
 level=2
 title=哪种颜色更常见？
 story=袋里只有两种颜色的珠子，形状都一样。
 kind=most
-question=闭眼摸 5 次，每次放回摇匀。通常哪种颜色更容易摸到？
-action=从袋里摸一颗、看一眼、放回、摇 3 下；重复 5 次。
+question=闭眼摸 10 次，每次放回摇匀。通常哪种颜色更容易摸到？
+action=从袋里摸一颗、看一眼、放回、摇 3 下；重复 10 次。次数少时结果可能碰巧偏到一边。
 bag=神秘袋|G:5 O:7
 answer=O
-hint=两种颜色在同一个袋子里，直接比较颗数。
+hint=两种颜色在同一个袋子里，直接比较颗数，不靠几次结果猜。
 explain=绿珠 5 颗、橙珠 7 颗；橙珠更多，所以通常更容易摸到橙珠。

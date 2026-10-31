@@ -23,6 +23,7 @@ PER_LEVEL = 20
 DATE = "2026-10-24"
 START = datetime(2026, 10, 24, 12, 0, 0)
 PALETTE = list(c.LETTERS)
+GENERATOR = "make_puzzles@2"
 
 
 @dataclass
@@ -93,7 +94,7 @@ def _text(recipe: Recipe, card_id: str) -> str:
         "",
         "created_at=" + DATE,
         "created_by=beadprob",
-        "generator=make_puzzles@1",
+        "generator=" + GENERATOR,
         "id=" + card_id,
         "level=" + str(recipe.level),
         "title=" + recipe.title,
@@ -258,9 +259,9 @@ def _most_recipes(rng: random.Random) -> List[Recipe]:
                 title="哪种颜色更常见？",
                 story="袋里只有两种颜色的珠子，形状都一样。",
                 kind="most",
-                question="闭眼摸 5 次，每次放回摇匀。通常哪种颜色更容易摸到？",
-                action="从袋里摸一颗、看一眼、放回、摇 3 下；重复 5 次。",
-                hint="两种颜色在同一个袋子里，直接比较颗数。",
+                question="闭眼摸 10 次，每次放回摇匀。通常哪种颜色更容易摸到？",
+                action="从袋里摸一颗、看一眼、放回、摇 3 下；重复 10 次。次数少时结果可能碰巧偏到一边。",
+                hint="两种颜色在同一个袋子里，直接比较颗数，不靠几次结果猜。",
                 explain="%s；%s珠更多，所以通常更容易摸到%s珠。"
                         % (_desc(counts), c.name(majority), c.name(majority)),
                 bags=[("神秘袋", counts)],
@@ -297,7 +298,7 @@ def _compare_same_total_recipes(rng: random.Random) -> List[Recipe]:
                     story="两只袋子里的珠子总数一样，颜色组成不同。",
                     kind="compare",
                     question="从哪只袋子更容易摸到%s珠？" % c.name(target),
-                    action="两只袋子轮流摸 5 次，每次放回并摇匀。",
+                    action="两只袋子轮流摸 10 次，每次放回并摇匀。结果不同也正常，结论看两只袋子的组成。",
                     hint="总数一样时，比一比目标颜色各有几颗。",
                     explain="两只袋子都有 %d 颗珠子；左边有 %d 颗%s珠，右边有 %d 颗。"
                             "%s目标珠更多，所以机会更大。"
@@ -335,16 +336,30 @@ def _proportion_trap_recipes(rng: random.Random) -> List[Recipe]:
                             ("左边的袋子", [(target, many[1]), (other, many[2])]),
                             ("右边的袋子", [(target, rare[1]), (other, rare[2])]),
                         ]
+                    left_n = dict(bags[0][1]).get(target, 0)
+                    right_n = dict(bags[1][1]).get(target, 0)
+                    left_total = sum(n for _, n in bags[0][1])
+                    right_total = sum(n for _, n in bags[1][1])
+                    more_label = "左边的袋子" if left_n > right_n else "右边的袋子"
+                    better_label = (
+                        "左边的袋子"
+                        if left_n / left_total > right_n / right_total
+                        else "右边的袋子"
+                    )
                     out.append(Recipe(
                         level=4,
                         title="袋子大就更占优吗？",
-                        story="两只袋子的总数不同，目标颜色的颗数也不同。",
+                        story="两只袋子的珠子总数不同，目标珠的颗数也不同；先看其他颜色的珠子多了多少。",
                         kind="compare",
                         question="从哪只袋子更容易摸到%s珠？" % c.name(target),
-                        action="先猜，再从两只袋子各摸 5 次；每次放回并摇匀。",
-                        hint="目标珠更多，不一定占的比例更大。",
-                        explain="左袋%s，右袋%s。目标珠更多的那只袋子，不一定更容易摸到它。"
-                                % (_desc(bags[0][1]), _desc(bags[1][1])),
+                        action="先猜，再从两只袋子各摸 10 次；每次放回并摇匀。结果不同也正常，结论看袋里的组成。",
+                        hint="目标珠更多，不代表更容易；其他颜色的珠子也可能增加得更多。",
+                        explain=(
+                            "左袋%s，右袋%s。%s中%s珠更多，但它的其他颜色也更多，"
+                            "把目标珠的机会冲淡了，所以%s更容易。"
+                            % (_desc(bags[0][1]), _desc(bags[1][1]), more_label,
+                               c.name(target), better_label)
+                        ),
                         bags=bags,
                         target=target,
                     ))
@@ -373,6 +388,7 @@ def _equal_chance_recipes(rng: random.Random) -> List[Recipe]:
         for right in options[i + 1:]:
             if left[0] != right[0] or left[1] == right[1]:
                 continue
+            ratio_numerator, ratio_denominator = left[0]
             target, = rng.sample(PALETTE, 1)
             distractors = [x for x in PALETTE if x != target]
             rng.shuffle(distractors)
@@ -385,14 +401,16 @@ def _equal_chance_recipes(rng: random.Random) -> List[Recipe]:
             out.append(Recipe(
                 level=5,
                 title="真的不一样吗？",
-                story="两只袋子的总数不同，但目标颜色所占的比例相同。",
+                story="两只袋子的总数不同，目标珠的颗数也不同。先看看它们能不能按同样的小组摆开。",
                 kind="compare",
                 question="从哪只袋子更容易摸到%s珠？" % c.name(target),
-                action="先猜，再从两袋各摸 5 次；每次放回并摇匀。",
-                hint="别只看总颗数，要比较目标颜色占多少。",
-                explain="左袋%s，右袋%s。两只袋子里%s珠所占的比例一样，"
-                        "所以机会相同；各摸几次得到的结果不同也很正常。"
-                        % (_desc(bags[0][1]), _desc(bags[1][1]), c.name(target)),
+                action="先猜，再从两袋各摸 10 次；每次放回并摇匀。结果不同也正常，结论看分组方式。",
+                hint="把珠子每 %d 颗看成一个小组，比较每个小组里有几颗%s珠。"
+                     % (ratio_denominator, c.name(target)),
+                explain="左袋%s，右袋%s。两只袋子都按每 %d 颗一组，每组有 %d 颗%s珠。"
+                        "小组的组成一样，所以机会相同；摸到的结果不同也很正常。"
+                        % (_desc(bags[0][1]), _desc(bags[1][1]),
+                           ratio_denominator, ratio_numerator, c.name(target)),
                 bags=bags,
                 target=target,
             ))
@@ -495,9 +513,9 @@ def _independence_recipes(rng: random.Random) -> List[Recipe]:
                              % (seq, c.name(target)),
                     action="照着上面的记录再摸一颗；之前每次都已经放回并摇匀。",
                     hint="先想一想：袋子里的颜色组成有没有变？",
-                    explain="不会。每次放回并摇匀后，袋子都恢复原样，%s珠仍然是 %d 颗中的 %d 颗；"
-                            "前面碰巧摸到什么，不会让下一次更容易。"
-                            % (c.name(target), total, a),
+                    explain="不会。前面每次都已经放回并摇匀，袋里还是原来的 %d 颗珠子，"
+                            "%s珠也还是 %d 颗；刚才碰巧摸到什么，不会让下一次更容易。"
+                            % (total, c.name(target), a),
                     bags=[("神秘袋", counts)],
                     target=target,
                     prior=prior,
@@ -519,16 +537,16 @@ def _convergence_recipes(rng: random.Random) -> List[Recipe]:
             for first, final in milestones:
                 out.append(Recipe(
                     level=8,
-                    title="多摸几次会更清楚吗？",
-                    story="小样本会有波动，多记录一些结果通常更有帮助。",
+                    title="多摸几次更清楚吗？",
+                    story="记录次数少时，结果容易碰巧偏到一边；多记一些通常更容易看出袋里的情况。",
                     kind="convergence",
-                    question="先记录 %d 次，再继续累计到 %d 次；哪一份累计记录通常更接近袋里的比例？"
+                    question="先记录 %d 次，再继续累计到 %d 次；哪一份记录更容易看出哪种颜色更常见？"
                              % (first, final),
                     action="每次摸完都放回并摇匀。先摸 %d 次记两列，再继续摸到累计 %d 次。"
                            % (first, final),
-                    hint="不是保证完全一样，而是通常会更接近。",
-                    explain="摸得更多的那一份累计记录通常更接近袋里的真实比例。%s；"
-                            "少量试验容易碰巧偏到一边，但不能保证最后一定完全一样。"
+                    hint="次数少，结果容易碰巧偏到一边；多记一些更有帮助。",
+                    explain="摸得更多的那一份记录通常更容易看出哪种颜色更常见。%s；"
+                            "少量试验可能碰巧偏到一边，多摸也不能保证每次都完全一样。"
                             % _desc(counts),
                     bags=[("神秘袋", counts)],
                     target=target,
@@ -558,19 +576,19 @@ def _without_replacement_recipes(rng: random.Random) -> List[Recipe]:
                 removed_target = removed.count(target)
                 after_target = before_target - removed_target
                 after_total = before_total - len(removed)
+                before_other = before_total - before_target
+                after_other = after_total - after_target
                 before = before_target / before_total
                 after = after_target / after_total
                 if abs(before - after) < 1e-12:
                     change = "不变"
-                    why = "拿出的珠子里，目标颜色所占的比例和袋里原来一样，所以下一次机会不变"
+                    why = "目标珠和其他珠按同样的方式减少，分组关系没变，所以机会不变"
                 elif after > before:
                     change = "变大"
-                    why = "拿出的珠子里%s珠较少，剩下的%s珠所占比例变大" % (
-                        c.name(target), c.name(target))
+                    why = "拿出的其他颜色更多，袋里剩下的珠子变少，目标珠更容易被摸到"
                 else:
                     change = "变小"
-                    why = "拿出的珠子里有%s珠，剩下的%s珠所占比例变小" % (
-                        c.name(target), c.name(target))
+                    why = "拿出的珠子里有%s珠，目标珠变少，所以机会变小" % c.name(target)
                 out.append(Recipe(
                     level=9,
                     title="不放回会怎样？",
@@ -579,10 +597,9 @@ def _without_replacement_recipes(rng: random.Random) -> List[Recipe]:
                     question="已经拿出%s，都不放回。现在再摸一颗，摸到%s珠的机会会怎样变化？"
                              % (chosen, c.name(target)),
                     action="先照题把%s拿出留在桌上，再摸下一颗。" % chosen,
-                    hint="先看目标珠少了几颗，再看袋里总数少了几颗。",
-                    explain="一开始袋里%s；拿出后剩下 %d 颗，其中%s珠 %d 颗。%s。"
-                            % (_desc(counts), after_total, c.name(target),
-                               after_target, why),
+                    hint="先看目标珠少了没有，再看其他颜色少了多少。",
+                    explain="一开始袋里目标珠 %d 颗、其他珠 %d 颗；拿出后目标珠 %d 颗、其他珠 %d 颗。%s。"
+                            % (before_target, before_other, after_target, after_other, why),
                     bags=[("神秘袋", counts)],
                     target=target,
                     removed=removed,
