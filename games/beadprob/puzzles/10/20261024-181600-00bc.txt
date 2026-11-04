@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-181600-00bc
+level=10
+title=三只盒子
+story=三只盒子中只有一只藏着星星，孩子先选中了左边。
+kind=evidence
+ask=update
+question=知道中间是空的以后，需要重新判断另外两只盒子吗？
+action=用三颗不同颜色的珠子代表盒子，拿走已经确认没有星星的那一颗。
+evidence=朋友打开中间盒子，里面是空的
+evidence=三只盒子中仍然只有一只藏星星
+answer=change
+conclusion=需要重新判断，因为一个可能的位置已经被排除。
+hint=新信息减少了哪些可能？
+explain=知道中间是空的以后，星星只剩两个可能位置。现在还不能确定在哪只盒子里，但对盒子的判断已经改变。

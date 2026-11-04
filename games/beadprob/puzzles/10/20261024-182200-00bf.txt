@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-182200-00bf
+level=10
+title=朋友确认过
+story=一个朋友隔着袋子猜里面有黄珠，另一个朋友打开看了一眼，说确实有。
+kind=evidence
+ask=update
+question=两个说法都出现后，你更应该相信哪一个？
+action=用彩珠和挡板模拟“猜”和“亲眼看”两种信息来源。
+evidence=第一个朋友只是猜
+evidence=第二个朋友现场看过并确认
+answer=yes
+conclusion=更应该相信亲自看过的朋友，因为信息来源经过了确认。
+hint=一个消息是猜的，另一个经过了什么？
+explain=新信息不仅要有内容，还要看来源是否可靠。已经实际检查过的信息，比没有依据的猜测更值得相信。

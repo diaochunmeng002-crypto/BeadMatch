@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-182600-00c1
+level=10
+title=个子高和鞋码大
+story=统计发现，个子高的孩子通常鞋码也更大。
+kind=evidence
+ask=cause
+question=能说鞋码大让孩子长得更高吗？
+action=用彩珠给不同年龄的孩子分组，观察年龄是不是同时影响身高和鞋码。
+evidence=身高较大的孩子，鞋码通常也较大
+evidence=观察结果来自不同年龄、不同成长阶段的孩子
+answer=not-cause
+conclusion=不能，年龄或成长会同时影响身高和鞋码。
+hint=孩子的年龄有没有同时影响两件事？
+explain=身高和鞋码一起变大，可能是因为孩子一起长大。相关记录能提示共同变化，但不能直接证明其中一项造成另一项。

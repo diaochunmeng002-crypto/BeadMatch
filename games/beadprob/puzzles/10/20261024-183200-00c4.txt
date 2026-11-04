@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-183200-00c4
+level=10
+title=冰淇淋和晒伤
+story=统计发现，冰淇淋卖得多的日子，晒伤的人也更多。
+kind=evidence
+ask=cause
+question=能说吃冰淇淋会导致晒伤吗？
+action=用同一种颜色的珠子标记晴天，分别用它连接冰淇淋和晒伤记录。
+evidence=晴天时冰淇淋销量较高
+evidence=晴天时户外活动更多，晒伤也更常见
+answer=not-cause
+conclusion=不能，晴天可能是两件事背后共同的原因。
+hint=两件事共同受什么条件影响？
+explain=晴天既能让人更想买冰淇淋，也会让更多人在户外活动。只有共同出现的记录，不足以说明其中一件造成另一件。

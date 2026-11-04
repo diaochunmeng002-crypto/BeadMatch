@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-183000-00c3
+level=10
+title=精彩集锦
+story=一段篮球集锦剪进了十次投篮，每一次都命中。
+kind=evidence
+ask=missing
+question=能用这段集锦判断球员的真实命中率吗？
+action=用 10 颗彩珠代表集锦，再挑出另一种颜色代表被剪掉的投篮。
+evidence=集锦里：10 次投篮，10 次命中
+evidence=没有投中的镜头全部被剪掉
+answer=no
+conclusion=不能，集锦只保留了成功结果。
+hint=失败投篮去哪里了？
+explain=集锦展示的是被挑出来的成功片段，不等于全部投篮记录。要估计命中率，需要把命中和没命中的次数都记下来。

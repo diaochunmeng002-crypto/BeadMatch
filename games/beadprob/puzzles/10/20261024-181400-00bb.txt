@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-181400-00bb
+level=10
+title=拿走一颗蓝珠
+story=袋里原来有 3 颗橙珠和 3 颗蓝珠。
+kind=evidence
+ask=update
+question=现在再摸一颗，摸到橙珠的机会有变化吗？
+action=用彩珠还原袋子，拿走一颗蓝珠，再比较剩下的橙珠和蓝珠数量。
+evidence=已经摸出 1 颗蓝珠
+evidence=这颗蓝珠不放回
+answer=change
+conclusion=有变化，蓝珠少了一颗，剩下橙珠的数量相对更多。
+hint=橙珠少了吗？蓝珠少了吗？
+explain=拿走的是一颗蓝珠，橙珠仍然是 3 颗，但袋里的其他珠子少了一颗，所以橙珠在下一次摸珠中更突出了。

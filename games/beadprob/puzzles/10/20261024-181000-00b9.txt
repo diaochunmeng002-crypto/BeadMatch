@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-181000-00b9
+level=10
+title=换了一个说法
+story=小盒里有一颗奖品，朋友只说“不在第一盒”。
+kind=evidence
+ask=update
+question=听到这个确定信息后，三个盒子仍然完全一样吗？
+action=摆三颗彩珠代表盒子，把已经被排除的颜色拿走。
+evidence=奖品原本可能在三个盒子里
+evidence=新的确定信息说明：第一盒没有
+answer=change
+conclusion=不一样了，第一盒已经被排除，判断范围变小了。
+hint=新的确定信息排除了什么？
+explain=得到可靠的新信息后，原来的可能结果会减少。即使还不能确定答案，也不应该继续把已排除的选项当成同等可能。

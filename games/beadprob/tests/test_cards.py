@@ -1,4 +1,4 @@
-"""彩珠机会屋题库：180 道都能读、答案能验、结构不重复。"""
+"""彩珠机会屋题库：200 道都能读、答案能验、结构不重复。"""
 
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ class LibraryTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.cards = k.iter_cards(ROOT)
 
-    def test_all_180_cards_are_clean(self) -> None:
-        self.assertEqual(len(self.cards), 180)
+    def test_all_200_cards_are_clean(self) -> None:
+        self.assertEqual(len(self.cards), 200)
         for card in self.cards:
             with self.subTest(card=card.path.name):
                 self.assertEqual(card.problems, [], card.title)
@@ -29,11 +29,11 @@ class LibraryTest(unittest.TestCase):
 
     def test_twenty_cards_per_level(self) -> None:
         rows = k.list_levels(ROOT)
-        self.assertEqual([row["level"] for row in rows], list(range(1, 10)))
-        self.assertEqual([row["count"] for row in rows], [20] * 9)
+        self.assertEqual([row["level"] for row in rows], list(range(1, 11)))
+        self.assertEqual([row["count"] for row in rows], [20] * 10)
 
     def test_each_level_has_twenty_distinct_shapes(self) -> None:
-        for level in range(1, 10):
+        for level in range(1, 11):
             cards = [card for card in self.cards if card.level == level]
             shapes = [k.shape_key(card) for card in cards]
             self.assertEqual(len(cards), 20, level)
@@ -43,7 +43,6 @@ class LibraryTest(unittest.TestCase):
         for card in self.cards:
             with self.subTest(card=card.path.name):
                 self.assertTrue(card.meta["action"].strip())
-                self.assertIn("摸", card.meta["action"])
 
     def test_level_three_uses_equal_totals(self) -> None:
         for card in (card for card in self.cards if card.level == 3):
@@ -137,6 +136,19 @@ class LibraryTest(unittest.TestCase):
             self.assertTrue(card.removed)
             self.assertIn(card.meta["answer"], ("larger", "smaller", "same"))
             self.assertNotIn("比例", card.meta["explain"], card.id)
+
+    def test_level_ten_is_evidence_detective(self) -> None:
+        cards = [card for card in self.cards if card.level == 10]
+        self.assertEqual(len(cards), 20)
+        self.assertEqual(Counter(card.meta["ask"] for card in cards),
+                         Counter({"missing": 4, "selection": 4, "streak": 4,
+                                  "update": 4, "cause": 4}))
+        for card in cards:
+            self.assertEqual(card.kind, "evidence")
+            self.assertFalse(card.bags)
+            self.assertTrue(card.evidence)
+            self.assertTrue(card.meta["conclusion"].strip())
+            self.assertIn(card.meta["answer"], k.EVIDENCE_ANSWERS)
 
     def test_physical_bead_limit_across_both_bags(self) -> None:
         """两只袋子同时摆出来时，每种颜色合计也不能超过 10 颗。"""

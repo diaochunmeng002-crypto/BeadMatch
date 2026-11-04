@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-181200-00ba
+level=10
+title=爱好者论坛
+story=一个游戏论坛里，大家讨论这个游戏时都很积极。
+kind=evidence
+ask=selection
+question=能说所有玩过游戏的人都喜欢它吗？
+action=把论坛用户放一堆，再想想删除游戏、没登录的人放在哪里。
+evidence=论坛调查中，90% 的人说很喜欢这个游戏
+evidence=调查对象只是主动登录论坛的用户
+answer=no
+conclusion=不能，论坛用户只是玩过的人中很特别的一部分。
+hint=不喜欢的人会不会更容易离开论坛？
+explain=愿意长期参与论坛的人通常更感兴趣；不喜欢的用户可能早就离开了。调查结果只代表留下来发言的人。

@@ -66,7 +66,8 @@ function bagSentence(bag) {
 function readWhole() {
   const puzzle = state.puzzle;
   if (!puzzle) return;
-  const parts = [puzzle.title, puzzle.story, ...(puzzle.bags || []).map(bagSentence)];
+  const parts = [puzzle.title, puzzle.story, ...(puzzle.evidence || []),
+                 ...(puzzle.bags || []).map(bagSentence)];
   if ((puzzle.prior || []).length) {
     parts.push('已经摸到：' + puzzle.prior.map((row) => row.name + '珠').join('、'));
   }
@@ -126,6 +127,19 @@ function renderBag(bag) {
   return el;
 }
 
+function renderEvidence(puzzle) {
+  const box = $('evidence');
+  box.replaceChildren();
+  const rows = puzzle.evidence || [];
+  rows.forEach((text) => {
+    const item = document.createElement('p');
+    item.className = 'evidence-item';
+    item.textContent = text;
+    box.appendChild(item);
+  });
+  box.hidden = !rows.length;
+}
+
 function renderSequence(puzzle) {
   const rows = (puzzle.removed || []).length ? puzzle.removed : (puzzle.prior || []);
   const box = $('sequence');
@@ -174,6 +188,7 @@ function render(puzzle) {
 
   const bags = $('bags');
   bags.innerHTML = '';
+  renderEvidence(puzzle);
   (puzzle.bags || []).forEach((bag) => bags.appendChild(renderBag(bag)));
   renderSequence(puzzle);
 

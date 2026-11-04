@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-182000-00be
+level=10
+title=连续五次正面
+story=一枚硬币连续掷出五次正面，硬币没有被改变。
+kind=evidence
+ask=streak
+question=第六次一定更可能是反面吗？
+action=用彩珠代表正反面，记录几次连续结果，但不要按“该轮到反面”猜。
+evidence=前五次结果：正、正、正、正、正
+evidence=硬币是同一枚普通硬币
+answer=no
+conclusion=不一定，前面的结果不会让硬币自动更想出现反面。
+hint=硬币会记得前面掷过什么吗？
+explain=如果硬币每次掷出的条件相同，前面出现正面并不会改变下一次；连续正面只是可能发生的随机序列。

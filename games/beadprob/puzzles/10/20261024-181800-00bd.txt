@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-181800-00bd
+level=10
+title=游泳馆调查
+story=有人在游泳馆调查了 50 个孩子：喜不喜欢游泳？
+kind=evidence
+ask=selection
+question=48 个孩子喜欢，能说明所有孩子都喜欢游泳吗？
+action=用彩珠代表 48 个“喜欢”，再想想不在这里的孩子要不要代表。
+evidence=48 个孩子回答喜欢
+evidence=调查地点只有正在游泳馆活动的孩子
+answer=no
+conclusion=不能，在游泳馆调查会更容易遇到本来就喜欢游泳的孩子。
+hint=谁最可能出现在游泳馆？
+explain=调查地点先筛选了一遍人群。要了解所有孩子，需要从不同地点、不同兴趣的孩子中取样。

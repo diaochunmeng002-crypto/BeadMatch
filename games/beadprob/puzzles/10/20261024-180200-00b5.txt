@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-180200-00b5
+level=10
+title=三个红点连成线
+story=一张随机点阵图上，正好有三个红点挨在一起。
+kind=evidence
+ask=streak
+question=看到三个红点排成线，就一定是有人故意设计吗？
+action=撒一把彩珠，看看随机摆放时会不会偶尔出现成串、成堆的样子。
+evidence=点阵里很多位置随机放了红点和蓝点
+evidence=其中三个红点形成一条直线
+answer=no
+conclusion=不一定，随机结果里偶尔也会出现看起来有规律的小团块。
+hint=随机是不是意味着每次都必须东一个、西一个？
+explain=随机会产生局部聚集。只凭一小处看起来整齐，不足以证明背后有设计；要比较整体数量和重复实验的结果。

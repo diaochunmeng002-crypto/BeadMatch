@@ -1,4 +1,4 @@
-"""生成彩珠机会屋九档题库，每档 20 道。
+"""生成彩珠机会屋十档题库，每档 20 道。
 
     python -m games.beadprob.tools.make_puzzles --fresh
 
@@ -41,6 +41,9 @@ class Recipe:
     ask: str = ""
     prior: List[str] = field(default_factory=list)
     removed: List[str] = field(default_factory=list)
+    evidence: List[str] = field(default_factory=list)
+    conclusion: str = ""
+    answer_code: str = ""
     first: int = 0
     total: int = 0
 
@@ -85,6 +88,8 @@ def _shape(recipe: Recipe) -> str:
                                           for bead in recipe.removed))
     if recipe.first:
         parts.append("%d/%d" % (recipe.first, recipe.total))
+    if recipe.kind == "evidence":
+        parts.append(recipe.question)
     return "|".join(parts)
 
 
@@ -116,6 +121,8 @@ def _text(recipe: Recipe, card_id: str) -> str:
         lines.append("prior=" + "".join(recipe.prior))
     if recipe.removed:
         lines.append("removed=" + "".join(recipe.removed))
+    for line in recipe.evidence:
+        lines.append("evidence=" + line)
     if recipe.first:
         lines.append("first=" + str(recipe.first))
         lines.append("total=" + str(recipe.total))
@@ -127,10 +134,12 @@ def _materialize(recipe: Recipe, serial: int) -> Tuple[str, k.Card]:
     card_id = "%s-%04x" % (stamp.strftime("%Y%m%d-%H%M%S"), serial)
     base = _text(recipe, card_id)
     probe = k.parse_card(base, Path("%s.txt" % card_id))
-    answer = k.infer_answer(probe)
+    answer = recipe.answer_code if recipe.kind == "evidence" else k.infer_answer(probe)
     if recipe.kind != "race" and not answer:
         raise RuntimeError("算不出答案：L%d《%s》" % (recipe.level, recipe.title))
     answer_line = "" if recipe.kind == "race" else "\nanswer=" + answer
+    if recipe.conclusion:
+        answer_line += "\nconclusion=" + recipe.conclusion
     text = base + answer_line + "\nhint=" + recipe.hint + "\nexplain=" + recipe.explain
     card = k.parse_card(text, Path(str(recipe.level), "%s.txt" % card_id))
     if card.problems:
@@ -607,6 +616,330 @@ def _without_replacement_recipes(rng: random.Random) -> List[Recipe]:
     return out
 
 
+def _evidence_recipes() -> List[Recipe]:
+    """L10：不计算，判断样本、随机波动、新信息和因果关系。"""
+    rows = [
+        {
+            "ask": "missing",
+            "title": "飞回来的飞机",
+            "story": "统计员只能看到安全返航的飞机，并在机身上记录弹孔。",
+            "evidence": [
+                "返航飞机：机翼 8 处弹孔，机身 5 处，驾驶舱 0 处",
+                "没有返航的飞机：没有任何记录",
+            ],
+            "question": "只凭这些返航飞机的弹孔，能直接说驾驶舱最安全吗？",
+            "action": "用彩珠在纸飞机图上摆出弹孔，再讨论哪些飞机没有进入这张统计图。",
+            "answer": "no",
+            "conclusion": "不能，因为没有返航的飞机没有进入统计。",
+            "hint": "先问：哪些飞机没有出现在记录里？",
+            "explain": "驾驶舱没有弹孔，可能是因为真的安全，也可能是因为那里中弹的飞机没有飞回来。缺少未返航数据，不能直接下结论。",
+        },
+        {
+            "ask": "missing",
+            "title": "完成游戏的人",
+            "story": "一个游戏只向完成全部十关的玩家发了问卷。",
+            "evidence": [
+                "收到 50 份问卷，其中 40 人说游戏很简单",
+                "没有完成十关的玩家没有收到问卷",
+            ],
+            "question": "这些回答能代表第一次来玩的玩家吗？",
+            "action": "把完成者的珠子放在左边，再想想哪些玩家没有珠子代表。",
+            "answer": "no",
+            "conclusion": "不能，问卷只看到了已经完成游戏的人。",
+            "hint": "谁会更容易完成全部十关？",
+            "explain": "愿意坚持到第十关的人可能本来就喜欢游戏或更熟练；没完成的玩家没有回答，样本已经经过筛选。",
+        },
+        {
+            "ask": "missing",
+            "title": "精彩集锦",
+            "story": "一段篮球集锦剪进了十次投篮，每一次都命中。",
+            "evidence": [
+                "集锦里：10 次投篮，10 次命中",
+                "没有投中的镜头全部被剪掉",
+            ],
+            "question": "能用这段集锦判断球员的真实命中率吗？",
+            "action": "用 10 颗彩珠代表集锦，再挑出另一种颜色代表被剪掉的投篮。",
+            "answer": "no",
+            "conclusion": "不能，集锦只保留了成功结果。",
+            "hint": "失败投篮去哪里了？",
+            "explain": "集锦展示的是被挑出来的成功片段，不等于全部投篮记录。要估计命中率，需要把命中和没命中的次数都记下来。",
+        },
+        {
+            "ask": "missing",
+            "title": "只剩五星的评价",
+            "story": "一家商店删除了所有一星到三星的评价，只留下五星。",
+            "evidence": [
+                "页面显示：80 条五星评价",
+                "被删除的差评没有显示数量",
+            ],
+            "question": "看到全是五星，能说所有买过的人都满意吗？",
+            "action": "用彩珠表示看到的五星，再用不透明的杯子盖住可能消失的评价。",
+            "answer": "no",
+            "conclusion": "不能，被删掉的评价也是买家体验的一部分。",
+            "hint": "页面为什么一条低分都没有？",
+            "explain": "低分评价被删除后，剩下的记录已经不代表全部买家。评价分布要先看数据是否完整。",
+        },
+        {
+            "ask": "selection",
+            "title": "游泳馆调查",
+            "story": "有人在游泳馆调查了 50 个孩子：喜不喜欢游泳？",
+            "evidence": [
+                "48 个孩子回答喜欢",
+                "调查地点只有正在游泳馆活动的孩子",
+            ],
+            "question": "48 个孩子喜欢，能说明所有孩子都喜欢游泳吗？",
+            "action": "用彩珠代表 48 个“喜欢”，再想想不在这里的孩子要不要代表。",
+            "answer": "no",
+            "conclusion": "不能，在游泳馆调查会更容易遇到本来就喜欢游泳的孩子。",
+            "hint": "谁最可能出现在游泳馆？",
+            "explain": "调查地点先筛选了一遍人群。要了解所有孩子，需要从不同地点、不同兴趣的孩子中取样。",
+        },
+        {
+            "ask": "selection",
+            "title": "只问观众",
+            "story": "老师在比赛结束后，只调查了坐在第一排的观众。",
+            "evidence": [
+                "第一排 10 人都说比赛很精彩",
+                "后排观众和没来看比赛的人没有被调查",
+            ],
+            "question": "能用这 10 个人判断所有人对比赛的评价吗？",
+            "action": "把 10 颗珠子放在展示区，再留一个空盒代表没有接受调查的人。",
+            "answer": "no",
+            "conclusion": "不能，样本只包含坐在第一排的人。",
+            "hint": "还有哪些人没有接受调查？",
+            "explain": "第一排观众可能和后排、没来的人有不同想法。样本范围太窄，就不能代表全部人。",
+        },
+        {
+            "ask": "selection",
+            "title": "大鱼网",
+            "story": "有人用网眼很大的渔网调查池塘里的鱼。",
+            "evidence": [
+                "抓到 10 条鱼，每条都很大",
+                "小鱼可能从大网眼里游走",
+            ],
+            "question": "能根据这 10 条大鱼说池塘里没有小鱼吗？",
+            "action": "用大珠和小珠当鱼，检查这个“网”会把哪一种留下。",
+            "answer": "no",
+            "conclusion": "不能，捕鱼工具先把小鱼筛掉了。",
+            "hint": "捉不到是因为不存在，还是因为工具抓不住？",
+            "explain": "样本受到工具筛选。看到鱼都大，可能只是小鱼没有被网留下，不能说明池塘里没有小鱼。",
+        },
+        {
+            "ask": "selection",
+            "title": "爱好者论坛",
+            "story": "一个游戏论坛里，大家讨论这个游戏时都很积极。",
+            "evidence": [
+                "论坛调查中，90% 的人说很喜欢这个游戏",
+                "调查对象只是主动登录论坛的用户",
+            ],
+            "question": "能说所有玩过游戏的人都喜欢它吗？",
+            "action": "把论坛用户放一堆，再想想删除游戏、没登录的人放在哪里。",
+            "answer": "no",
+            "conclusion": "不能，论坛用户只是玩过的人中很特别的一部分。",
+            "hint": "不喜欢的人会不会更容易离开论坛？",
+            "explain": "愿意长期参与论坛的人通常更感兴趣；不喜欢的用户可能早就离开了。调查结果只代表留下来发言的人。",
+        },
+        {
+            "ask": "streak",
+            "title": "连续五颗红珠",
+            "story": "袋子的组成没有变化，每次摸完都放回并摇匀。",
+            "evidence": [
+                "刚才连续摸到 5 颗红珠",
+                "每次摸完都放回并摇匀",
+            ],
+            "question": "连续出现红珠后，下一次蓝珠会变得更容易吗？",
+            "action": "用彩珠做一次有放回的摸珠，发现连续结果后停下来讨论。",
+            "answer": "same",
+            "conclusion": "不会，袋里的组成没变，下一次机会仍然和原来一样。",
+            "hint": "先问袋子有没有改变。",
+            "explain": "连续红珠可以让结果看起来很特别，但只要每次都放回并摇匀，袋子就没有记住刚才的结果。",
+        },
+        {
+            "ask": "streak",
+            "title": "连续五次正面",
+            "story": "一枚硬币连续掷出五次正面，硬币没有被改变。",
+            "evidence": [
+                "前五次结果：正、正、正、正、正",
+                "硬币是同一枚普通硬币",
+            ],
+            "question": "第六次一定更可能是反面吗？",
+            "action": "用彩珠代表正反面，记录几次连续结果，但不要按“该轮到反面”猜。",
+            "answer": "no",
+            "conclusion": "不一定，前面的结果不会让硬币自动更想出现反面。",
+            "hint": "硬币会记得前面掷过什么吗？",
+            "explain": "如果硬币每次掷出的条件相同，前面出现正面并不会改变下一次；连续正面只是可能发生的随机序列。",
+        },
+        {
+            "ask": "streak",
+            "title": "三个红点连成线",
+            "story": "一张随机点阵图上，正好有三个红点挨在一起。",
+            "evidence": [
+                "点阵里很多位置随机放了红点和蓝点",
+                "其中三个红点形成一条直线",
+            ],
+            "question": "看到三个红点排成线，就一定是有人故意设计吗？",
+            "action": "撒一把彩珠，看看随机摆放时会不会偶尔出现成串、成堆的样子。",
+            "answer": "no",
+            "conclusion": "不一定，随机结果里偶尔也会出现看起来有规律的小团块。",
+            "hint": "随机是不是意味着每次都必须东一个、西一个？",
+            "explain": "随机会产生局部聚集。只凭一小处看起来整齐，不足以证明背后有设计；要比较整体数量和重复实验的结果。",
+        },
+        {
+            "ask": "streak",
+            "title": "四投全中",
+            "story": "一个孩子连续投进四球，大家说他今天进入了“手感状态”。",
+            "evidence": [
+                "最近四次投篮全部命中",
+                "之前和之后的投篮没有完整记录",
+            ],
+            "question": "只凭四次全中，能确定他的真实能力突然提高了吗？",
+            "action": "用四种颜色的珠子记录命中与未命中，继续多投几轮再比较。",
+            "answer": "no",
+            "conclusion": "不能，四投全中可能只是短时间内的巧合。",
+            "hint": "四次的样本够不够？",
+            "explain": "短时间连续成功很引人注意，但需要更多次记录才能判断能力是否真的改变。不能只看最精彩的一小段。",
+        },
+        {
+            "ask": "update",
+            "title": "三只盒子",
+            "story": "三只盒子中只有一只藏着星星，孩子先选中了左边。",
+            "evidence": [
+                "朋友打开中间盒子，里面是空的",
+                "三只盒子中仍然只有一只藏星星",
+            ],
+            "question": "知道中间是空的以后，需要重新判断另外两只盒子吗？",
+            "action": "用三颗不同颜色的珠子代表盒子，拿走已经确认没有星星的那一颗。",
+            "answer": "change",
+            "conclusion": "需要重新判断，因为一个可能的位置已经被排除。",
+            "hint": "新信息减少了哪些可能？",
+            "explain": "知道中间是空的以后，星星只剩两个可能位置。现在还不能确定在哪只盒子里，但对盒子的判断已经改变。",
+        },
+        {
+            "ask": "update",
+            "title": "拿走一颗蓝珠",
+            "story": "袋里原来有 3 颗橙珠和 3 颗蓝珠。",
+            "evidence": [
+                "已经摸出 1 颗蓝珠",
+                "这颗蓝珠不放回",
+            ],
+            "question": "现在再摸一颗，摸到橙珠的机会有变化吗？",
+            "action": "用彩珠还原袋子，拿走一颗蓝珠，再比较剩下的橙珠和蓝珠数量。",
+            "answer": "change",
+            "conclusion": "有变化，蓝珠少了一颗，剩下橙珠的数量相对更多。",
+            "hint": "橙珠少了吗？蓝珠少了吗？",
+            "explain": "拿走的是一颗蓝珠，橙珠仍然是 3 颗，但袋里的其他珠子少了一颗，所以橙珠在下一次摸珠中更突出了。",
+        },
+        {
+            "ask": "update",
+            "title": "朋友确认过",
+            "story": "一个朋友隔着袋子猜里面有黄珠，另一个朋友打开看了一眼，说确实有。",
+            "evidence": [
+                "第一个朋友只是猜",
+                "第二个朋友现场看过并确认",
+            ],
+            "question": "两个说法都出现后，你更应该相信哪一个？",
+            "action": "用彩珠和挡板模拟“猜”和“亲眼看”两种信息来源。",
+            "answer": "yes",
+            "conclusion": "更应该相信亲自看过的朋友，因为信息来源经过了确认。",
+            "hint": "一个消息是猜的，另一个经过了什么？",
+            "explain": "新信息不仅要有内容，还要看来源是否可靠。已经实际检查过的信息，比没有依据的猜测更值得相信。",
+        },
+        {
+            "ask": "update",
+            "title": "换了一个说法",
+            "story": "小盒里有一颗奖品，朋友只说“不在第一盒”。",
+            "evidence": [
+                "奖品原本可能在三个盒子里",
+                "新的确定信息说明：第一盒没有",
+            ],
+            "question": "听到这个确定信息后，三个盒子仍然完全一样吗？",
+            "action": "摆三颗彩珠代表盒子，把已经被排除的颜色拿走。",
+            "answer": "change",
+            "conclusion": "不一样了，第一盒已经被排除，判断范围变小了。",
+            "hint": "新的确定信息排除了什么？",
+            "explain": "得到可靠的新信息后，原来的可能结果会减少。即使还不能确定答案，也不应该继续把已排除的选项当成同等可能。",
+        },
+        {
+            "ask": "cause",
+            "title": "雨伞和湿地",
+            "story": "统计发现，雨天街上雨伞多，地面也更容易湿。",
+            "evidence": [
+                "雨伞多的日子，地面经常是湿的",
+                "雨伞和湿地面常常一起出现",
+            ],
+            "question": "能说雨伞把地面弄湿了吗？",
+            "action": "用蓝色珠子代表雨、黄色代表雨伞、灰色代表湿地，看看谁可能同时带来前两样。",
+            "answer": "not-cause",
+            "conclusion": "不能，下雨可能同时造成大家带伞和地面变湿。",
+            "hint": "有没有第三个原因同时影响两件事？",
+            "explain": "两件事经常一起出现，不代表一件造成另一件。雨可能同时解释了雨伞和湿地面。",
+        },
+        {
+            "ask": "cause",
+            "title": "冰淇淋和晒伤",
+            "story": "统计发现，冰淇淋卖得多的日子，晒伤的人也更多。",
+            "evidence": [
+                "晴天时冰淇淋销量较高",
+                "晴天时户外活动更多，晒伤也更常见",
+            ],
+            "question": "能说吃冰淇淋会导致晒伤吗？",
+            "action": "用同一种颜色的珠子标记晴天，分别用它连接冰淇淋和晒伤记录。",
+            "answer": "not-cause",
+            "conclusion": "不能，晴天可能是两件事背后共同的原因。",
+            "hint": "两件事共同受什么条件影响？",
+            "explain": "晴天既能让人更想买冰淇淋，也会让更多人在户外活动。只有共同出现的记录，不足以说明其中一件造成另一件。",
+        },
+        {
+            "ask": "cause",
+            "title": "幸运袜",
+            "story": "一支球队换了红袜子后连赢三场，队员说袜子带来了好运。",
+            "evidence": [
+                "穿红袜子的三场都赢了",
+                "穿其他袜子时的比赛结果没有被完整比较",
+            ],
+            "question": "能确定是红袜子让球队获胜吗？",
+            "action": "用彩珠分别记录不同袜子和胜负，先确认两种条件下的全部比赛。",
+            "answer": "not-cause",
+            "conclusion": "不能，还需要比较穿和不穿红袜子时的全部结果。",
+            "hint": "是否缺少另一种情况的记录？",
+            "explain": "只挑出连胜的三场，不能看出袜子是否真的影响结果。要比较两种情况的完整记录，还要考虑对手、队员状态等其他因素。",
+        },
+        {
+            "ask": "cause",
+            "title": "个子高和鞋码大",
+            "story": "统计发现，个子高的孩子通常鞋码也更大。",
+            "evidence": [
+                "身高较大的孩子，鞋码通常也较大",
+                "观察结果来自不同年龄、不同成长阶段的孩子",
+            ],
+            "question": "能说鞋码大让孩子长得更高吗？",
+            "action": "用彩珠给不同年龄的孩子分组，观察年龄是不是同时影响身高和鞋码。",
+            "answer": "not-cause",
+            "conclusion": "不能，年龄或成长会同时影响身高和鞋码。",
+            "hint": "孩子的年龄有没有同时影响两件事？",
+            "explain": "身高和鞋码一起变大，可能是因为孩子一起长大。相关记录能提示共同变化，但不能直接证明其中一项造成另一项。",
+        },
+    ]
+    return [
+        Recipe(
+            level=10,
+            title=row["title"],
+            story=row["story"],
+            kind="evidence",
+            question=row["question"],
+            action=row["action"],
+            hint=row["hint"],
+            explain=row["explain"],
+            bags=[],
+            ask=row["ask"],
+            evidence=row["evidence"],
+            conclusion=row["conclusion"],
+            answer_code=row["answer"],
+        )
+        for row in rows
+    ]
+
+
 def build_all() -> List[Tuple[str, k.Card]]:
     rng = random.Random(20261024)
     groups: List[List[Recipe]] = [
@@ -619,6 +952,7 @@ def build_all() -> List[Tuple[str, k.Card]]:
         _choose(_independence_recipes(rng), rng),
         _choose(_convergence_recipes(rng), rng),
         _choose(_without_replacement_recipes(rng), rng),
+        _choose(_evidence_recipes(), rng),
     ]
     selected = [recipe for group in groups for recipe in group]
     rng.shuffle(selected)
@@ -644,7 +978,7 @@ def write_all(items: List[Tuple[str, k.Card]], root: Path, fresh: bool) -> None:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="生成彩珠机会屋九档题库")
+    parser = argparse.ArgumentParser(description="生成彩珠机会屋十档题库")
     parser.add_argument("--out", default=str(k.PUZZLE_DIR), help="题库目录")
     parser.add_argument("--fresh", action="store_true",
                         help="先删掉目标目录里的旧 .txt，再生成整套")

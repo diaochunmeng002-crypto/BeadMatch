@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-183600-00c6
+level=10
+title=四投全中
+story=一个孩子连续投进四球，大家说他今天进入了“手感状态”。
+kind=evidence
+ask=streak
+question=只凭四次全中，能确定他的真实能力突然提高了吗？
+action=用四种颜色的珠子记录命中与未命中，继续多投几轮再比较。
+evidence=最近四次投篮全部命中
+evidence=之前和之后的投篮没有完整记录
+answer=no
+conclusion=不能，四投全中可能只是短时间内的巧合。
+hint=四次的样本够不够？
+explain=短时间连续成功很引人注意，但需要更多次记录才能判断能力是否真的改变。不能只看最精彩的一小段。

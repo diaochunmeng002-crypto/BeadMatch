@@ -468,7 +468,7 @@ class HistoryPageTest(unittest.TestCase):
         game = next((row for row in games if row["id"] == "beadprob"), None)
         self.assertIsNotNone(game)
         self.assertEqual(game["name"], "彩珠机会屋")
-        self.assertEqual(game["total"], 180)
+        self.assertEqual(game["total"], 200)
         self.assertEqual(games[-1]["id"], "beadprob")
 
         page = self.client.get("/games/beadprob/")

@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-184000-00c8
+level=10
+title=只剩五星的评价
+story=一家商店删除了所有一星到三星的评价，只留下五星。
+kind=evidence
+ask=missing
+question=看到全是五星，能说所有买过的人都满意吗？
+action=用彩珠表示看到的五星，再用不透明的杯子盖住可能消失的评价。
+evidence=页面显示：80 条五星评价
+evidence=被删除的差评没有显示数量
+answer=no
+conclusion=不能，被删掉的评价也是买家体验的一部分。
+hint=页面为什么一条低分都没有？
+explain=低分评价被删除后，剩下的记录已经不代表全部买家。评价分布要先看数据是否完整。

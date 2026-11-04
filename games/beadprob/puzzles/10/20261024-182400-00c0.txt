@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-182400-00c0
+level=10
+title=飞回来的飞机
+story=统计员只能看到安全返航的飞机，并在机身上记录弹孔。
+kind=evidence
+ask=missing
+question=只凭这些返航飞机的弹孔，能直接说驾驶舱最安全吗？
+action=用彩珠在纸飞机图上摆出弹孔，再讨论哪些飞机没有进入这张统计图。
+evidence=返航飞机：机翼 8 处弹孔，机身 5 处，驾驶舱 0 处
+evidence=没有返航的飞机：没有任何记录
+answer=no
+conclusion=不能，因为没有返航的飞机没有进入统计。
+hint=先问：哪些飞机没有出现在记录里？
+explain=驾驶舱没有弹孔，可能是因为真的安全，也可能是因为那里中弹的飞机没有飞回来。缺少未返航数据，不能直接下结论。

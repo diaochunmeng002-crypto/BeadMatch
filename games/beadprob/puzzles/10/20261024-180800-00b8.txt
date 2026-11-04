@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-180800-00b8
+level=10
+title=大鱼网
+story=有人用网眼很大的渔网调查池塘里的鱼。
+kind=evidence
+ask=selection
+question=能根据这 10 条大鱼说池塘里没有小鱼吗？
+action=用大珠和小珠当鱼，检查这个“网”会把哪一种留下。
+evidence=抓到 10 条鱼，每条都很大
+evidence=小鱼可能从大网眼里游走
+answer=no
+conclusion=不能，捕鱼工具先把小鱼筛掉了。
+hint=捉不到是因为不存在，还是因为工具抓不住？
+explain=样本受到工具筛选。看到鱼都大，可能只是小鱼没有被网留下，不能说明池塘里没有小鱼。

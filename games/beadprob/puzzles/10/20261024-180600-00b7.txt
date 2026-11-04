@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-180600-00b7
+level=10
+title=幸运袜
+story=一支球队换了红袜子后连赢三场，队员说袜子带来了好运。
+kind=evidence
+ask=cause
+question=能确定是红袜子让球队获胜吗？
+action=用彩珠分别记录不同袜子和胜负，先确认两种条件下的全部比赛。
+evidence=穿红袜子的三场都赢了
+evidence=穿其他袜子时的比赛结果没有被完整比较
+answer=not-cause
+conclusion=不能，还需要比较穿和不穿红袜子时的全部结果。
+hint=是否缺少另一种情况的记录？
+explain=只挑出连胜的三场，不能看出袜子是否真的影响结果。要比较两种情况的完整记录，还要考虑对手、队员状态等其他因素。

@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-182800-00c2
+level=10
+title=完成游戏的人
+story=一个游戏只向完成全部十关的玩家发了问卷。
+kind=evidence
+ask=missing
+question=这些回答能代表第一次来玩的玩家吗？
+action=把完成者的珠子放在左边，再想想哪些玩家没有珠子代表。
+evidence=收到 50 份问卷，其中 40 人说游戏很简单
+evidence=没有完成十关的玩家没有收到问卷
+answer=no
+conclusion=不能，问卷只看到了已经完成游戏的人。
+hint=谁会更容易完成全部十关？
+explain=愿意坚持到第十关的人可能本来就喜欢游戏或更熟练；没完成的玩家没有回答，样本已经经过筛选。

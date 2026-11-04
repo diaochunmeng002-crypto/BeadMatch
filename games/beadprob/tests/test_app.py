@@ -27,13 +27,14 @@ class BeadProbAppTest(unittest.TestCase):
 
     def test_levels_and_random(self) -> None:
         data = client.get("/api/levels").json()
-        self.assertEqual(data["total"], 180)
-        self.assertEqual([row["level"] for row in data["levels"]], list(range(1, 10)))
-        self.assertEqual([row["count"] for row in data["levels"]], [20] * 9)
+        self.assertEqual(data["total"], 200)
+        self.assertEqual([row["level"] for row in data["levels"]], list(range(1, 11)))
+        self.assertEqual([row["count"] for row in data["levels"]], [20] * 10)
         self.assertEqual(data["levels"][5]["name"], "三颗赛跑")
-        self.assertEqual(data["levels"][-1]["name"], "不放回")
+        self.assertEqual(data["levels"][8]["name"], "不放回")
+        self.assertEqual(data["levels"][-1]["name"], "证据侦探")
 
-        for level in range(1, 10):
+        for level in range(1, 11):
             puzzle = client.get("/api/random", params={"level": level}).json()
             self.assertEqual(puzzle["level"], level)
             self.assertTrue(puzzle["action"])
@@ -43,6 +44,9 @@ class BeadProbAppTest(unittest.TestCase):
             else:
                 self.assertTrue(puzzle["answer_text"])
             self.assertEqual(puzzle["pool_size"], 20)
+            if level == 10:
+                self.assertEqual(puzzle["kind"], "evidence")
+                self.assertTrue(puzzle["evidence"])
 
     def test_get_by_id(self) -> None:
         listed = client.get("/api/puzzles", params={"level": 7}).json()
@@ -68,6 +72,7 @@ class BeadProbAppTest(unittest.TestCase):
         self.assertIn("row.name + ' ' + row.count + ' 颗'", js)
         self.assertIn("sort((a, b) => a.count - b.count", js)
         self.assertIn("renderSequence", js)
+        self.assertIn("renderEvidence", js)
         self.assertNotIn("choose(", js)
 
         css = client.get("/static/style.css").text
@@ -76,7 +81,8 @@ class BeadProbAppTest(unittest.TestCase):
 
     def test_page_has_no_screen_answer_buttons(self) -> None:
         page = client.get("/").text
-        self.assertIn("线下摸珠", page)
+        self.assertIn("线下动手或观察", page)
+        self.assertIn('id="evidence"', page)
         self.assertIn('id="action"', page)
         self.assertIn('id="next">换一题</button>', page)
         self.assertNotIn('id="options"', page)

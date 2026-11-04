@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-183800-00c7
+level=10
+title=只问观众
+story=老师在比赛结束后，只调查了坐在第一排的观众。
+kind=evidence
+ask=selection
+question=能用这 10 个人判断所有人对比赛的评价吗？
+action=把 10 颗珠子放在展示区，再留一个空盒代表没有接受调查的人。
+evidence=第一排 10 人都说比赛很精彩
+evidence=后排观众和没来看比赛的人没有被调查
+answer=no
+conclusion=不能，样本只包含坐在第一排的人。
+hint=还有哪些人没有接受调查？
+explain=第一排观众可能和后排、没来的人有不同想法。样本范围太窄，就不能代表全部人。

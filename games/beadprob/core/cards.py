@@ -58,6 +58,7 @@ LEVEL_NAMES = {
     7: "放回与随机",
     8: "多试几次",
     9: "不放回",
+    10: "证据侦探",
 }
 LEVEL_KINDS = {
     1: "outcome",
@@ -69,13 +70,16 @@ LEVEL_KINDS = {
     7: "independence",
     8: "convergence",
     9: "without",
+    10: "evidence",
 }
 KINDS = set(LEVEL_KINDS.values())
+EVIDENCE_ASKS = {"missing", "selection", "streak", "update", "cause"}
+EVIDENCE_ANSWERS = {"yes", "no", "same", "change", "not-cause"}
 
 META_KEYS = {
     "created_at", "created_by", "generator", "id", "level", "title", "story",
     "kind", "target", "ask", "question", "action", "bag", "answer", "hint",
-    "explain", "prior", "removed", "first", "total",
+    "explain", "prior", "removed", "first", "total", "evidence", "conclusion",
 }
 REQUIRED = ("id", "level", "title", "kind", "question", "action", "explain")
 
@@ -112,6 +116,7 @@ class Card:
     bags: List[Bag] = field(default_factory=list)
     prior: List[str] = field(default_factory=list)
     removed: List[str] = field(default_factory=list)
+    evidence: List[str] = field(default_factory=list)
     problems: List[str] = field(default_factory=list)
 
     @property
@@ -204,6 +209,8 @@ def _parse_sequence(text: str, field_name: str, problems: List[str]) -> List[str
 
 def _truth(card: Card) -> str:
     """按题卡实际数据算答案；数据不完整时返回空串。"""
+    if card.kind == "evidence":
+        return (card.meta.get("answer") or "").strip()
     if not card.bags:
         return ""
     if card.kind == "outcome":
@@ -270,7 +277,7 @@ def _check(card: Card) -> None:
         _parse_error("第 %d 档的 kind 应该是 %s，不是 %s"
                      % (card.level, LEVEL_KINDS[card.level], card.kind), card.problems)
 
-    expected_bags = 2 if card.kind == "compare" else 1
+    expected_bags = 2 if card.kind == "compare" else (0 if card.kind == "evidence" else 1)
     if len(card.bags) != expected_bags:
         _parse_error("%s 题要 %d 只袋子，现在有 %d 只"
                      % (card.kind, expected_bags, len(card.bags)), card.problems)
@@ -293,7 +300,7 @@ def _check(card: Card) -> None:
             _parse_error("两只袋子合起来要 %d 颗%s珠，可手上一共只有 %d 颗"
                          % (count, c.name(bead), MAX_COLOR_TOTAL), card.problems)
 
-    if card.kind not in ("most", "race") and not c.is_color(card.target):
+    if card.kind not in ("most", "race", "evidence") and not c.is_color(card.target):
         _parse_error("target=%r 不是认识的珠子颜色" % card.target, card.problems)
 
     if card.kind == "outcome":
@@ -335,6 +342,17 @@ def _check(card: Card) -> None:
                 _parse_error("拿出的%s珠比袋里原有的还多" % c.name(bead), card.problems)
         if bag.total - len(card.removed) <= 0:
             _parse_error("不能把袋里的珠子全部拿光", card.problems)
+    elif card.kind == "evidence":
+        if card.meta.get("ask") not in EVIDENCE_ASKS:
+            _parse_error("evidence 题要写 ask=missing / selection / streak / update / cause",
+                         card.problems)
+        if not card.evidence:
+            _parse_error("evidence 题至少要写一条 evidence=", card.problems)
+        if not (card.meta.get("conclusion") or "").strip():
+            _parse_error("evidence 题要写 conclusion=", card.problems)
+        if (card.meta.get("answer") or "") not in EVIDENCE_ANSWERS:
+            _parse_error("evidence 题的 answer 要是 yes / no / same / change / not-cause",
+                         card.problems)
 
     if card.kind == "compare" and len(card.bags) == 2:
         left, right = card.bags
@@ -380,6 +398,7 @@ def parse_card(text: str, path: Path = Path("card.txt")) -> Card:
     """把一段题卡文本读成 ``Card``，同时收集所有问题。"""
     card = Card(path=Path(path))
     bag_lines: List[str] = []
+    evidence_lines: List[str] = []
     for raw in text.splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -392,6 +411,8 @@ def parse_card(text: str, path: Path = Path("card.txt")) -> Card:
         value = value.strip()
         if key == "bag":
             bag_lines.append(value)
+        elif key == "evidence":
+            evidence_lines.append(value)
         else:
             card.meta[key] = value
 
@@ -399,6 +420,7 @@ def parse_card(text: str, path: Path = Path("card.txt")) -> Card:
                  if bag is not None]
     card.prior = _parse_sequence(card.meta.get("prior", ""), "prior", card.problems)
     card.removed = _parse_sequence(card.meta.get("removed", ""), "removed", card.problems)
+    card.evidence = [line.strip() for line in evidence_lines if line.strip()]
     _check(card)
     return card
 
@@ -432,6 +454,8 @@ def answer_text(card: Card) -> str:
             "smaller": "更小",
             "same": "不变",
         }.get(answer, "")
+    if card.kind == "evidence":
+        return card.meta.get("conclusion", "")
     return ""
 
 
@@ -471,6 +495,7 @@ def payload(card: Card) -> Dict[str, Any]:
         "action": card.meta.get("action", ""),
         "hint": card.meta.get("hint", ""),
         "explain": card.meta.get("explain", ""),
+        "evidence": card.evidence,
         "bags": bags,
         "prior": [{"bead": bead, "name": c.name(bead)} for bead in card.prior],
         "removed": [{"bead": bead, "name": c.name(bead)} for bead in card.removed],
@@ -506,6 +531,8 @@ def shape_key(card: Card) -> str:
                                           for bead in card.removed))
     if card.kind == "convergence":
         parts.append("%d/%d" % (card.first_draws, card.total_draws))
+    if card.kind == "evidence":
+        parts.append(card.meta.get("question", ""))
     return "|".join(parts)
 
 

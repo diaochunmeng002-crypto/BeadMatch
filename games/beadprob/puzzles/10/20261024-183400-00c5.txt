@@ -1,0 +1,19 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-24
+created_by=beadprob
+generator=make_puzzles@2
+id=20261024-183400-00c5
+level=10
+title=连续五颗红珠
+story=袋子的组成没有变化，每次摸完都放回并摇匀。
+kind=evidence
+ask=streak
+question=连续出现红珠后，下一次蓝珠会变得更容易吗？
+action=用彩珠做一次有放回的摸珠，发现连续结果后停下来讨论。
+evidence=刚才连续摸到 5 颗红珠
+evidence=每次摸完都放回并摇匀
+answer=same
+conclusion=不会，袋里的组成没变，下一次机会仍然和原来一样。
+hint=先问袋子有没有改变。
+explain=连续红珠可以让结果看起来很特别，但只要每次都放回并摇匀，袋子就没有记住刚才的结果。

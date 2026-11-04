@@ -114,6 +114,22 @@ h2 {
   gap: 12px;
 }
 
+.evidence {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.evidence[hidden] { display: none; }
+.evidence-item {
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--slot);
+  line-height: 1.75;
+}
+
 .bag {
   min-width: 0;
   padding: 15px 16px 13px;
