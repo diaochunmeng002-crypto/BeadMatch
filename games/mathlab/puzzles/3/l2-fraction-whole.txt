@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l2-fraction-whole
+level=3
+theme=分数
+title=先找到整个一
+thing=糖球
+unit=颗
+materials=Y:4 B:2
+example=6 颗合起来是一整个|YYYYBB|整体 6 颗|
+example=平均分成 2 份|YYY BBB|每份 3 颗|
+answer=把这 6 颗糖球看成一个整体，平均分成 2 份后，每份都是这个整体的一半。
+why=说“几分之几”以前，先要确定哪一堆是完整的“1”；再把完整的 1 平均分。
+
+拿 6 颗糖球，把它们合在一起，假装这是一整盒糖。
+把这盒糖平均倒进 2 个小盘子。
+每个盘子里有几颗？
+每一盘占这盒糖的多少？

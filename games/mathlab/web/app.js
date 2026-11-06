@@ -37,7 +37,7 @@ const WANT_ID = (() => {
 
 const state = {
   demo: null,        // 当前这个演示（后端返回的原样）
-  levels: [],        // 每档几个演示（下拉框用，跟别的游戏一样只列难度）
+  levels: [],        // 每个学习阶段有几个演示（下拉框用）
   revealed: false,
 };
 

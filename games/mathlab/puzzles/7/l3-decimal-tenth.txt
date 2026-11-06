@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l3-decimal-tenth
+level=7
+theme=小数
+title=十颗串成一条
+thing=木珠
+unit=颗
+materials=Y:5 B:5
+example=一整条是 1|YYYYYBBBBB|平均分成 10 份|
+example=一颗是 0.1|YYB|3 颗是 0.3|
+answer=把 10 颗木珠平均串成一条，这条完整的珠串就是 1；其中每一颗都是 1/10，也就是 0.1。
+why=“十分之一”就是把一个整体平均分成 10 份；小数 0.1 是它的另一种写法。
+
+把 10 颗木珠串成一条，并把这一整条看成 1。
+这一条被平均分成了多少份？
+其中一颗占整条珠串的几分之几？
+十个“十分之一”合起来是多少？

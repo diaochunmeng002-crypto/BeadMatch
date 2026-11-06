@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l5-decimal-fraction-tenth
+level=7
+theme=小数
+title=0.1 和十分之一
+thing=小珠子
+unit=颗
+materials=Y:5 B:5
+example=完整的一整条|YYYYYBBBBB|1 = 10 个十分之一|
+example=其中 7 份|YYY BB|7/10 = 0.7|
+answer=0.1 和 1/10 都表示把整体平均分成 10 份后的一份；0.7 就是 7 个 0.1，也等于 7/10。
+why=小数和分数可以记录同一个部分，只是写法不同；十分位的数字表示一共有几个十分之一。
+
+把 10 颗珠子串成一整条，把整条看成 1。
+数出其中 1 颗：它既是 1/10，也是 0.1。
+再数出 7 颗：它等于几个 0.1？
+7/10 写成小数是多少？

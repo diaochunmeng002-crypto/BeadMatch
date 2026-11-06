@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17
+created_by=manual
+id=l2-share
+level=3
+theme=分组
+title=平均分配
+thing=小饼干
+unit=块
+materials=O:4
+example=分给 3 个盒子|O O O|每盒 1 块，余 1 块|
+example=分给 2 个盒子|OO OO|每盒 2 块，正好分完|
+answer=4 块分给 3 个盒子：每盒 1 块，还剩 1 块；分给 2 个盒子：每盒 2 块，正好分完。剩下不够再分一圈的，叫余数。
+why=平均分要每个盒子拿到的一样多。分到后面不够每个盒子再拿一块，剩下的就是余数。
+
+拿 4 块小饼干，准备 3 个小盒子。
+一块一块地分：每个盒子先放 1 块，转着圈放。
+每个盒子一样多吗？还剩几块？
+换成 2 个盒子再试一次：能分完吗？

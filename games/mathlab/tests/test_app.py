@@ -22,21 +22,23 @@ class TestMathLab(unittest.TestCase):
         r = client.get("/")
         self.assertEqual(r.status_code, 200)
         self.assertIn("数学实验室", r.text)
+        self.assertIn("学习阶段", r.text)
         self.assertIn('id="level-menu"', r.text)       # 当前等级类型用一行顿号文字
         self.assertIn("static/app.js", r.text)
         self.assertIn("static/style.css", r.text)
 
     def test_levels_and_list(self):
         body = client.get("/api/levels").json()
-        self.assertEqual(body["total"], 54)
+        self.assertEqual(body["total"], 65)
         self.assertEqual([row["level"] for row in body["levels"]], list(range(1, 9)))
         self.assertEqual([row["name"] for row in body["levels"]],
-                         ["感知", "组合", "结构", "探索", "关系", "规律", "符号", "建模"])
+                         ["数数和比较", "拆分和合并", "平均分和分数", "乘法和除法",
+                          "规律和验算", "图形、测量和数据", "位值和小数", "生活里的数学"])
         self.assertEqual([row["count"] for row in body["levels"]],
-                         [7, 7, 8, 8, 6, 6, 6, 6])
+                         [4, 3, 8, 11, 8, 14, 11, 6])
         self.assertTrue(all(row["summary"].strip() for row in body["levels"]))
         listed = client.get("/api/puzzles").json()
-        self.assertEqual(listed["count"], 54)
+        self.assertEqual(listed["count"], 65)
 
     def test_get_demo(self):
         demo_id = client.get("/api/puzzles").json()["demos"][0]["id"]

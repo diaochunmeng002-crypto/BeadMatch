@@ -1,0 +1,21 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l3-decimal-jiao-money
+level=7
+theme=小数
+title=几毛钱是多少元
+thing=小圆片
+unit=枚
+materials=Y:5 B:5 R:3
+example=10 枚代表 1 元|YYYYYBBBBB|1 元 = 1.0 元|
+example=3 枚代表 3 角|RRR|3 角 = 0.3 元|
+example=1 元再加 3 角|YYYYYBBBBB RRR|1 元 3 角 = 1.3 元|
+answer=1 元等于 10 角，每 1 角就是 0.1 元；3 角是 0.3 元，所以 1 元 3 角写成一位小数是 1.3 元。
+why=平时说的“几毛钱”就是“几角钱”。把 1 元平均分成 10 份，每一份是 1 角，也就是 0.1 元。
+
+拿 10 枚小圆片，假装每一枚代表 1 角钱。
+10 角合起来是多少元？
+3 枚圆片代表几角？也就是多少元？
+1 元再加 3 角，一共是多少元？

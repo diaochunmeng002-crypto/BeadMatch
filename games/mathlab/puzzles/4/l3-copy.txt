@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-10-17
+created_by=manual
+id=l3-copy
+level=4
+theme=乘除
+title=复制魔法
+thing=小星星
+unit=颗
+materials=G:4
+example=1 组：2 颗|GG|2 颗|
+example=2 组：4 颗|GG GG|2 + 2 = 4|
+answer=2 组，每组 2 颗，一共 4 颗 —— 2 × 2 = 4。
+why=乘法就是几个一样多的组加起来：2 + 2 = 4。
+
+摆一组小星星：2 颗绿。
+照着这一组，再摆一组（这就是复制）。
+一共摆 2 组。
+2 组、每组 2 颗，一共几颗？

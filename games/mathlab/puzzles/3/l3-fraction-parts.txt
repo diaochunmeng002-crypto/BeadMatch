@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l3-fraction-parts
+level=3
+theme=分数
+title=取走其中的几份
+thing=积木
+unit=块
+materials=Y:4 B:4
+example=整体平均分成 4 份|YY BB YY BB|每份 2 块|
+example=取走其中 3 份|YY BB YY|取走 3/4|
+answer=8 块平均分成 4 份，每份 2 块；取走 3 份就是 3/4，剩下 1/4。
+why=分母 4 表示整个被平均分成 4 份，分子 3 表示取走了其中的 3 份。
+
+把 8 块积木看成完整的 1。
+平均分成 4 份，每份要有几块？
+把其中 3 份圈在一起。
+圈起来的占整体的几分之几？剩下几分之几？

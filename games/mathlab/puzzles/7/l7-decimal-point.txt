@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l7-decimal-point
+level=7
+theme=小数
+title=小数点是分隔线
+thing=木珠
+unit=颗
+materials=Y:5 B:5
+example=一个完整整体|YYYYYBBBBB|1 = 1.0|
+example=一个十分之一|Y|1/10 = 0.1|
+answer=1 个完整整体可以写成 1.0；小数点左边记录完整整体的个数，右边一位记录十分之一的个数。
+why=小数点不是随便加上的符号，它把“完整的整体”和“不足一个整体的十分部分”分开记录。
+
+把一条 10 颗的木珠串看成 1 个完整整体。
+完整的 1 个，小数部分没有，怎么写成一位小数？
+只拿 1 颗，它是 1 个整体还是 1 个十分之一？
+小数点左边和右边的数字分别表示什么？

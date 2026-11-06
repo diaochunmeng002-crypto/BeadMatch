@@ -1,0 +1,20 @@
+# colors: Yellow Green Red Purple Blue Orange
+
+created_at=2026-11-06
+created_by=manual
+id=l3-fraction-third
+level=3
+theme=分数
+title=平均分成三份
+thing=小饼干
+unit=块
+materials=Y:4 B:2
+example=6 块是完整的 1|YYYYBB|整体 6 块|
+example=平均分成 3 份|YY BB YY|每份 2 块，一份是 1/3|
+answer=6 块平均分成 3 份，每份 2 块；其中一份就是整体的 1/3。
+why=分成几份，分母就写几；三份里的其中一份，就写成 1/3。
+
+把 6 块小饼干看成完整的 1。
+把它们平均放进 3 个小盘子。
+每个盘子要一样多：每盘有几块？
+拿走其中一盘，拿走了整体的几分之几？
