@@ -109,6 +109,7 @@ _EXTRA_LINKS = (
     ("pitchpot", "投壶", "/extras/pitchpot"),
     ("pickleball", "匹克球", "/extras/pickleball"),
     ("tabletennis", "乒乓球", "/extras/tabletennis"),
+    ("badminton", "羽毛球", "/extras/badminton"),
 )
 
 

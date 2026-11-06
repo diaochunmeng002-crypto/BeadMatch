@@ -304,7 +304,8 @@ class HistoryPageTest(unittest.TestCase):
         self.assertLess(home.index('href="/history">历史</a>'),
                         home.index('href="/stars"'))
         for extra_id, name in (("slingshot", "弹弓"), ("pitchpot", "投壶"),
-                               ("pickleball", "匹克球"), ("tabletennis", "乒乓球")):
+                               ("pickleball", "匹克球"), ("tabletennis", "乒乓球"),
+                               ("badminton", "羽毛球")):
             self.assertIn('href="/extras/%s"' % extra_id, home)
         self.assertIn('href="/extras/kendama"', home)
         self.assertIn('class="extra-games"', home)
@@ -313,8 +314,10 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
         self.assertIn("用小目标练发球、连续对打和控球。", home)
         self.assertIn("先练控拍控球，再上球台练过网和落点。", home)
+        self.assertIn("让羽球停稳、向上挑高，再练发球和连续来回。", home)
         self.assertEqual(home.count("共 5 级"), 3)
         self.assertEqual(home.count("共 8 级"), 1)
+        self.assertEqual(home.count("共 7 级"), 1)
         self.assertEqual(home.count("共 2 级"), 1)
 
         game = self.client.get("/games/logic/").text
@@ -327,7 +330,8 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("background:var(--panel,var(--card,var(--bg,#fff)))", game)
         self.assertIn('href="/extras/kendama">剑玉</a>', game)
         for extra_id, name in (("slingshot", "弹弓"), ("pitchpot", "投壶"),
-                               ("pickleball", "匹克球"), ("tabletennis", "乒乓球")):
+                               ("pickleball", "匹克球"), ("tabletennis", "乒乓球"),
+                               ("badminton", "羽毛球")):
             self.assertIn('href="/extras/%s">%s</a>' % (extra_id, name), game)
 
     def test_kendama_has_five_ordered_challenges(self) -> None:
@@ -381,6 +385,7 @@ class HistoryPageTest(unittest.TestCase):
             ("pitchpot", "投壶", 5),
             ("pickleball", "匹克球", 5),
             ("tabletennis", "乒乓球", 8),
+            ("badminton", "羽毛球", 7),
         ):
             page = self.client.get("/extras/%s" % extra_id)
             self.assertEqual(page.status_code, 200, extra_id)
@@ -408,6 +413,25 @@ class HistoryPageTest(unittest.TestCase):
             "对面半台",
             "左右落点",
             "长短落点",
+        ):
+            self.assertIn(text, page.text)
+
+    def test_badminton_uses_shuttle_and_net_specific_levels(self) -> None:
+        """羽毛球从不会弹跳的羽球开始，再到低手发球、落点和合作高球。"""
+        page = self.client.get("/extras/badminton")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("羽毛球", page.text)
+        self.assertEqual(page.text.count("<option value="), 7)
+        for text in (
+            "让羽球稳稳停在拍面上",
+            "从下往上轻轻挑",
+            "自己把羽球连续挑起来",
+            "一次挑低，一次挑高",
+            "从下面把羽球送过网",
+            "把羽球送到近网或靠后",
+            "两个人把羽球挑回来",
+            "羽毛球不会像小球那样弹跳",
+            "合作高球",
         ):
             self.assertIn(text, page.text)
 
