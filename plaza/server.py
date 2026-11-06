@@ -108,6 +108,7 @@ _EXTRA_LINKS = (
     ("slingshot", "弹弓", "/extras/slingshot"),
     ("pitchpot", "投壶", "/extras/pitchpot"),
     ("pickleball", "匹克球", "/extras/pickleball"),
+    ("tabletennis", "乒乓球", "/extras/tabletennis"),
 )
 
 

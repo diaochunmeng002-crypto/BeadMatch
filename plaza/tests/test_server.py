@@ -304,7 +304,7 @@ class HistoryPageTest(unittest.TestCase):
         self.assertLess(home.index('href="/history">历史</a>'),
                         home.index('href="/stars"'))
         for extra_id, name in (("slingshot", "弹弓"), ("pitchpot", "投壶"),
-                               ("pickleball", "匹克球")):
+                               ("pickleball", "匹克球"), ("tabletennis", "乒乓球")):
             self.assertIn('href="/extras/%s"' % extra_id, home)
         self.assertIn('href="/extras/kendama"', home)
         self.assertIn('class="extra-games"', home)
@@ -312,7 +312,9 @@ class HistoryPageTest(unittest.TestCase):
                         home.index('class="extra-games"'))
         self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
         self.assertIn("用小目标练发球、连续对打和控球。", home)
+        self.assertIn("先练控拍控球，再上球台练过网和落点。", home)
         self.assertEqual(home.count("共 5 级"), 3)
+        self.assertEqual(home.count("共 8 级"), 1)
         self.assertEqual(home.count("共 2 级"), 1)
 
         game = self.client.get("/games/logic/").text
@@ -325,7 +327,7 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("background:var(--panel,var(--card,var(--bg,#fff)))", game)
         self.assertIn('href="/extras/kendama">剑玉</a>', game)
         for extra_id, name in (("slingshot", "弹弓"), ("pitchpot", "投壶"),
-                               ("pickleball", "匹克球")):
+                               ("pickleball", "匹克球"), ("tabletennis", "乒乓球")):
             self.assertIn('href="/extras/%s">%s</a>' % (extra_id, name), game)
 
     def test_kendama_has_five_ordered_challenges(self) -> None:
@@ -378,6 +380,7 @@ class HistoryPageTest(unittest.TestCase):
             ("slingshot", "儿童弹弓", 2),
             ("pitchpot", "投壶", 5),
             ("pickleball", "匹克球", 5),
+            ("tabletennis", "乒乓球", 8),
         ):
             page = self.client.get("/extras/%s" % extra_id)
             self.assertEqual(page.status_code, 200, extra_id)
@@ -385,6 +388,28 @@ class HistoryPageTest(unittest.TestCase):
             self.assertEqual(page.text.count("<option value="), count, extra_id)
             self.assertIn('id="plaza-star"', page.text, extra_id)
             self.assertIn("GAME_ID = %s" % ('"' + extra_id + '"'), page.text)
+
+    def test_table_tennis_levels_use_the_table(self) -> None:
+        """乒乓球先练三项控球，再用五个动作专门练球台与台面落点。"""
+        page = self.client.get("/extras/tabletennis")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("乒乓球", page.text)
+        self.assertEqual(page.text.count("<option value="), 8)
+        for text in (
+            "让球安静地停在球拍上",
+            "让小球连续弹起",
+            "打墙后接住回来那一下",
+            "让球先落在自己半台",
+            "轻轻送过球网",
+            "把球送到左边或右边",
+            "一次近网，一次靠后",
+            "两个人在球台上来回",
+            "第一落点",
+            "对面半台",
+            "左右落点",
+            "长短落点",
+        ):
+            self.assertIn(text, page.text)
 
     def test_slingshot_has_two_summarised_levels(self) -> None:
         """原来的五步动作归纳为基础训练，靶场单独作为第二级。"""
