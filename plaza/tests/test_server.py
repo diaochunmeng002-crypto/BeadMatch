@@ -173,7 +173,7 @@ class HistoryPageTest(unittest.TestCase):
         """首页每张卡片只报总数（"共 N 题"），不铺每级多少题。"""
         home = self.client.get("/").text
         self.assertIn("共 ", home)
-        self.assertNotIn("1 级", home)              # 等级明细只在游戏页的难度下拉里
+        self.assertNotIn("1 级（", home)            # 等级明细只在游戏页的难度下拉里
 
     def test_history_page_link_points_at_the_puzzle(self) -> None:
         """「打开」得带上题目 id（/games/<游戏>/?p=<id>）—— 光回游戏首页就开成随机一道了。"""
@@ -312,10 +312,11 @@ class HistoryPageTest(unittest.TestCase):
         self.assertLess(home.index('href="/games/beadprob/"'),
                         home.index('class="extra-games"'))
         self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
-        self.assertIn("用小目标练发球、连续对打和控球。", home)
+        self.assertIn("从托球走动、接抛练到双拍、对墙和两人连续对打。", home)
         self.assertIn("先练控拍控球，再上球台练过网和落点。", home)
         self.assertIn("让羽球停稳、向上挑高，再练发球和连续来回。", home)
-        self.assertEqual(home.count("共 5 级"), 3)
+        self.assertEqual(home.count("共 5 级"), 2)
+        self.assertEqual(home.count("共 19 级"), 1)
         self.assertEqual(home.count("共 8 级"), 1)
         self.assertEqual(home.count("共 7 级"), 1)
         self.assertEqual(home.count("共 2 级"), 1)
@@ -383,7 +384,7 @@ class HistoryPageTest(unittest.TestCase):
         for extra_id, name, count in (
             ("slingshot", "儿童弹弓", 2),
             ("pitchpot", "投壶", 5),
-            ("pickleball", "匹克球", 5),
+            ("pickleball", "匹克球", 19),
             ("tabletennis", "乒乓球", 8),
             ("badminton", "羽毛球", 7),
         ):
@@ -393,6 +394,45 @@ class HistoryPageTest(unittest.TestCase):
             self.assertEqual(page.text.count("<option value="), count, extra_id)
             self.assertIn('id="plaza-star"', page.text, extra_id)
             self.assertIn("GAME_ID = %s" % ('"' + extra_id + '"'), page.text)
+            if extra_id != "pickleball":
+                self.assertNotIn("<optgroup", page.text, extra_id)
+
+    def test_pickleball_levels_progress_from_floor_to_partner_rally(self) -> None:
+        """匹克球把拖球、落地球感、单双拍控球、对墙和合作对打串成渐进阶梯。"""
+        page = self.client.get("/extras/pickleball")
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(page.text.count("<option value="), 19)
+        self.assertEqual(page.text.count("<optgroup label="), 5)
+        self.assertEqual(page.text.count("</optgroup>"), 5)
+        for group in ("球感入门", "接球与缓冲", "颠球变化",
+                      "进阶控球与对墙", "对打与应用"):
+            self.assertIn('<optgroup label="%s">' % group, page.text)
+        self.assertIn("球感入门 · 第 1 级 · 托球站稳", page.text)
+        self.assertIn("对打与应用 · 第 19 级 · 落点控制", page.text)
+        for text in (
+            "托球站稳",
+            "用球拍拖着球走",
+            "控制球绕过障碍物",
+            "等球落地，再用手接住",
+            "听方向口令接球",
+            "用拍面接球并停稳",
+            "落地拍起，再用手接住",
+            "球落地一次后接稳",
+            "用球拍连续颠球",
+            "一次低颠，一次高颠",
+            "用球拍正反面轮流颠球",
+            "边走边颠，听口令停住",
+            "落地后向前上方挑球",
+            "两只球拍轮流颠球",
+            "对墙击打落地球",
+            "对墙连续不落地击打",
+            "让球落地一次后再对打",
+            "两人不落地连续对打",
+            "落点控制",
+        ):
+            self.assertIn(text, page.text)
+        self.assertNotIn(">过关<", page.text)
+        self.assertNotIn('<div class="pass">', page.text)
 
     def test_table_tennis_levels_use_the_table(self) -> None:
         """乒乓球先练三项控球，再用五个动作专门练球台与台面落点。"""

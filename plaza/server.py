@@ -667,6 +667,8 @@ __STAR_JS__
 .extra-controls{display:flex;align-items:center;gap:8px;font-size:.9rem}
 .extra-controls select{font:inherit;padding:6px 30px 6px 12px;border:1px solid var(--border);
   border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.extra-controls optgroup{color:var(--muted);font-weight:600}
+.extra-controls option{color:var(--ink);font-weight:400}
 .extra-main{width:100%;max-width:46rem;display:block;margin-top:12px}
 .extra-summary{margin:0 0 14px;color:var(--muted);font-size:.88rem;line-height:1.7}
 .safety{display:flex;gap:12px;padding:12px 15px;border:1px solid var(--border);
@@ -784,11 +786,20 @@ def _extra_page(extra_id: str) -> str:
 
     options: List[str] = []
     panels: List[str] = []
+    active_group = ""
     for index, level in enumerate(levels):
         if not isinstance(level, dict):
             continue
         level_name = escape(str(level["name"]))
         short = escape(str(level["short"]))
+        group = str(level.get("group") or "").strip()
+        group_html = escape(group)
+        if group != active_group:
+            if active_group:
+                options.append("</optgroup>")
+            if group:
+                options.append('<optgroup label="%s">' % group_html)
+            active_group = group
         steps_title = escape(str(level.get("steps_title", "怎么玩"))).strip()
         goal_html = escape(str(level["goal"]))
         goal_details = level.get("goal_details")
@@ -807,20 +818,27 @@ def _extra_page(extra_id: str) -> str:
         steps_html = '<%s class="%s">%s</%s>' % (
             steps_tag, steps_class, steps_items, steps_tag,
         )
+        pass_condition = str(level.get("pass_condition") or "").strip()
+        pass_html = (
+            '<div class="pass"><span>过关</span>%s</div>' % escape(pass_condition)
+            if pass_condition else ""
+        )
         hidden = "" if index == 0 else " hidden"
         panels.append(
             '<article class="level-card" data-level="%d" data-level-number="%d"'
             ' data-puzzle-id="%s"%s>'
-            '<p class="level-kicker">第 %d 级 · %s</p>'
-            '<h2>%s</h2><p class="goal">%s</p>%s%s'
-            '<div class="pass"><span>过关</span>%s</div>'
+            '<p class="level-kicker">%s第 %d 级 · %s</p>'
+            '<h2>%s</h2><p class="goal">%s</p>%s%s%s'
             '<p class="tip"><strong>提示：</strong>%s</p>'
             "</article>"
-            % (index, index + 1, level_name, hidden, index + 1, short,
+            % (index, index + 1, level_name, hidden,
+               ("%s · " % group_html) if group_html else "", index + 1, short,
                level_name, goal_html,
                ("<h3>%s</h3>" % steps_title) if steps_title else "",
-               steps_html, escape(str(level["pass_condition"])), escape(str(level["tip"])))
+               steps_html, pass_html, escape(str(level["tip"])))
         )
+    if active_group:
+        options.append("</optgroup>")
     if not options:
         raise HTTPException(500, "%s 没有可显示的难度" % extra_id)
 
