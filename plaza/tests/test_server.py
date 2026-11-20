@@ -316,7 +316,7 @@ class HistoryPageTest(unittest.TestCase):
         self.assertIn("无台也能练球感与对墙，有台再练发球、落点和正反手。", home)
         self.assertIn("让羽球停稳、向上挑高，再练发球和连续来回。", home)
         self.assertEqual(home.count("共 5 级"), 2)
-        self.assertEqual(home.count("共 19 级"), 1)
+        self.assertEqual(home.count("共 20 级"), 1)
         self.assertEqual(home.count("共 22 级"), 1)
         self.assertEqual(home.count("共 7 级"), 1)
         self.assertEqual(home.count("共 2 级"), 1)
@@ -384,7 +384,7 @@ class HistoryPageTest(unittest.TestCase):
         for extra_id, name, count in (
             ("slingshot", "儿童弹弓", 2),
             ("pitchpot", "投壶", 5),
-            ("pickleball", "匹克球", 19),
+            ("pickleball", "匹克球", 20),
             ("tabletennis", "乒乓球", 22),
             ("badminton", "羽毛球", 7),
         ):
@@ -401,14 +401,14 @@ class HistoryPageTest(unittest.TestCase):
         """匹克球把拖球、落地球感、单双拍控球、对墙和合作对打串成渐进阶梯。"""
         page = self.client.get("/extras/pickleball")
         self.assertEqual(page.status_code, 200)
-        self.assertEqual(page.text.count("<option value="), 19)
+        self.assertEqual(page.text.count("<option value="), 20)
         self.assertEqual(page.text.count("<optgroup label="), 5)
         self.assertEqual(page.text.count("</optgroup>"), 5)
         for group in ("球感入门", "接球与缓冲", "颠球变化",
                       "进阶控球与对墙", "对打与应用"):
             self.assertIn('<optgroup label="%s">' % group, page.text)
         self.assertIn("球感入门 · 第 1 级 · 托球站稳", page.text)
-        self.assertIn("对打与应用 · 第 19 级 · 落点控制", page.text)
+        self.assertIn("对打与应用 · 第 20 级 · 落点控制", page.text)
         for text in (
             "托球站稳",
             "用球拍拖着球走",
@@ -418,6 +418,7 @@ class HistoryPageTest(unittest.TestCase):
             "用拍面接球并停稳",
             "落地拍起，再用手接住",
             "球落地一次后接稳",
+            "自己连续一弹一托",
             "用球拍连续颠球",
             "一次低颠，一次高颠",
             "用球拍正反面轮流颠球",
@@ -426,7 +427,7 @@ class HistoryPageTest(unittest.TestCase):
             "两只球拍轮流颠球",
             "对墙击打落地球",
             "对墙连续不落地击打",
-            "让球落地一次后再对打",
+            "两个人轮流一弹一托",
             "两人不落地连续对打",
             "落点控制",
         ):
