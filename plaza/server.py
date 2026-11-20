@@ -794,6 +794,8 @@ def _extra_page(extra_id: str) -> str:
         short = escape(str(level["short"]))
         group = str(level.get("group") or "").strip()
         group_html = escape(group)
+        venue = str(level.get("venue") or "").strip()
+        venue_html = escape(venue)
         if group != active_group:
             if active_group:
                 options.append("</optgroup>")
@@ -807,9 +809,13 @@ def _extra_page(extra_id: str) -> str:
             goal_html += "".join("<br>%s" % escape(str(line))
                                  for line in goal_details if str(line).strip())
         selected = " selected" if index == 0 else ""
+        option_text = (
+            "%d 级 · %s · %s" % (index + 1, venue_html, short)
+            if venue_html else "%d 级（%s）" % (index + 1, short)
+        )
         options.append(
-            '<option value="%d"%s>%d 级（%s）</option>'
-            % (index, selected, index + 1, short)
+            '<option value="%d"%s>%s</option>'
+            % (index, selected, option_text)
         )
         steps_plain = bool(level.get("steps_plain"))
         steps_tag = "ul" if steps_plain else "ol"
@@ -824,6 +830,8 @@ def _extra_page(extra_id: str) -> str:
             if pass_condition else ""
         )
         hidden = "" if index == 0 else " hidden"
+        kicker_parts = [part for part in (group_html, venue_html) if part]
+        kicker_prefix = ("%s · " % " · ".join(kicker_parts)) if kicker_parts else ""
         panels.append(
             '<article class="level-card" data-level="%d" data-level-number="%d"'
             ' data-puzzle-id="%s"%s>'
@@ -832,7 +840,7 @@ def _extra_page(extra_id: str) -> str:
             '<p class="tip"><strong>提示：</strong>%s</p>'
             "</article>"
             % (index, index + 1, level_name, hidden,
-               ("%s · " % group_html) if group_html else "", index + 1, short,
+               kicker_prefix, index + 1, short,
                level_name, goal_html,
                ("<h3>%s</h3>" % steps_title) if steps_title else "",
                steps_html, pass_html, escape(str(level["tip"])))

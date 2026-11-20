@@ -313,11 +313,11 @@ class HistoryPageTest(unittest.TestCase):
                         home.index('class="extra-games"'))
         self.assertIn("照着动作卡练接球、平衡和进阶招式。", home)
         self.assertIn("从托球走动、接抛练到双拍、对墙和两人连续对打。", home)
-        self.assertIn("先练控拍控球，再上球台练过网和落点。", home)
+        self.assertIn("无台也能练球感与对墙，有台再练发球、落点和正反手。", home)
         self.assertIn("让羽球停稳、向上挑高，再练发球和连续来回。", home)
         self.assertEqual(home.count("共 5 级"), 2)
         self.assertEqual(home.count("共 19 级"), 1)
-        self.assertEqual(home.count("共 8 级"), 1)
+        self.assertEqual(home.count("共 22 级"), 1)
         self.assertEqual(home.count("共 7 级"), 1)
         self.assertEqual(home.count("共 2 级"), 1)
 
@@ -385,7 +385,7 @@ class HistoryPageTest(unittest.TestCase):
             ("slingshot", "儿童弹弓", 2),
             ("pitchpot", "投壶", 5),
             ("pickleball", "匹克球", 19),
-            ("tabletennis", "乒乓球", 8),
+            ("tabletennis", "乒乓球", 22),
             ("badminton", "羽毛球", 7),
         ):
             page = self.client.get("/extras/%s" % extra_id)
@@ -394,7 +394,7 @@ class HistoryPageTest(unittest.TestCase):
             self.assertEqual(page.text.count("<option value="), count, extra_id)
             self.assertIn('id="plaza-star"', page.text, extra_id)
             self.assertIn("GAME_ID = %s" % ('"' + extra_id + '"'), page.text)
-            if extra_id != "pickleball":
+            if extra_id not in {"pickleball", "tabletennis"}:
                 self.assertNotIn("<optgroup", page.text, extra_id)
 
     def test_pickleball_levels_progress_from_floor_to_partner_rally(self) -> None:
@@ -434,21 +434,45 @@ class HistoryPageTest(unittest.TestCase):
         self.assertNotIn(">过关<", page.text)
         self.assertNotIn('<div class="pass">', page.text)
 
-    def test_table_tennis_levels_use_the_table(self) -> None:
-        """乒乓球先练三项控球，再用五个动作专门练球台与台面落点。"""
+    def test_table_tennis_groups_mix_floor_and_table_practice(self) -> None:
+        """乒乓球按难度分组，同组里同时容纳无台基础和有台练习。"""
         page = self.client.get("/extras/tabletennis")
         self.assertEqual(page.status_code, 200)
         self.assertIn("乒乓球", page.text)
-        self.assertEqual(page.text.count("<option value="), 8)
+        self.assertEqual(page.text.count("<option value="), 22)
+        self.assertEqual(page.text.count("<optgroup label="), 5)
+        self.assertEqual(page.text.count("</optgroup>"), 5)
+        for group in ("球感入门", "接球与缓冲", "过网基础",
+                      "落点与正反手", "对打应用"):
+            self.assertIn('<optgroup label="%s">' % group, page.text)
+        self.assertIn("球感入门 · 无台 · 第 1 级 · 拍面停球", page.text)
+        self.assertIn("球感入门 · 有台 · 第 5 级 · 台面滚球", page.text)
+        self.assertIn("过网基础 · 无台 · 第 10 级 · 对墙不落地", page.text)
+        self.assertIn("对打应用 · 无台 · 第 20 级 · 空中对托", page.text)
+        self.assertNotIn(">过关<", page.text)
         for text in (
-            "让球安静地停在球拍上",
-            "让小球连续弹起",
+            "让小球安静地停在球拍上",
+            "让小球连续轻弹",
+            "一次低颠，一次高颠",
+            "用球拍正反面轮流颠球",
+            "用拍面带着球沿台面滚",
+            "听方向口令接球",
+            "用拍面接球并停稳",
+            "球落地一次后接稳",
             "打墙后接住回来那一下",
+            "球不落地连续轻打墙面",
+            "球在己方台面弹起后接稳",
             "让球先落在自己半台",
-            "轻轻送过球网",
+            "轻轻把球送过网",
+            "让发球先落在自己台面",
             "把球送到左边或右边",
             "一次近网，一次靠后",
+            "在身体右侧轻推来球",
+            "在身体前方轻推来球",
+            "左右来球轮流用正反手",
+            "两人不落地轻托小球",
             "两个人在球台上来回",
+            "听口令把球送到指定区域",
             "第一落点",
             "对面半台",
             "左右落点",
